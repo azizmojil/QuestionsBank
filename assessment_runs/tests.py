@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.utils.translation import override
 from assessment_flow.models import AssessmentQuestion, AssessmentFlowRule, AssessmentOption
 from assessment_runs.engine import ClassificationEngine
 from assessment_runs.models import QuestionClassificationRule, AssessmentResult, AssessmentRun
@@ -18,9 +19,9 @@ class RewindAssessmentTestCase(TestCase):
         self.client = Client()
         
         # Create test questions
-        self.q1 = AssessmentQuestion.objects.create(text="Question 1")
-        self.q2 = AssessmentQuestion.objects.create(text="Question 2")
-        self.q3 = AssessmentQuestion.objects.create(text="Question 3")
+        self.q1 = AssessmentQuestion.objects.create(text="Question 1", text_ar="سؤال 1")
+        self.q2 = AssessmentQuestion.objects.create(text="Question 2", text_ar="سؤال 2")
+        self.q3 = AssessmentQuestion.objects.create(text="Question 3", text_ar="سؤال 3")
         
         # Create rules
         self.rule_a = AssessmentFlowRule.objects.create(
@@ -143,10 +144,10 @@ class ClassificationEngineTestCase(TestCase):
     """Test cases for the ClassificationEngine to ensure rule evaluation works like routing logic."""
 
     def setUp(self):
-        self.survey = Survey.objects.create(name="Demo Survey", code="DEMO")
+        self.survey = Survey.objects.create(name="Demo Survey", name_ar="استبيان تجريبي", name_en="Demo Survey", code="DEMO")
         self.version = SurveyVersion.objects.create(survey=self.survey, interval=SurveyVersion.SurveyInterval.ANNUALLY)
-        self.q1 = SurveyQuestion.objects.create(survey_version=self.version, text="Survey Question 1")
-        self.q2 = SurveyQuestion.objects.create(survey_version=self.version, text="Survey Question 2")
+        self.q1 = SurveyQuestion.objects.create(survey_version=self.version, text="Survey Question 1", text_ar="سؤال استبيان 1", text_en="Survey Question 1")
+        self.q2 = SurveyQuestion.objects.create(survey_version=self.version, text="Survey Question 2", text_ar="سؤال استبيان 2", text_en="Survey Question 2")
 
     def test_classify_question_matches_value_condition(self):
         rule = QuestionClassificationRule.objects.create(
@@ -199,12 +200,31 @@ class ClassificationEngineTestCase(TestCase):
         self.assertEqual(result.rule, fallback_rule)
 
 
+class AssessmentLocalizationTests(TestCase):
+    def test_option_display_text_switches_language(self):
+        question = AssessmentQuestion.objects.create(text="Assess", text_ar="قيّم")
+        option = AssessmentOption.objects.create(
+            question=question,
+            text="Yes",
+            text_ar="نعم",
+            text_en="Yes",
+        )
+
+        with override("ar"):
+            self.assertEqual(option.display_text, "نعم")
+            self.assertEqual(question.display_text, "قيّم")
+
+        with override("en"):
+            self.assertEqual(option.display_text, "Yes")
+            self.assertEqual(question.display_text, "Assess")
+
+
 class AssessmentCompletionSaveTestCase(TestCase):
     """Ensure completing an assessment stores results and links back to the question list."""
 
     def setUp(self):
         self.client = Client()
-        self.survey = Survey.objects.create(name="Demo Survey", code="DEMO-SAVE")
+        self.survey = Survey.objects.create(name="Demo Survey", name_ar="استبيان تجريبي", name_en="Demo Survey", code="DEMO-SAVE")
         self.version = SurveyVersion.objects.create(
             survey=self.survey,
             interval=SurveyVersion.SurveyInterval.ANNUALLY,
@@ -212,9 +232,16 @@ class AssessmentCompletionSaveTestCase(TestCase):
         self.survey_question = SurveyQuestion.objects.create(
             survey_version=self.version,
             text="Survey Question",
+            text_ar="سؤال استبيان",
+            text_en="Survey Question",
         )
-        self.assessment_question = AssessmentQuestion.objects.create(text="Assess this")
-        self.option = AssessmentOption.objects.create(question=self.assessment_question, text="Yes")
+        self.assessment_question = AssessmentQuestion.objects.create(text="Assess this", text_ar="قيّم هذا", text_en="Assess this")
+        self.option = AssessmentOption.objects.create(
+            question=self.assessment_question,
+            text="Yes",
+            text_ar="نعم",
+            text_en="Yes",
+        )
 
     def test_complete_saves_assessment_result(self):
         start_url = reverse('assessment_page', args=[self.assessment_question.id])
@@ -241,6 +268,6 @@ class AssessmentCompletionSaveTestCase(TestCase):
 
         result = AssessmentResult.objects.get(assessment_run=run, survey_question=self.survey_question)
         self.assertEqual(result.status, AssessmentResult.Status.COMPLETE)
-        self.assertEqual(result.assessment_path[0]['answer'], self.option.text)
+        self.assertEqual(result.assessment_path[0]['answer'], self.option.display_text)
 
         self.assertContains(response, reverse('survey_question_list', args=[self.version.id]))

@@ -95,7 +95,7 @@ def get_next_question_view(request):
         answer_texts = [opt.name for opt in selected_options]
     else:
         selected_options = AssessmentOption.objects.filter(id__in=numeric_option_ids)
-        answer_texts = [opt.text for opt in selected_options]
+        answer_texts = [opt.display_text for opt in selected_options]
 
     answer_texts.extend(freeform_answers)
 

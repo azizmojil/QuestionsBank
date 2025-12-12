@@ -7,11 +7,11 @@
             {% for option in option_list %}
                 <div class="searchable-dropdown-item multi-select-item"
                      data-option-id="{{ option.id }}"
-                     data-option-text="{% if question.option_type == 'INDICATOR_LIST' %}{{ option.name }}{% else %}{{ option.text }}{% endif %}">
+                     data-option-text="{% if question.option_type == 'INDICATOR_LIST' %}{{ option.name }}{% else %}{{ option.display_text }}{% endif %}">
                     {% if question.option_type == 'INDICATOR_LIST' %}
                         {{ option.name }}
                     {% else %}
-                        {{ option.text }}
+                        {{ option.display_text }}
                     {% endif %}
                 </div>
             {% endfor %}
@@ -27,7 +27,7 @@
                 {% if question.option_type == 'INDICATOR_LIST' %}
                     {{ option.name }}
                 {% else %}
-                    {{ option.text }}
+                    {{ option.display_text }}
                 {% endif %}
             </label>
         {% endfor %}
@@ -43,7 +43,7 @@
                     {% if question.option_type == 'INDICATOR_LIST' %}
                         {{ option.name }}
                     {% else %}
-                        {{ option.text }}
+                        {{ option.display_text }}
                     {% endif %}
                 </div>
             {% endfor %}
@@ -56,7 +56,7 @@
             {% if question.option_type == 'INDICATOR_LIST' %}
                 {{ option.name }}
             {% else %}
-                {{ option.text }}
+                {{ option.display_text }}
             {% endif %}
         </button>
     {% endfor %}

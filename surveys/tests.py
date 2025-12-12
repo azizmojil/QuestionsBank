@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
 
-from .models import SurveyQuestion, SurveyVersion
+from .models import Survey, SurveyQuestion, SurveyVersion
 
 
 class SurveyBuilderViewTests(TestCase):
@@ -33,3 +33,34 @@ class SurveyVersionStatusTranslationTests(TestCase):
             self.assertEqual(SurveyVersion.Status.LOCKED.label, "Locked")
         with override("ar"):
             self.assertEqual(SurveyVersion.Status.LOCKED.label, "مقفل")
+
+
+class SurveyLocalizationTests(TestCase):
+    def setUp(self):
+        self.survey = Survey.objects.create(
+            name="Localized Survey",
+            name_ar="استبيان مترجم",
+            name_en="Localized Survey",
+        )
+        self.version = SurveyVersion.objects.create(
+            survey=self.survey,
+            interval=SurveyVersion.SurveyInterval.MONTHLY,
+        )
+        self.question = SurveyQuestion.objects.create(
+            survey_version=self.version,
+            text="Legacy text",
+            text_ar="نص السؤال",
+            text_en="Question text",
+        )
+
+    def test_survey_display_name_switches_language(self):
+        with override("ar"):
+            self.assertEqual(self.survey.display_name, "استبيان مترجم")
+        with override("en"):
+            self.assertEqual(self.survey.display_name, "Localized Survey")
+
+    def test_survey_question_display_text_switches_language(self):
+        with override("ar"):
+            self.assertEqual(self.question.display_text, "نص السؤال")
+        with override("en"):
+            self.assertEqual(self.question.display_text, "Question text")
