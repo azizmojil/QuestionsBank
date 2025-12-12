@@ -24,13 +24,13 @@ class Survey(models.Model):
         max_length=50,
         unique=True,
         blank=True,
-        help_text="Optional short code, e.g. LFS_2025.",
+        help_text=_("رمز قصير اختياري مثل LFS_2025."),
     )
     slug = models.SlugField(
         max_length=255,
         unique=True,
         blank=True,
-        help_text="Auto-generated from name if left blank.",
+        help_text=_("يُنشأ تلقائياً من الاسم إذا تُرك فارغاً."),
     )
     description = models.TextField(blank=True)
 
@@ -38,7 +38,7 @@ class Survey(models.Model):
         max_length=20,
         choices=Status.choices,
         default=Status.DRAFT,
-        help_text="Draft: still being designed. Active: in use. Archived: no longer used.",
+        help_text=_("مسودة: قيد التصميم. نشط: قيد الاستخدام. مؤرشف: لم يعد مستخدماً."),
     )
 
     owner = models.ForeignKey(
@@ -47,14 +47,14 @@ class Survey(models.Model):
         null=True,
         blank=True,
         related_name="owned_surveys",
-        help_text="Primary responsible person for this survey.",
+        help_text=_("المسؤول الأساسي عن هذا الاستبيان."),
     )
 
     editors = models.ManyToManyField(
         User,
         blank=True,
         related_name="editable_surveys",
-        help_text="Users allowed to edit survey structure.",
+        help_text=_("المستخدمون المسموح لهم بتعديل هيكل الاستبيان."),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -85,10 +85,10 @@ class SurveyVersion(models.Model):
     """
 
     class Status(models.TextChoices):
-        DRAFT = "DRAFT", "Draft"
-        ACTIVE = "ACTIVE", "Active"
-        LOCKED = "LOCKED", "Locked"
-        ARCHIVED = "ARCHIVED", "Archived"
+        DRAFT = "DRAFT", _("مسودة")
+        ACTIVE = "ACTIVE", _("نشط")
+        LOCKED = "LOCKED", _("مقفل")
+        ARCHIVED = "ARCHIVED", _("مؤرشف")
 
     class SurveyInterval(models.TextChoices):
         MONTHLY = "M", _("شهري")
@@ -105,31 +105,31 @@ class SurveyVersion(models.Model):
     version_label = models.CharField(
         max_length=50,
         blank=True,
-        help_text="Human-friendly label, e.g. '2025-03' or 'Round 1-2025'.",
+        help_text=_("تسمية ودية مثل '2025-03' أو 'الجولة 1-2025'."),
     )
 
     version_date = models.DateField(
         default=datetime.date.today,
-        help_text="Reference date of this version/wave.",
+        help_text=_("تاريخ الإشارة لهذه النسخة/الموجة."),
     )
 
     interval = models.CharField(
         max_length=20,
         choices=SurveyInterval.choices,
-        help_text="The frequency of the survey.",
+        help_text=_("تواتر الاستبيان."),
     )
 
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
         default=Status.DRAFT,
-        help_text="Draft: editable; Active: in collection; Locked: structure frozen; Archived: historic.",
+        help_text=_("مسودة: قابلة للتحرير؛ نشطة: قيد الجمع؛ مقفلة: هيكل ثابت؛ مؤرشفة: للاطلاع التاريخي."),
     )
 
     metadata = models.JSONField(
         blank=True,
         default=dict,
-        help_text="Optional metadata, e.g. sampling frame info, notes, etc.",
+        help_text=_("بيانات وصفية اختيارية مثل معلومات إطار العينة أو الملاحظات."),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -184,38 +184,38 @@ class SurveyQuestion(models.Model):
     code = models.CharField(
         max_length=50,
         blank=True,
-        help_text="Optional question code, e.g. Q1, A01, etc.",
+        help_text=_("رمز سؤال اختياري مثل Q1 أو A01."),
     )
 
-    text = models.TextField(help_text="Full text of the question as seen by the respondent.")
+    text = models.TextField(help_text=_("النص الكامل للسؤال كما يراه المجيب."))
 
     help_text = models.TextField(
         blank=True,
-        help_text="Optional help text / enumerator instructions.",
+        help_text=_("نص مساعدة اختياري أو تعليمات للمُعِد."),
     )
 
     section_label = models.CharField(
         max_length=255,
         blank=True,
-        help_text="Optional logical section/group name for reporting only.",
+        help_text=_("تسمية قسم منطقية للتقارير فقط."),
     )
 
     response_type = models.CharField(
         max_length=30,
         choices=ResponseType.choices,
         default=ResponseType.FREE_TEXT,
-        help_text="Basic expected response type; detailed coding/validation can live elsewhere.",
+        help_text=_("النوع الأساسي المتوقع للإجابة؛ يمكن أن تعيش الترميزات أو التحقق التفصيلي في مكان آخر."),
     )
 
     is_required = models.BooleanField(
         default=False,
-        help_text="Whether the question must be answered in data collection.",
+        help_text=_("هل يجب الإجابة على السؤال أثناء جمع البيانات."),
     )
 
     metadata = models.JSONField(
         blank=True,
         default=dict,
-        help_text="Optional extra structure (allowed values, ranges, skip tags, etc.).",
+        help_text=_("بنية إضافية اختيارية (القيم المسموحة، النطاقات، شروط التخطي، إلخ)."),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

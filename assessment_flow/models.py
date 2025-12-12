@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 import os
 import uuid
 
@@ -22,13 +23,13 @@ class AssessmentQuestion(models.Model):
     """A node in the assessment decision-flow graph."""
 
     class OptionType(models.TextChoices):
-        STATIC = "STATIC", "Static Options"
-        DYNAMIC_FROM_PREVIOUS_MULTI_SELECT = "DYNAMIC_FROM_PREVIOUS_MULTI_SELECT", "Dynamic (from previous multi-select)"
-        DYNAMIC_SURVEY_QUESTIONS = "DYNAMIC_SURVEY_QUESTIONS", "Dynamic (Survey Questions)"
-        INDICATOR_LIST = "INDICATOR_LIST", "Indicator List"
+        STATIC = "STATIC", _("خيارات ثابتة")
+        DYNAMIC_FROM_PREVIOUS_MULTI_SELECT = "DYNAMIC_FROM_PREVIOUS_MULTI_SELECT", _("ديناميكي (من اختيار متعدد سابق)")
+        DYNAMIC_SURVEY_QUESTIONS = "DYNAMIC_SURVEY_QUESTIONS", _("ديناميكي (أسئلة الاستبيان)")
+        INDICATOR_LIST = "INDICATOR_LIST", _("قائمة المؤشرات")
 
     text = models.CharField(max_length=512)
-    explanation = models.TextField(blank=True, help_text="Optional explanation for assessors.")
+    explanation = models.TextField(blank=True, help_text=_("توضيح اختياري للمقيّمين."))
     option_type = models.CharField(max_length=50, choices=OptionType.choices, default=OptionType.STATIC)
     use_searchable_dropdown = models.BooleanField(default=False)
     allow_multiple_choices = models.BooleanField(default=False)
@@ -51,10 +52,10 @@ class AssessmentOption(models.Model):
     """An option/branch from an AssessmentQuestion."""
 
     class ResponseType(models.TextChoices):
-        PREDEFINED = "PREDEFINED", "Predefined Choice"
-        FREE_TEXT = "FREE_TEXT", "Free Text Input"
-        NUMERICAL = "NUMERICAL", "Numerical Input"
-        URL = "URL", "URL Input"
+        PREDEFINED = "PREDEFINED", _("خيار محدد مسبقاً")
+        FREE_TEXT = "FREE_TEXT", _("إدخال نصي حر")
+        NUMERICAL = "NUMERICAL", _("إدخال رقمي")
+        URL = "URL", _("إدخال رابط")
 
     question = models.ForeignKey(AssessmentQuestion, related_name="options", on_delete=models.CASCADE)
     text = models.TextField(blank=True)
@@ -79,7 +80,7 @@ class AssessmentFlowRule(models.Model):
     )
     condition = models.TextField(
         blank=True,
-        help_text="Expression to be evaluated by the routing engine. E.g., \"option == 'CODE_A' -> 'NEXT_Q_CODE'\"",
+        help_text=_("تعبير يُقيّمه محرك التوجيه، مثل \"option == 'CODE_A' -> 'NEXT_Q_CODE'\""),
     )
     priority = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)

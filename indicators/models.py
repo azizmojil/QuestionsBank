@@ -11,48 +11,48 @@ class Indicator(models.Model):
     """
 
     class Classification(models.TextChoices):
-        NATIONAL = "NATIONAL", _("National")
-        REGIONAL = "REGIONAL", _("Regional")
-        INTERNATIONAL = "INTERNATIONAL", _("International")
+        NATIONAL = "NATIONAL", _("وطني")
+        REGIONAL = "REGIONAL", _("إقليمي")
+        INTERNATIONAL = "INTERNATIONAL", _("دولي")
 
     name = models.CharField(
         max_length=255,
-        help_text=_("Human-readable name of the indicator."),
+        help_text=_("اسم المؤشر المقروء."),
     )
 
     code = models.CharField(
         max_length=50,
         blank=True,
-        help_text=_("Optional code, e.g. IND_01 or SDG_8_5_2."),
+        help_text=_("رمز اختياري مثل IND_01 أو SDG_8_5_2."),
     )
 
     classification = models.CharField(
         max_length=20,
         choices=Classification.choices,
         default=Classification.NATIONAL,
-        help_text=_("Classification of the indicator."),
+        help_text=_("تصنيف المؤشر."),
     )
 
     unit = models.CharField(
         max_length=100,
         blank=True,
-        help_text=_("Unit of measure, e.g. % or 'persons'."),
+        help_text=_("وحدة القياس مثل % أو 'أشخاص'."),
     )
 
     frequency = models.CharField(
         max_length=50,
         blank=True,
-        help_text=_("Frequency of publication, e.g. monthly, quarterly."),
+        help_text=_("تواتر النشر مثل شهري أو ربع سنوي."),
     )
 
     methodology_reference = models.URLField(
         blank=True,
-        help_text=_("Optional URL to methodology or metadata documentation."),
+        help_text=_("رابط اختياري لمنهجية أو وثائق بيانات."),
     )
 
     notes = models.TextField(
         blank=True,
-        help_text=_("Free-form notes or methodological comments."),
+        help_text=_("ملاحظات حرة أو تعليقات منهجية."),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -72,8 +72,8 @@ class IndicatorListItem(models.Model):
     """Individual item within an Indicator, representing a specific survey question or data point."""
 
     class TrackingStatus(models.TextChoices):
-        TRACKED = "TRACKED", _("Tracked by the authority")
-        NOT_TRACKED = "NOT_TRACKED", _("Not tracked by the authority")
+        TRACKED = "TRACKED", _("متابع من الجهة المختصة")
+        NOT_TRACKED = "NOT_TRACKED", _("غير متابع من الجهة المختصة")
 
     indicator = models.ForeignKey(
         Indicator,
@@ -83,13 +83,13 @@ class IndicatorListItem(models.Model):
 
     name = models.CharField(
         max_length=255,
-        help_text=_("Name of the indicator list item."),
+        help_text=_("اسم عنصر قائمة المؤشر."),
     )
 
     code = models.CharField(
         max_length=50,
         blank=True,
-        help_text=_("Optional code for the list item."),
+        help_text=_("رمز اختياري لعنصر القائمة."),
     )
 
     tracking_status = models.CharField(
@@ -97,7 +97,7 @@ class IndicatorListItem(models.Model):
         choices=TrackingStatus.choices,
         blank=True,
         null=True,
-        help_text=_("Whether this specific item is tracked by the authority."),
+        help_text=_("ما إذا كان هذا العنصر متابعاً من الجهة المختصة."),
     )
 
     survey_version = models.ForeignKey(
@@ -106,7 +106,7 @@ class IndicatorListItem(models.Model):
         null=True,
         blank=True,
         related_name="indicator_list_items",
-        help_text=_("Survey version this indicator list item is defined on."),
+        help_text=_("نسخة الاستبيان التي يُعرَّف عليها هذا العنصر."),
     )
 
     survey_question = models.ForeignKey(
@@ -115,7 +115,7 @@ class IndicatorListItem(models.Model):
         null=True,
         blank=True,
         related_name="indicator_list_items",
-        help_text=_("Survey question that defines or feeds this indicator list item."),
+        help_text=_("سؤال الاستبيان الذي يعرّف أو يرفد هذا العنصر."),
     )
 
     class Meta:
