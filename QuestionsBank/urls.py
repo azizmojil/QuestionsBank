@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', qnr_views.home, name='home'),
     path('assessment/', include('assessment_runs.urls')),
+    path('surveys/', include('surveys.urls')),
 ]

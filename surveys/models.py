@@ -172,6 +172,7 @@ class SurveyQuestion(models.Model):
         DATE = "DATE", "Date"
         DATETIME = "DATETIME", "Date & Time"
         SCALE = "SCALE", "Scale (e.g. 1–5)"
+        MATRIX = "MATRIX", "Matrix"
 
     survey_version = models.ForeignKey(
         SurveyVersion,
