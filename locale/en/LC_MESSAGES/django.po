@@ -17,13 +17,53 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: QnR/models.py:12
-msgid "نوع الاستجابة (مثل اختيار واحد أو رقمي)."
-msgstr "Response type (e.g., single choice or numeric)."
+#: assessment_flow/apps.py:7
+msgid "مسار التقييم"
+msgstr "Assessment Flow"
 
-#: QnR/models.py:19
+#: assessment_flow/models.py:75
+msgid "سؤال التقييم"
+msgstr "Assessment Question"
+
+#: QnR/models.py:28
+msgid "الجواب [عربية]"
+msgstr "Answer [Arabic]"
+
+#: QnR/models.py:29
+msgid "الجواب [إنجليزية]"
+msgstr "Answer [English]"
+
+#: QnR/apps.py:7
+msgid "بنك الأسئلة"
+msgstr "Questions Bank"
+
+#: assessment_flow/models.py:76
+msgid "أسئلة التقييم"
+msgstr "Assessment Questions"
+
+#: QnR/models.py:19 assessment_flow/models.py:124 #: QnR/models.py:11
 msgid "نوع الاستجابة"
 msgstr "Response type"
+
+#: QnR/models.py:41
+msgid "اسم المجموعة"
+msgstr "Group Name"
+
+#: QnR/models.py:42
+msgid "الإجابات"
+msgstr "Responses"
+
+#: QnR/models.py:48
+msgid "مجموعة إجابات"
+msgstr "Response Group"
+
+#: QnR/models.py:49
+msgid "مجموعات الإجابات"
+msgstr "Response Groups"
+
+#: QnR/admin.py:21
+msgid "إجابة"
+msgstr "Response"
 
 #: QnR/models.py:20
 msgid "أنواع الاستجابة"
@@ -59,13 +99,11 @@ msgstr "Responses"
 msgid "حدد الإجابات المحتملة لأسئلة الاختيار."
 msgstr "Select possible responses for choice questions."
 
-#: QnR/models.py:60
+#: QnR/models.py:60 #: surveys/models.py:222
 msgid "سؤال استبيان"
 msgstr "Survey question"
 
-#: QnR/models.py:61
-msgid "أسئلة الاستبيان"
-msgstr "Survey questions"
+
 
 #: QuestionsBank/settings.py:117
 msgid "Arabic"
@@ -75,9 +113,33 @@ msgstr "Arabic"
 msgid "English"
 msgstr "English"
 
+#: assessment_flow/admin.py:33
+msgid "قاعدة توجيه"
+msgstr "Routing Rule"
+
+#: assessment_flow/admin.py:34
+msgid "منطق التوجيه"
+msgstr "Routing Logic"
+
+#: assessment_flow/admin.py:43
+msgid "تفاصيل السؤال"
+msgstr "Question Details"
+
+#: assessment_flow/admin.py:50
+msgid "مصدر ديناميكي"
+msgstr "Dynamic Source"
+
+#: assessment_flow/admin.py:53
+msgid "اختر السؤال الذي ستُؤخذ الخيارات منه."
+msgstr "Select the question from which to source the options."
+
+#: assessment_flow/admin.py:61
+msgid "اختر المؤشر الذي ستُؤخذ الخيارات منه."
+msgstr "Select the indicator from which to source the options."
+
 #: assessment_flow/models.py:26
 msgid "خيارات ثابتة"
-msgstr "Static options"
+msgstr "Static Options"
 
 #: assessment_flow/models.py:27
 msgid "ديناميكي (من اختيار متعدد سابق)"
@@ -95,23 +157,31 @@ msgstr "Indicator list"
 msgid "توضيح اختياري للمقيّمين."
 msgstr "Optional explanation for assessors."
 
-#: assessment_flow/models.py:55
-msgid "خيار محدد مسبقاً"
-msgstr "Predefined choice"
+#: assessment_flow/models.py:42
+msgid "نوع الخيار"
+msgstr "Option type"
 
-#: assessment_flow/models.py:56
-msgid "إدخال نصي حر"
-msgstr "Free text input"
+#: assessment_flow/models.py:46
+msgid "استخدام قائمة منسدلة قابلة للبحث"
+msgstr "Use searchable dropdown"
 
-#: assessment_flow/models.py:57
-msgid "إدخال رقمي"
-msgstr "Numerical input"
+#: assessment_flow/models.py:49
+msgid "السماح باختيارات متعددة"
+msgstr "Allow multiple choices"
 
-#: assessment_flow/models.py:58
-msgid "إدخال رابط"
-msgstr "URL input"
+#: assessment_flow/models.py:53
+msgid "سؤال مصدر الخيارات الديناميكي"
+msgstr "Dynamic Option Source Question"
 
-#: assessment_flow/models.py:83
+#: assessment_flow/models.py:61 assessment_flow/admin.py:58
+msgid "مصدر المؤشر"
+msgstr "Indicator Source"
+
+#: assessment_flow/models.py:161
+msgid "الشرط"
+msgstr "Condition"
+
+#: assessment_flow/models.py:163
 msgid "تعبير يُقيّمه محرك التوجيه، مثل \"option == 'CODE_A' -> 'NEXT_Q_CODE'\""
 msgstr "Expression evaluated by the routing engine, e.g., \"option == 'CODE_A' -> 'NEXT_Q_CODE'\""
 
@@ -571,12 +641,12 @@ msgstr "Available surveys with their status and creation date"
 msgid "اسم الاستبيان"
 msgstr "Survey Name"
 
-#: templates/assessment_runs/survey_list.html:20
+#: templates/assessment_runs/survey_list.html:20 surveys/models.py:36
 #: templates/assessment_runs/survey_version_list.html:20
 msgid "الحالة"
 msgstr "Status"
 
-#: templates/assessment_runs/survey_list.html:21
+#: templates/assessment_runs/survey_list.html:21 surveys/models.py:171
 msgid "تاريخ الإنشاء"
 msgstr "Created"
 
@@ -590,6 +660,18 @@ msgstr "Status: %(status)s"
 #, python-format
 msgid "أسئلة الاستبيان - %(version_label)s"
 msgstr "Survey Questions - %(version_label)s"
+
+#: surveys/models.py:22
+msgid "اسم المسح [عربية]"
+msgstr "Survey name [Arabic]"
+
+#: surveys/admin.py:40
+msgid "تاريخ إنشاء آخر إصدار"
+msgstr "Last version creation date"
+
+#: surveys/models.py:27
+msgid "اسم المسح [انجليزية]"
+msgstr "Survey name [English]"
 
 #: templates/assessment_runs/survey_question_list.html:9
 #: templates/assessment_runs/survey_version_list.html:9
@@ -973,6 +1055,62 @@ msgstr "No"
 #: templates/surveys/builder.html:124
 msgid "استبيان بدون عنوان"
 msgstr "Untitled survey"
+
+#: surveys/admin.py:17
+msgid "(لم يتم الحفظ بعد)"
+msgstr "(Not saved yet)"
+
+#: surveys/admin.py:19
+msgid "رمز الإصدار"
+msgstr "Version Label"
+
+#: surveys/models.py:28
+msgid "الرمز"
+msgstr "Code"
+
+#: surveys/models.py:33
+msgid "الوصف"
+msgstr "Description"
+
+#: surveys/models.py:45
+msgid "المالك"
+msgstr "Owner"
+
+#: surveys/models.py:55
+msgid "المحررون"
+msgstr "Editors"
+
+#: surveys/models.py:151
+msgid "تاريخ الإصدار"
+msgstr "Version date"
+
+#: surveys/models.py:157
+msgid "الفاصل الزمني"
+msgstr "Interval"
+
+#: surveys/admin.py:10 surveys/models.py:121
+msgid "إصدار الاستبيان"
+msgstr "Survey version"
+
+#: surveys/admin.py:11 #: #: surveys/models.py:121
+msgid "إصدارات الاستبيان"
+msgstr "Survey versions"
+
+#: surveys/apps.py:6 #: surveys/models.py:13
+msgid "الاستبيانات"
+msgstr "Surveys"
+
+#: surveys/models.py:12
+msgid "استبيان"
+msgstr "Survey"
+
+#: surveys/models.py:222
+msgid "سؤال الاستبيان"
+msgstr "Survey Question"
+
+#: surveys/models.py:223 #: QnR/models.py:61 #: surveys/models.py:223
+msgid "أسئلة الاستبيان"
+msgstr "Survey Questions"
 
 #~ msgid "National"
 #~ msgstr "National"

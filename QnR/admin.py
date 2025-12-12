@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import SurveyQuestion, ResponseType, Response
+from .models import SurveyQuestion, ResponseType, Response, ResponseGroup
+from django.utils.translation import gettext_lazy as _
 
 
 @admin.register(ResponseType)
@@ -12,6 +13,19 @@ class ResponseTypeAdmin(admin.ModelAdmin):
 class ResponseAdmin(admin.ModelAdmin):
     list_display = ("text_en", "text_ar")
     search_fields = ("text_en", "text_ar")
+
+
+class ResponseInline(admin.TabularInline):
+    model = ResponseGroup.responses.through
+    verbose_name = _("إجابة")
+    verbose_name_plural = _("الإجابات")
+    extra = 1
+
+
+@admin.register(ResponseGroup)
+class ResponseGroupAdmin(admin.ModelAdmin):
+    inlines = [ResponseInline]
+    exclude = ("responses",)
 
 
 @admin.register(SurveyQuestion)

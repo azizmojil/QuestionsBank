@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
 from .models import AssessmentQuestion, AssessmentOption, AssessmentFlowRule
 
@@ -14,9 +15,9 @@ from .models import AssessmentQuestion, AssessmentOption, AssessmentFlowRule
 class StaticOptionsInline(admin.TabularInline):
     model = AssessmentOption
     extra = 0
-    fields = ("text", "text_ar", "text_en", "response_type", "explanation", "explanation_ar", "explanation_en")
-    verbose_name = "Static Option"
-    verbose_name_plural = "Static Options"
+    fields = ("text_ar", "text_en", "response_type", "explanation_ar", "explanation_en")
+    verbose_name = _("خيار ثابت")
+    verbose_name_plural = _("خيارات ثابتة")
     formfield_overrides = {
         models.TextField: {'widget': admin.widgets.AdminTextareaWidget(attrs={'rows': 1})},
     }
@@ -27,39 +28,39 @@ class AssessmentFlowRuleInline(admin.TabularInline):
     extra = 0
     fk_name = "from_question"
     fields = ("condition",)
-    verbose_name = "Routing Rule"
-    verbose_name_plural = "Routing Logic"
+    verbose_name = _("قاعدة توجيه")
+    verbose_name_plural = _("منطق التوجيه")
 
 
 @admin.register(AssessmentQuestion)
 class AssessmentQuestionAdmin(admin.ModelAdmin):
     list_display = ("display_text", "id", "option_type")
     list_filter = ("option_type",)
-    search_fields = ("text", "text_ar", "text_en", "id")
+    search_fields = ("text_ar", "text_en", "id")
 
     # Define all possible inlines
     inlines = [StaticOptionsInline, AssessmentFlowRuleInline]
 
     def get_fieldsets(self, request, obj=None):
-        base_fields = ("text", "text_ar", "text_en", "explanation", "explanation_ar", "explanation_en", "option_type", "allow_multiple_choices", "use_searchable_dropdown")
+        base_fields = ("text_ar", "text_en", "explanation_ar", "explanation_en", "option_type", "allow_multiple_choices", "use_searchable_dropdown")
         
         fieldsets = [
-            ("Question Details", {"fields": base_fields}),
+            (_("تفاصيل السؤال"), {"fields": base_fields}),
         ]
 
         if obj:
             if obj.option_type == AssessmentQuestion.OptionType.DYNAMIC_FROM_PREVIOUS_MULTI_SELECT:
                 fieldsets.append(
-                    ("Dynamic Source", {
+                    (_("مصدر ديناميكي"), {
                         "fields": ("dynamic_option_source_question",),
-                        "description": "Select the question from which to source the options.",
+                        "description": _("اختر السؤال الذي ستُؤخذ الخيارات منه."),
                     })
                 )
             elif obj.option_type == AssessmentQuestion.OptionType.INDICATOR_LIST:
                 fieldsets.append(
-                    ("Indicator Source", {
+                    (_("مصدر المؤشر"), {
                         "fields": ("indicator_source",),
-                        "description": "Select the indicator from which to source the options.",
+                        "description": _("اختر المؤشر الذي ستُؤخذ الخيارات منه."),
                     })
                 )
 
@@ -83,6 +84,6 @@ class AssessmentQuestionAdmin(admin.ModelAdmin):
 
 @admin.register(AssessmentOption)
 class AssessmentOptionAdmin(admin.ModelAdmin):
-    search_fields = ("text", "text_ar", "text_en", "question__text", "question__text_ar", "question__text_en")
+    search_fields = ("text_ar", "text_en", "question__text_ar", "question__text_en")
     def get_model_perms(self, request):
         return {}
