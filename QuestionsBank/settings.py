@@ -118,7 +118,7 @@ LANGUAGES = [
     ('en', _('English')),
 ]
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Riyadh'
 
 USE_I18N = True
 

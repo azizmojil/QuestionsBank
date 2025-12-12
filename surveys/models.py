@@ -9,46 +9,41 @@ User = get_user_model()
 
 
 class Survey(models.Model):
-    """Top-level survey definition.
+    """Top-level survey definition."""
 
-    Represents a logical survey instrument (e.g. \"Labor Force Survey\").
-    Specific versions / waves are handled by SurveyVersion.
-    """
+    class Meta:
+        verbose_name = _("استبيان")
+        verbose_name_plural = _("الاستبيانات")
+        ordering = ["name_ar", "name_en"]
 
     class Status(models.TextChoices):
         DRAFT = "DRAFT", _("مسودة")
         ACTIVE = "ACTIVE", _("نشط")
         ARCHIVED = "ARCHIVED", _("مؤرشف")
 
-    name = models.CharField(max_length=255, unique=True)
     name_ar = models.CharField(
         max_length=255,
         blank=True,
-        verbose_name=_("الاسم بالعربية"),
+        verbose_name=_("اسم المسح [عربية]"),
     )
     name_en = models.CharField(
         max_length=255,
         blank=True,
-        verbose_name=_("الاسم بالإنجليزية"),
+        verbose_name=_("اسم المسح [انجليزية]"),
     )
     code = models.CharField(
         max_length=50,
         unique=True,
         blank=True,
-        help_text=_("رمز قصير اختياري مثل LFS_2025."),
+        verbose_name=_("الرمز"),
     )
-    slug = models.SlugField(
-        max_length=255,
-        unique=True,
-        blank=True,
-        help_text=_("يُنشأ تلقائياً من الاسم إذا تُرك فارغاً."),
-    )
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, verbose_name=_("الوصف"))
 
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
         default=Status.DRAFT,
+        verbose_name=_("الحالة"),
         help_text=_("مسودة: قيد التصميم. نشط: قيد الاستخدام. مؤرشف: لم يعد مستخدماً."),
     )
 
@@ -58,6 +53,7 @@ class Survey(models.Model):
         null=True,
         blank=True,
         related_name="owned_surveys",
+        verbose_name=_("المالك"),
         help_text=_("المسؤول الأساسي عن هذا الاستبيان."),
     )
 
@@ -65,14 +61,12 @@ class Survey(models.Model):
         User,
         blank=True,
         related_name="editable_surveys",
+        verbose_name=_("المحررون"),
         help_text=_("المستخدمون المسموح لهم بتعديل هيكل الاستبيان."),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ["name"]
 
     def __str__(self) -> str:
         return self.display_name
@@ -85,17 +79,13 @@ class Survey(models.Model):
         if lang == "en" and self.name_en:
             return self.name_en
         # Fallbacks for missing translations
-        return self.name or self.name_en or self.name_ar
+        return self.name_en or self.name_ar
 
     def save(self, *args, **kwargs):
-        # Auto-generate slug from name if missing
-        base_name = self.name or self.name_ar or self.name_en
-        if not self.slug and base_name:
-            self.slug = slugify(base_name, allow_unicode=True)
-
         # If code is empty, you can optionally derive a default from slug
-        if not self.code and self.slug:
-            self.code = self.slug.upper()[:50]
+        if not self.code:
+            base_name = self.name_ar or self.name_en
+            self.code = slugify(base_name, allow_unicode=True).upper()[:50]
 
         super().save(*args, **kwargs)
 
@@ -105,6 +95,12 @@ class SurveyVersion(models.Model):
 
     Example: Labor Force Survey March 2025, or \"2025-Q1\" round.
     """
+
+    class Meta:
+        verbose_name = _("إصدار الاستبيان")
+        verbose_name_plural = _("إصدارات الاستبيان")
+        ordering = ["-version_date", "-id"]
+        unique_together = ("survey", "version_label")
 
     class Status(models.TextChoices):
         DRAFT = "DRAFT", _("مسودة")
@@ -122,6 +118,7 @@ class SurveyVersion(models.Model):
         Survey,
         on_delete=models.CASCADE,
         related_name="versions",
+        verbose_name=_("الاستبيان")
     )
 
     version_label = models.CharField(
@@ -132,12 +129,14 @@ class SurveyVersion(models.Model):
 
     version_date = models.DateField(
         default=datetime.date.today,
+        verbose_name=_("تاريخ الإصدار"),
         help_text=_("تاريخ الإشارة لهذه النسخة/الموجة."),
     )
 
     interval = models.CharField(
         max_length=20,
         choices=SurveyInterval.choices,
+        verbose_name=_("الفاصل الزمني"),
         help_text=_("تواتر الاستبيان."),
     )
 
@@ -145,6 +144,7 @@ class SurveyVersion(models.Model):
         max_length=20,
         choices=Status.choices,
         default=Status.DRAFT,
+        verbose_name=_("الحالة"),
         help_text=_("مسودة: قابلة للتحرير؛ نشطة: قيد الجمع؛ مقفلة: هيكل ثابت؛ مؤرشفة: للاطلاع التاريخي."),
     )
 
@@ -154,12 +154,8 @@ class SurveyVersion(models.Model):
         help_text=_("بيانات وصفية اختيارية مثل معلومات إطار العينة أو الملاحظات."),
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاريخ الإنشاء"))
     updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ["-version_date", "-id"]
-        unique_together = ("survey", "version_label")
 
     def __str__(self) -> str:
         return f"{self.survey.display_name} - {self.version_label or '(new)'}"
@@ -171,7 +167,7 @@ class SurveyVersion(models.Model):
 
         year = self.version_date.strftime("%y")
         month = self.version_date.strftime("%m")
-        
+
         return f"{year}{self.survey.code}{self.interval}{month}"
 
     def save(self, *args, **kwargs):
@@ -185,6 +181,11 @@ class SurveyQuestion(models.Model):
     This is the canonical question bank for a given wave. Assessment / flows
     live in a different app and reference these questions.
     """
+
+    class Meta:
+        verbose_name = _("سؤال الاستبيان")
+        verbose_name_plural = _("أسئلة الاستبيان")
+        ordering = ["id"]
 
     class ResponseType(models.TextChoices):
         BINARY = "BINARY", _("نعم/لا (ثنائي)")
@@ -201,6 +202,7 @@ class SurveyQuestion(models.Model):
         SurveyVersion,
         on_delete=models.CASCADE,
         related_name="questions",
+        verbose_name=_("إصدار الاستبيان")
     )
 
     code = models.CharField(
@@ -209,7 +211,6 @@ class SurveyQuestion(models.Model):
         help_text=_("رمز سؤال اختياري مثل Q1 أو A01."),
     )
 
-    text = models.TextField(help_text=_("النص الكامل للسؤال كما يراه المجيب."))
     text_ar = models.TextField(
         blank=True,
         verbose_name=_("السؤال [عربية]"),
@@ -253,9 +254,6 @@ class SurveyQuestion(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        ordering = ["id"]
-
     def __str__(self) -> str:
         prefix = f"{self.code} - " if self.code else ""
         text = self.display_text
@@ -275,4 +273,4 @@ class SurveyQuestion(models.Model):
             return self.text_ar
         if lang == "en" and self.text_en:
             return self.text_en
-        return self.text or self.text_en or self.text_ar
+        return self.text_en or self.text_ar

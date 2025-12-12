@@ -9,7 +9,7 @@ class ResponseType(models.Model):
     name = models.CharField(
         max_length=100,
         unique=True,
-        help_text=_("نوع الاستجابة (مثل اختيار واحد أو رقمي).")
+        verbose_name=_("نوع الاستجابة"),
     )
 
     def __str__(self):
@@ -24,8 +24,8 @@ class Response(models.Model):
     """
     Represents a single predefined answer/choice.
     """
-    text_ar = models.CharField(max_length=255, verbose_name=_("السؤال [عربية]"))
-    text_en = models.CharField(max_length=255, verbose_name=_("السؤال [إنجليزية]"))
+    text_ar = models.CharField(max_length=255, verbose_name=_("الجواب [عربية]"))
+    text_en = models.CharField(max_length=255, verbose_name=_("الجواب [إنجليزية]"))
 
     def __str__(self):
         return f"{self.text_en} / {self.text_ar}"
@@ -33,6 +33,18 @@ class Response(models.Model):
     class Meta:
         verbose_name = _("إجابة")
         verbose_name_plural = _("إجابات")
+
+
+class ResponseGroup(models.Model):
+    name = models.CharField(max_length=255, verbose_name=_("اسم المجموعة"))
+    responses = models.ManyToManyField(Response, verbose_name=_("الإجابات"))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("مجموعة إجابات")
+        verbose_name_plural = _("مجموعات الإجابات")
 
 
 class SurveyQuestion(models.Model):

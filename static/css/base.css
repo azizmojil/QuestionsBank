@@ -145,7 +145,7 @@ nav a:focus {
         margin-left: 0;
         width: 100%;
     }
-    
+
     nav ul {
         flex-direction: column;
         gap: 0.75rem;
