@@ -389,12 +389,26 @@ body.dark-mode .spinner {
 .flex { display: flex; }
 .flex-column { flex-direction: column; }
 .flex-center { justify-content: center; align-items: center; }
+.flex-wrap { flex-wrap: wrap; }
 .gap-1 { gap: 0.5rem; }
 .gap-2 { gap: 1rem; }
 .gap-3 { gap: 1.5rem; }
 
 .hidden { display: none; }
 .visible { display: block; }
+
+/* Feature Grid */
+.feature-grid {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.feature-card {
+    flex: 1;
+    min-width: 280px;
+}
 
 /* Screen reader only */
 .sr-only {
