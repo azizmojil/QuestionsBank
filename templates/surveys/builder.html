@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Survey Builder - QnR Platform{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'surveys/css/builder.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="hero builder-hero">
+    <div class="card hero-card">
+        <p class="eyebrow">Design-first</p>
+        <h1>Survey builder</h1>
+        <p class="lead">Compose sections, add questions, and shape responses—including matrix grids—in a single focused workspace.</p>
+        <div class="flex gap-2 mt-3 flex-wrap">
+            <a href="#builder-workspace" class="btn">Start assembling</a>
+            <a href="{% url 'survey_list' %}" class="btn btn-secondary">Preview respondent view</a>
+        </div>
+    </div>
+    <div class="card">
+        <h3>Response types available</h3>
+        <div class="type-grid" role="list">
+            {% for rt in response_types %}
+                <div class="type-pill" role="listitem">
+                    <div>
+                        <p class="type-label">{{ rt.label }}</p>
+                        <p class="type-desc">{{ rt.description }}</p>
+                    </div>
+                    {% if rt.supports_matrix %}
+                        <span class="badge">Matrix-ready</span>
+                    {% elif rt.supports_options %}
+                        <span class="badge">Options</span>
+                    {% else %}
+                        <span class="badge neutral">Freeform</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section id="builder-workspace" class="builder-grid">
+    <div class="card">
+        <h2>Structure your survey</h2>
+        <form id="builder-form">
+            <label class="stacked">
+                Survey title
+                <input id="survey-title" name="survey_title" type="text" placeholder="Customer Experience Pulse" value="Customer Experience Pulse">
+            </label>
+            <div class="flex gap-2 mt-2 wrap">
+                <div class="info-block">
+                    <p class="eyebrow">Sections</p>
+                    <p class="muted">Group related questions for better pacing.</p>
+                </div>
+                <div class="info-block">
+                    <p class="eyebrow">Matrix questions</p>
+                    <p class="muted">Define rows, columns, and shared response options.</p>
+                </div>
+            </div>
+            <div class="section-actions mt-3">
+                <button type="button" class="btn" id="add-section-btn">Add section</button>
+                <button type="button" class="btn btn-secondary" id="load-sample-btn">Load sample structure</button>
+            </div>
+            <div id="sections-container" class="section-container" aria-live="polite"></div>
+        </form>
+    </div>
+
+    <div class="card preview-card">
+        <div class="section-header">
+            <div>
+                <p class="eyebrow">Live blueprint</p>
+                <h3>JSON preview</h3>
+            </div>
+            <button type="button" class="btn btn-secondary" id="refresh-preview">Refresh preview</button>
+        </div>
+        <p class="muted">Review the structure you are building, including sections, question text, response types, and any matrix rows/columns.</p>
+        <pre id="survey-preview" class="preview-block" aria-live="polite">{}</pre>
+        <div class="hints">
+            <p><strong>Tip:</strong> Matrix questions accept both rows and columns. Regular questions allow you to set required status and add response options for single or multi-select types.</p>
+            <p class="muted">This builder saves in the browser for now—perfect for prototyping and sharing a plan with your team.</p>
+        </div>
+    </div>
+</section>
+
+<template id="section-template">
+    <div class="card section-block">
+        <div class="section-head">
+            <div class="stacked">
+                <label>Section title
+                    <input type="text" class="section-name" placeholder="Section title">
+                </label>
+                <label>Section description
+                    <textarea class="section-description" rows="2" placeholder="Briefly describe what this section covers"></textarea>
+                </label>
+            </div>
+            <button type="button" class="btn btn-secondary remove-section">Remove section</button>
+        </div>
+        <div class="questions-area">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow">Questions</p>
+                    <p class="muted">Add as many as you need. Switch response type to reveal options or matrix grids.</p>
+                </div>
+                <button type="button" class="btn add-question">Add question</button>
+            </div>
+            <div class="question-list"></div>
+        </div>
+    </div>
+</template>
+
+<template id="question-template">
+    <div class="card question-block">
+        <div class="question-top">
+            <label class="stacked full-width">Question text
+                <input type="text" class="question-text" placeholder="Ask your question clearly" required>
+            </label>
+            <div class="question-controls">
+                <label class="stacked">Response type
+                    <select class="response-type">
+                        {% for rt in response_types %}
+                            <option value="{{ rt.value }}">{{ rt.label }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" class="question-required">
+                    <span>Required</span>
+                </label>
+                <button type="button" class="btn btn-secondary remove-question">Remove</button>
+            </div>
+        </div>
+        <div class="option-editor hidden">
+            <div class="option-row">
+                <label class="stacked full-width">Response option
+                    <input type="text" class="option-input" placeholder="Type an option then add it">
+                </label>
+                <button type="button" class="btn add-option">Add option</button>
+            </div>
+            <div class="pill-list" aria-live="polite"></div>
+        </div>
+        <div class="matrix-editor hidden">
+            <div class="matrix-grid">
+                <label class="stacked full-width">Matrix rows
+                    <textarea class="matrix-rows" rows="3" placeholder="One row per line"></textarea>
+                </label>
+                <label class="stacked full-width">Matrix columns
+                    <textarea class="matrix-columns" rows="3" placeholder="One column per line"></textarea>
+                </label>
+            </div>
+            <p class="muted">Rows often represent themes (e.g., usability, speed), columns represent channels (e.g., web, mobile).</p>
+        </div>
+    </div>
+</template>
+
+{{ response_types|json_script:"response-types-data" }}
+{{ sample_sections|json_script:"sample-sections-data" }}
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'surveys/js/builder.js' %}"></script>
+{% endblock %}
