@@ -48,19 +48,30 @@ def assessment_page(request, question_id):
 def get_next_question_view(request):
     data = json.loads(request.body)
     question_id = int(data.get('question_id'))
-    option_ids = data.get('option_ids', [])
+    raw_option_ids = data.get('option_ids', [])
 
     history = request.session.get('assessment_history', [])
 
     question = get_object_or_404(AssessmentQuestion, pk=question_id)
 
+    numeric_option_ids = []
+    freeform_answers = []
+    for raw_id in raw_option_ids:
+        try:
+            numeric_option_ids.append(int(raw_id))
+        except (TypeError, ValueError):
+            if raw_id not in (None, ""):
+                freeform_answers.append(str(raw_id))
+
     answer_texts = []
     if question.option_type == AssessmentQuestion.OptionType.INDICATOR_LIST:
-        selected_options = IndicatorListItem.objects.filter(id__in=option_ids)
+        selected_options = IndicatorListItem.objects.filter(id__in=numeric_option_ids)
         answer_texts = [opt.name for opt in selected_options]
     else:
-        selected_options = AssessmentOption.objects.filter(id__in=option_ids)
+        selected_options = AssessmentOption.objects.filter(id__in=numeric_option_ids)
         answer_texts = [opt.text for opt in selected_options]
+
+    answer_texts.extend(freeform_answers)
 
     answer_to_store = answer_texts[0] if len(answer_texts) == 1 else answer_texts
 
@@ -70,6 +81,7 @@ def get_next_question_view(request):
         if item['question_id'] == question_id:
             item['answer'] = answer_to_store
             break
+    request.session['assessment_history'] = history
 
     # NOW reconstruct responses and used rules from the UPDATED history
     responses = {str(item['question_id']): item.get('answer') for item in history if 'answer' in item}

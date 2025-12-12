@@ -123,6 +123,7 @@ class RewindAssessmentTestCase(TestCase):
             }),
             content_type='application/json'
         )
+        self.assertEqual(response.status_code, 204)
         
         # Check that Rule A is still in used_rule_ids
         # This is verified by checking the history
@@ -132,3 +133,4 @@ class RewindAssessmentTestCase(TestCase):
         q2_entry = next((item for item in history if item['question_id'] == self.q2.id), None)
         self.assertIsNotNone(q2_entry)
         self.assertEqual(q2_entry['rule_id'], self.rule_a.id)
+        self.assertEqual(q2_entry.get('answer'), 'test_option')
