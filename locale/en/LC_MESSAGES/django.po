@@ -1,0 +1,788 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-12 18:05+0000\n"
+"PO-Revision-Date: 2025-12-12 18:07+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: QuestionsBank/settings.py:117
+msgid "Arabic"
+msgstr "Arabic"
+
+#: QuestionsBank/settings.py:118 templates/base.html:38 templates/base.html:40
+msgid "English"
+msgstr "English"
+
+#: indicators/models.py:14
+msgid "National"
+msgstr "National"
+
+#: indicators/models.py:15
+msgid "Regional"
+msgstr "Regional"
+
+#: indicators/models.py:16
+msgid "International"
+msgstr "International"
+
+#: indicators/models.py:20
+msgid "Human-readable name of the indicator."
+msgstr "Human-readable name of the indicator."
+
+#: indicators/models.py:26
+msgid "Optional code, e.g. IND_01 or SDG_8_5_2."
+msgstr "Optional code, e.g. IND_01 or SDG_8_5_2."
+
+#: indicators/models.py:33
+msgid "Classification of the indicator."
+msgstr "Classification of the indicator."
+
+#: indicators/models.py:39
+#, python-format
+msgid "Unit of measure, e.g. % or 'persons'."
+msgstr "Unit of measure, e.g. % or 'persons'."
+
+#: indicators/models.py:45
+msgid "Frequency of publication, e.g. monthly, quarterly."
+msgstr "Frequency of publication, e.g. monthly, quarterly."
+
+#: indicators/models.py:50
+msgid "Optional URL to methodology or metadata documentation."
+msgstr "Optional URL to methodology or metadata documentation."
+
+#: indicators/models.py:55
+msgid "Free-form notes or methodological comments."
+msgstr "Free-form notes or methodological comments."
+
+#: indicators/models.py:75
+msgid "Tracked by the authority"
+msgstr "Tracked by the authority"
+
+#: indicators/models.py:76
+msgid "Not tracked by the authority"
+msgstr "Not tracked by the authority"
+
+#: indicators/models.py:86
+msgid "Name of the indicator list item."
+msgstr "Name of the indicator list item."
+
+#: indicators/models.py:92
+msgid "Optional code for the list item."
+msgstr "Optional code for the list item."
+
+#: indicators/models.py:100
+msgid "Whether this specific item is tracked by the authority."
+msgstr "Whether this specific item is tracked by the authority."
+
+#: indicators/models.py:109
+msgid "Survey version this indicator list item is defined on."
+msgstr "Survey version this indicator list item is defined on."
+
+#: indicators/models.py:118
+msgid "Survey question that defines or feeds this indicator list item."
+msgstr "Survey question that defines or feeds this indicator list item."
+
+#: surveys/models.py:18
+msgid "مسودة"
+msgstr "Draft"
+
+#: surveys/models.py:19
+msgid "نشط"
+msgstr "Active"
+
+#: surveys/models.py:20
+msgid "مؤرشف"
+msgstr "Archived"
+
+#: surveys/models.py:94
+msgid "شهري"
+msgstr "Monthly"
+
+#: surveys/models.py:95
+msgid "ربع سنوي"
+msgstr "Quarterly"
+
+#: surveys/models.py:96
+msgid "نصف سنوي"
+msgstr "Biannually"
+
+#: surveys/models.py:97
+msgid "سنوي"
+msgstr "Annually"
+
+#: surveys/models.py:168
+msgid "نعم/لا (ثنائي)"
+msgstr "Yes/No (Binary)"
+
+#: surveys/models.py:169
+msgid "اختيار واحد"
+msgstr "Single Choice"
+
+#: surveys/models.py:170
+msgid "اختيارات متعددة"
+msgstr "Multiple Choice"
+
+#: surveys/models.py:171
+msgid "نص حر"
+msgstr "Free Text"
+
+#: surveys/models.py:172
+msgid "رقمي"
+msgstr "Numeric"
+
+#: surveys/models.py:173
+msgid "تاريخ"
+msgstr "Date"
+
+#: surveys/models.py:174
+msgid "تاريخ ووقت"
+msgstr "Date & Time"
+
+#: surveys/models.py:175
+msgid "مقياس (مثلاً 1–5)"
+msgstr "Scale (e.g. 1–5)"
+
+#: surveys/models.py:176
+msgid "مصفوفة"
+msgstr "Matrix"
+
+#: surveys/views.py:12
+msgid "خيار سريع بنعم/لا مع خيارات محددة مسبقاً."
+msgstr "Quick yes/no with predefined options."
+
+#: surveys/views.py:16
+msgid "اختر خياراً واحداً من القائمة."
+msgstr "Pick one option from a list."
+
+#: surveys/views.py:20
+msgid "اختر عدة خيارات من القائمة."
+msgstr "Pick many options from a list."
+
+#: surveys/views.py:24
+msgid "دع المجيبين يكتبون إجاباتهم بحرية."
+msgstr "Let respondents answer in their own words."
+
+#: surveys/views.py:28
+msgid "تسجيل أعداد أو قيم رقمية متصلة."
+msgstr "Capture counts or continuous values."
+
+#: surveys/views.py:32
+msgid "اطلب تاريخاً محدداً."
+msgstr "Ask for a calendar date."
+
+#: surveys/views.py:36
+msgid "تاريخ ووقت معاً."
+msgstr "Date and time together."
+
+#: surveys/views.py:40
+msgid "تقييمات مثل مقياس الموافقة من 1 إلى 5."
+msgstr "Ratings such as 1–5 agreement scales."
+
+#: surveys/views.py:45
+msgid "شبكة من الصفوف والأعمدة يتم تقييمها بخيارات مشتركة."
+msgstr "Grid of rows and columns scored with shared options."
+
+#: surveys/views.py:60
+msgid "الملف الشخصي"
+msgstr "Profile"
+
+#: surveys/views.py:61
+msgid "سمات أساسية لتقسيم المجيبين."
+msgstr "Baseline attributes to segment respondents."
+
+#: surveys/views.py:64
+msgid "ما الوصف الأفضل لدورك؟"
+msgstr "What best describes your role?"
+
+#: surveys/views.py:66
+msgid "مؤسس"
+msgstr "Founder"
+
+#: surveys/views.py:66
+msgid "مدير"
+msgstr "Manager"
+
+#: surveys/views.py:66
+msgid "عضو مساهم"
+msgstr "Individual contributor"
+
+#: surveys/views.py:70
+msgid "ما الأدوات التي تستخدمها أسبوعياً؟"
+msgstr "Which tools do you use weekly?"
+
+#: surveys/views.py:72
+msgid "دفاتر ملاحظات"
+msgstr "Notebooks"
+
+#: surveys/views.py:72
+msgid "لوحات معلومات"
+msgstr "Dashboards"
+
+#: surveys/views.py:72
+msgid "برمجيات مخصصة"
+msgstr "Custom scripts"
+
+#: surveys/views.py:76
+msgid "ما الشيء الذي تود تحسينه اليوم؟"
+msgstr "Share one thing you'd improve today."
+
+#: surveys/views.py:84
+msgid "مصفوفة التجربة"
+msgstr "Experience matrix"
+
+#: surveys/views.py:85
+msgid "قيّم كل قناة تقديم عبر اللحظات الأساسية."
+msgstr "Rate each delivery channel across key moments."
+
+#: surveys/views.py:88
+msgid "كيف يعمل كل مسار؟"
+msgstr "How does each channel perform?"
+
+#: surveys/views.py:90
+msgid "ممتاز"
+msgstr "Excellent"
+
+#: surveys/views.py:90
+msgid "جيد"
+msgstr "Good"
+
+#: surveys/views.py:90
+msgid "مقبول"
+msgstr "Fair"
+
+#: surveys/views.py:90
+msgid "ضعيف"
+msgstr "Poor"
+
+#: surveys/views.py:92
+msgid "إعداد الحساب"
+msgstr "Account setup"
+
+#: surveys/views.py:93
+msgid "العثور على إجابات"
+msgstr "Finding answers"
+
+#: surveys/views.py:94
+msgid "الحصول على الدعم"
+msgstr "Getting support"
+
+#: surveys/views.py:96
+msgid "ويب"
+msgstr "Web"
+
+#: surveys/views.py:96
+msgid "جوال"
+msgstr "Mobile"
+
+#: surveys/views.py:96
+msgid "دردشة"
+msgstr "Chat"
+
+#: templates/assessment_runs/_options_renderer.html:5
+msgid "ابحث للإضافة..."
+msgstr "Search to add..."
+
+#: templates/assessment_runs/_options_renderer.html:5
+msgid "ابحث عن خيارات لإضافتها"
+msgstr "Search options to add"
+
+#: templates/assessment_runs/_options_renderer.html:19
+#: templates/assessment_runs/_options_renderer.html:34
+msgid "متابعة"
+msgstr "Continue"
+
+#: templates/assessment_runs/_options_renderer.html:39
+msgid "ابحث..."
+msgstr "Search..."
+
+#: templates/assessment_runs/_options_renderer.html:39
+msgid "ابحث عن الخيارات"
+msgstr "Search options"
+
+#: templates/assessment_runs/assessment_complete.html:4
+msgid "انتهى التقييم - منصة QnR"
+msgstr "Assessment Complete - QnR Platform"
+
+#: templates/assessment_runs/assessment_complete.html:8
+msgid "عمل رائع"
+msgstr "Well done"
+
+#: templates/assessment_runs/assessment_complete.html:9
+msgid "اكتمل التقييم"
+msgstr "Assessment Complete"
+
+#: templates/assessment_runs/assessment_complete.html:10
+msgid "شكراً لوقتك في إكمال هذا التقييم. تم تسجيل إجاباتك."
+msgstr ""
+"Thank you for taking the time to complete this assessment. Your responses "
+"have been recorded."
+
+#: templates/assessment_runs/assessment_complete.html:12
+msgid "العودة إلى قائمة الاستبيانات"
+msgstr "Return to survey list"
+
+#: templates/assessment_runs/assessment_page.html:4
+#: templates/assessment_runs/assessment_page.html:14
+msgid "التقييم"
+msgstr "Assessment"
+
+#: templates/assessment_runs/assessment_page.html:13
+msgid "تقييم مباشر"
+msgstr "Live assessment"
+
+#: templates/assessment_runs/assessment_page.html:15
+msgid ""
+"تقدم خلال كل سؤال. اختياراتك تبقى متاحة لقارئات الشاشة ولمستخدمي لوحة "
+"المفاتيح."
+msgstr ""
+"Progress through each question. Your choices remain accessible for screen "
+"readers and keyboard users."
+
+#: templates/assessment_runs/assessment_page.html:18
+msgid "يرجى اختيار خيار واحد على الأقل."
+msgstr "Please select at least one option."
+
+#: templates/assessment_runs/survey_list.html:4
+msgid "الاستبيانات - منصة QnR"
+msgstr "Surveys - QnR Platform"
+
+#: templates/assessment_runs/survey_list.html:9 templates/home.html:52
+msgid "التقييمات الذاتية"
+msgstr "Self assessments"
+
+#: templates/assessment_runs/survey_list.html:10
+msgid "اختر استبياناً"
+msgstr "Select a survey"
+
+#: templates/assessment_runs/survey_list.html:11
+msgid "اختر استبياناً لبدء تقييم نفسك أو فريقك."
+msgstr "Choose a survey to start assessing yourself or your team."
+
+#: templates/assessment_runs/survey_list.html:16
+msgid "الاستبيانات المتاحة مع حالتها وتاريخ إنشائها"
+msgstr "Available surveys with their status and creation date"
+
+#: templates/assessment_runs/survey_list.html:19
+msgid "اسم الاستبيان"
+msgstr "Survey Name"
+
+#: templates/assessment_runs/survey_list.html:20
+#: templates/assessment_runs/survey_version_list.html:20
+msgid "الحالة"
+msgstr "Status"
+
+#: templates/assessment_runs/survey_list.html:21
+msgid "تاريخ الإنشاء"
+msgstr "Created"
+
+#: templates/assessment_runs/survey_list.html:28
+#: templates/assessment_runs/survey_version_list.html:28
+#, python-format
+msgid "الحالة: %(status)s"
+msgstr "Status: %(status)s"
+
+#: templates/assessment_runs/survey_question_list.html:4
+#, python-format
+msgid "أسئلة الاستبيان - %(version_label)s"
+msgstr "Survey Questions - %(version_label)s"
+
+#: templates/assessment_runs/survey_question_list.html:9
+#: templates/assessment_runs/survey_version_list.html:9
+#, python-format
+msgid "الاستبيان: %(survey_name)s"
+msgstr "Survey: %(survey_name)s"
+
+#: templates/assessment_runs/survey_question_list.html:10
+#, python-format
+msgid "الأسئلة في %(version_label)s"
+msgstr "Questions in %(version_label)s"
+
+#: templates/assessment_runs/survey_question_list.html:11
+msgid "عاين الأسئلة وابدأ التقييم من أي سؤال."
+msgstr "Preview the questions and start an assessment from any entry."
+
+#: templates/assessment_runs/survey_question_list.html:16
+msgid "الأسئلة وإجراءات التقييم"
+msgstr "Questions and assessment actions"
+
+#: templates/assessment_runs/survey_question_list.html:19
+#: templates/surveys/builder.html:77
+msgid "نص السؤال"
+msgstr "Question Text"
+
+#: templates/assessment_runs/survey_question_list.html:20
+msgid "الإجراء"
+msgstr "Action"
+
+#: templates/assessment_runs/survey_question_list.html:29
+msgid "ابدأ التقييم"
+msgstr "Start assessment"
+
+#: templates/assessment_runs/survey_question_list.html:31
+msgid "لا يوجد تقييم مُعد"
+msgstr "No assessment configured"
+
+#: templates/assessment_runs/survey_version_list.html:4
+#, python-format
+msgid "إصدارات الاستبيان - %(survey_name)s"
+msgstr "Survey Versions - %(survey_name)s"
+
+#: templates/assessment_runs/survey_version_list.html:10
+msgid "اختر إصداراً"
+msgstr "Select a version"
+
+#: templates/assessment_runs/survey_version_list.html:11
+msgid ""
+"اختر الإصدار الذي تريد تشغيله. كل إصدار يحفظ حالة أسئلتك في لحظة زمنية."
+msgstr ""
+"Pick the version you want to run. Each version captures the state of your "
+"questions at a point in time."
+
+#: templates/assessment_runs/survey_version_list.html:16
+#, python-format
+msgid "الإصدارات المتاحة لـ %(survey_name)s"
+msgstr "Available versions for %(survey_name)s"
+
+#: templates/assessment_runs/survey_version_list.html:19
+msgid "اسم الإصدار"
+msgstr "Version Label"
+
+#: templates/assessment_runs/survey_version_list.html:21
+msgid "التاريخ"
+msgstr "Date"
+
+#: templates/base.html:9 templates/base.html:17
+msgid "منصة QnR"
+msgstr "QnR Platform"
+
+#: templates/base.html:14
+msgid "تخطي إلى المحتوى الرئيسي"
+msgstr "Skip to main content"
+
+#: templates/base.html:18
+msgid "تقييمات ذاتية جميلة وسهلة الوصول"
+msgstr "Accessible, beautiful self assessments"
+
+#: templates/base.html:22
+msgid "التقييم الذاتي"
+msgstr "Self Assessment"
+
+#: templates/base.html:23 templates/surveys/builder.html:13
+msgid "منشئ الاستبيان"
+msgstr "Survey Builder"
+
+#: templates/base.html:27
+msgid "تسجيل الدخول"
+msgstr "Login"
+
+#: templates/base.html:35
+msgid "التبديل إلى الإنجليزية"
+msgstr "Switch to English"
+
+#: templates/base.html:36
+msgid "التبديل إلى العربية"
+msgstr "Switch to Arabic"
+
+#: templates/base.html:37 templates/base.html:40
+msgid "العربية"
+msgstr "Arabic"
+
+#: templates/base.html:44
+msgid "التبديل إلى الوضع الداكن"
+msgstr "Switch to dark mode"
+
+#: templates/base.html:45
+msgid "التبديل إلى الوضع الفاتح"
+msgstr "Switch to light mode"
+
+#: templates/base.html:49
+msgid "السمة"
+msgstr "Theme"
+
+#: templates/base.html:59
+msgid "صمم لتقييمات شاملة مع عناية بقابلية الوصول."
+msgstr "Built for inclusive assessments with care for accessibility."
+
+#: templates/home.html:4
+msgid "الصفحة الرئيسية - منصة QnR"
+msgstr "Home - QnR Platform"
+
+#: templates/home.html:9
+msgid "شامل منذ التصميم"
+msgstr "Inclusive by design"
+
+#: templates/home.html:10
+msgid "مرحباً بك في منصة QnR"
+msgstr "Welcome to the QnR Platform"
+
+#: templates/home.html:11
+msgid ""
+"أنشئ استبيانات مدروسة، ووجّه المتعلمين خلال التقييمات، واجعل كل تفاعل سهلاً "
+"وجميلاً."
+msgstr ""
+"Create thoughtful surveys, guide learners through assessments, and keep "
+"every interaction accessible and beautiful."
+
+#: templates/home.html:13
+msgid "ابدأ تقييماً ذاتياً"
+msgstr "Start a self assessment"
+
+#: templates/home.html:14
+msgid "استكشف المزايا"
+msgstr "Explore features"
+
+#: templates/home.html:18
+msgid "سهل الوصول"
+msgstr "Accessible"
+
+#: templates/home.html:19
+msgid "تنقل يعتمد على لوحة المفاتيح أولاً"
+msgstr "Keyboard-first navigation"
+
+#: templates/home.html:22
+msgid "فاتح وداكن"
+msgstr "Dark & Light"
+
+#: templates/home.html:23
+msgid "تجربة تدعم تبديل السمة"
+msgstr "Theme aware experience"
+
+#: templates/home.html:26
+msgid "متجاوب"
+msgstr "Responsive"
+
+#: templates/home.html:27
+msgid "محسن لكل الشاشات"
+msgstr "Optimized for every screen"
+
+#: templates/home.html:32
+msgid "ما يمكنك القيام به"
+msgstr "What you can do"
+
+#: templates/home.html:33
+msgid "صمم استبيانات واضحة وموجهة"
+msgstr "Design clear, guided surveys"
+
+#: templates/home.html:35
+msgid "أنشئ بنوك أسئلة ومسارات تقييم تلائم جمهورك."
+msgstr "Craft question banks and assessment flows tailored to your audience."
+
+#: templates/home.html:36
+msgid "قدّم أنواع خيارات غنية من الاختيار الفردي إلى القوائم القابلة للبحث."
+msgstr "Offer rich option types, from single choice to searchable dropdowns."
+
+#: templates/home.html:37
+msgid "حافظ على تركيز المشاركين ببطاقات خالية من الإلهاء وإجراءات واضحة."
+msgstr ""
+"Keep respondents focused with distraction-free cards and call-to-actions."
+
+#: templates/home.html:45
+msgid "أبرز المزايا"
+msgstr "Highlights"
+
+#: templates/home.html:46
+msgid "وضوح وتجربة مصقولة مدمجة"
+msgstr "Built-in clarity and polish"
+
+#: templates/home.html:48
+msgid "لوحات ألوان متوافقة مع WCAG"
+msgstr "WCAG-friendly palettes"
+
+#: templates/home.html:52
+msgid "ميزة التقييمات الذاتية"
+msgstr "Self assessments feature"
+
+#: templates/home.html:53
+msgid "وجّه المتعلمين عبر أسئلة متعمدة وهيكلية تتكيف مع أي موضوع."
+msgstr ""
+"Guide learners through intentional, structured questions that adapt to any "
+"topic."
+
+#: templates/home.html:56
+msgid "ميزة تتبع التقدم"
+msgstr "Track progress feature"
+
+#: templates/home.html:56
+msgid "تتبع التقدم"
+msgstr "Track Progress"
+
+#: templates/home.html:57
+msgid "تابع تغير الاستجابات بمرور الوقت مع معالم واضحة وإشعارات إكمال."
+msgstr ""
+"See how responses change over time with clear milestones and completion "
+"cues."
+
+#: templates/home.html:60
+msgid "ميزة الأسئلة المخصصة"
+msgstr "Custom questions feature"
+
+#: templates/home.html:60
+msgid "أسئلة مخصصة"
+msgstr "Custom Questions"
+
+#: templates/home.html:61
+msgid ""
+"أنشئ بنوك أسئلة قابلة لإعادة الاستخدام بخيارات قابلة للبحث ومرونة التحديد "
+"المتعدد."
+msgstr ""
+"Create reusable question banks with searchable options and multi-select "
+"flexibility."
+
+#: templates/surveys/builder.html:4
+msgid "منشئ الاستبيان - منصة QnR"
+msgstr "Survey Builder - QnR Platform"
+
+#: templates/surveys/builder.html:14
+msgid ""
+"أنشئ استبيانات بأقسام وأنواع أسئلة متنوعة (بما فيها المصفوفات)، واجمع الردود"
+" التي تحتاجها."
+msgstr ""
+"Create surveys with sections, varied question types (including matrix "
+"grids), and capture the responses you need."
+
+#: templates/surveys/builder.html:16
+msgid "ابدأ التركيب"
+msgstr "Start assembling"
+
+#: templates/surveys/builder.html:23
+msgid "صمم هيكل استبيانك"
+msgstr "Structure your survey"
+
+#: templates/surveys/builder.html:26
+msgid "عنوان الاستبيان"
+msgstr "Survey title"
+
+#: templates/surveys/builder.html:27
+msgid "نبض تجربة العملاء"
+msgstr "Customer Experience Pulse"
+
+#: templates/surveys/builder.html:31
+msgid "الأقسام"
+msgstr "Sections"
+
+#: templates/surveys/builder.html:32
+msgid "اجمع الأسئلة ذات الصلة لتحسين التسلسل."
+msgstr "Group related questions for better pacing."
+
+#: templates/surveys/builder.html:35
+msgid "أسئلة المصفوفة"
+msgstr "أسئلة المصفوفة"
+
+#: templates/surveys/builder.html:36
+msgid "حدّد الصفوف والأعمدة وخيارات الاستجابة المشتركة."
+msgstr "Define rows, columns, and shared response options."
+
+#: templates/surveys/builder.html:40
+msgid "إضافة قسم"
+msgstr "Add section"
+
+#: templates/surveys/builder.html:41
+msgid "تحميل نموذج هيكل"
+msgstr "Load sample structure"
+
+#: templates/surveys/builder.html:52 templates/surveys/builder.html:53
+msgid "عنوان القسم"
+msgstr "Section title"
+
+#: templates/surveys/builder.html:55
+msgid "وصف القسم"
+msgstr "Section description"
+
+#: templates/surveys/builder.html:56
+msgid "صف بإيجاز ما يتضمنه هذا القسم"
+msgstr "Briefly describe what this section covers"
+
+#: templates/surveys/builder.html:59
+msgid "حذف القسم"
+msgstr "Remove section"
+
+#: templates/surveys/builder.html:64
+msgid "الأسئلة"
+msgstr "Questions"
+
+#: templates/surveys/builder.html:65
+msgid ""
+"أضف ما تشاء من الأسئلة. غيّر نوع الإجابة لإظهار الخيارات أو شبكات المصفوفة."
+msgstr ""
+"Add as many as you need. Switch response type to reveal options or matrix "
+"grids."
+
+#: templates/surveys/builder.html:67
+msgid "إضافة سؤال"
+msgstr "Add question"
+
+#: templates/surveys/builder.html:78
+msgid "اطرح سؤالك بوضوح"
+msgstr "Ask your question clearly"
+
+#: templates/surveys/builder.html:81
+msgid "نوع الإجابة"
+msgstr "Response type"
+
+#: templates/surveys/builder.html:90
+msgid "إلزامي"
+msgstr "Required"
+
+#: templates/surveys/builder.html:92
+msgid "حذف"
+msgstr "Remove"
+
+#: templates/surveys/builder.html:97
+msgid "خيار إجابة"
+msgstr "Response option"
+
+#: templates/surveys/builder.html:98
+msgid "اكتب خياراً ثم أضفه"
+msgstr "Type an option then add it"
+
+#: templates/surveys/builder.html:100
+msgid "إضافة خيار"
+msgstr "Add option"
+
+#: templates/surveys/builder.html:106
+msgid "صفوف المصفوفة"
+msgstr "Matrix rows"
+
+#: templates/surveys/builder.html:107
+msgid "سطر لكل صف"
+msgstr "One row per line"
+
+#: templates/surveys/builder.html:109
+msgid "أعمدة المصفوفة"
+msgstr "Matrix columns"
+
+#: templates/surveys/builder.html:110
+msgid "سطر لكل عمود"
+msgstr "One column per line"
+
+#: templates/surveys/builder.html:113
+msgid ""
+"تمثل الصفوف محاور مثل سهولة الاستخدام أو السرعة، وتمثل الأعمدة القنوات مثل "
+"الويب أو الجوال."
+msgstr ""
+"Rows often represent themes (e.g., usability, speed), columns represent "
+"channels (e.g., web, mobile)."
+
+#: templates/surveys/builder.html:122
+msgid "نعم"
+msgstr "Yes"
+
+#: templates/surveys/builder.html:123
+msgid "لا"
+msgstr "No"
+
+#: templates/surveys/builder.html:124
+msgid "استبيان بدون عنوان"
+msgstr "Untitled survey"

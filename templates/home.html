@@ -1,39 +1,40 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Home - QnR Platform{% endblock %}
+{% block title %}{% trans "الصفحة الرئيسية - منصة QnR" %}{% endblock %}
 
 {% block content %}
     <section class="hero">
         <div class="card hero-card">
-            <span class="hero-highlight" aria-hidden="true">Inclusive by design</span>
-            <h1>Welcome to the QnR Platform</h1>
-            <p class="lead">Create thoughtful surveys, guide learners through assessments, and keep every interaction accessible and beautiful.</p>
+            <span class="hero-highlight" aria-hidden="true">{% trans "شامل منذ التصميم" %}</span>
+            <h1>{% trans "مرحباً بك في منصة QnR" %}</h1>
+            <p class="lead">{% trans "أنشئ استبيانات مدروسة، ووجّه المتعلمين خلال التقييمات، واجعل كل تفاعل سهلاً وجميلاً." %}</p>
             <div class="flex gap-2 mt-3 flex-wrap">
-                <a href="{% url 'survey_list' %}" class="btn">Start a self assessment</a>
-                <a href="#features" class="btn btn-secondary">Explore features</a>
+                <a href="{% url 'survey_list' %}" class="btn">{% trans "ابدأ تقييماً ذاتياً" %}</a>
+                <a href="#features" class="btn btn-secondary">{% trans "استكشف المزايا" %}</a>
             </div>
             <div class="stat-grid" role="list">
                 <div class="stat" role="listitem">
-                    <p class="value">Accessible</p>
-                    <p class="label">Keyboard-first navigation</p>
+                    <p class="value">{% trans "سهل الوصول" %}</p>
+                    <p class="label">{% trans "تنقل يعتمد على لوحة المفاتيح أولاً" %}</p>
                 </div>
                 <div class="stat" role="listitem">
-                    <p class="value">Dark & Light</p>
-                    <p class="label">Theme aware experience</p>
+                    <p class="value">{% trans "فاتح وداكن" %}</p>
+                    <p class="label">{% trans "تجربة تدعم تبديل السمة" %}</p>
                 </div>
                 <div class="stat" role="listitem">
-                    <p class="value">Responsive</p>
-                    <p class="label">Optimized for every screen</p>
+                    <p class="value">{% trans "متجاوب" %}</p>
+                    <p class="label">{% trans "محسن لكل الشاشات" %}</p>
                 </div>
             </div>
         </div>
         <div class="card">
-            <p class="eyebrow">What you can do</p>
-            <h3>Design clear, guided surveys</h3>
+            <p class="eyebrow">{% trans "ما يمكنك القيام به" %}</p>
+            <h3>{% trans "صمم استبيانات واضحة وموجهة" %}</h3>
             <ul>
-                <li>Craft question banks and assessment flows tailored to your audience.</li>
-                <li>Offer rich option types, from single choice to searchable dropdowns.</li>
-                <li>Keep respondents focused with distraction-free cards and call-to-actions.</li>
+                <li>{% trans "أنشئ بنوك أسئلة ومسارات تقييم تلائم جمهورك." %}</li>
+                <li>{% trans "قدّم أنواع خيارات غنية من الاختيار الفردي إلى القوائم القابلة للبحث." %}</li>
+                <li>{% trans "حافظ على تركيز المشاركين ببطاقات خالية من الإلهاء وإجراءات واضحة." %}</li>
             </ul>
         </div>
     </section>
@@ -41,23 +42,23 @@
     <section id="features">
         <div class="section-header">
             <div>
-                <p class="eyebrow">Highlights</p>
-                <h2>Built-in clarity and polish</h2>
+                <p class="eyebrow">{% trans "أبرز المزايا" %}</p>
+                <h2>{% trans "وضوح وتجربة مصقولة مدمجة" %}</h2>
             </div>
-            <div class="hero-highlight">WCAG-friendly palettes</div>
+            <div class="hero-highlight">{% trans "لوحات ألوان متوافقة مع WCAG" %}</div>
         </div>
         <div class="feature-grid">
             <div class="card feature-card">
-                <h3 aria-label="Self assessments feature">📋 Self Assessments</h3>
-                <p>Guide learners through intentional, structured questions that adapt to any topic.</p>
+                <h3 aria-label="{% trans 'ميزة التقييمات الذاتية' %}">📋 {% trans "التقييمات الذاتية" %}</h3>
+                <p>{% trans "وجّه المتعلمين عبر أسئلة متعمدة وهيكلية تتكيف مع أي موضوع." %}</p>
             </div>
             <div class="card feature-card">
-                <h3 aria-label="Track progress feature">📊 Track Progress</h3>
-                <p>See how responses change over time with clear milestones and completion cues.</p>
+                <h3 aria-label="{% trans 'ميزة تتبع التقدم' %}">📊 {% trans "تتبع التقدم" %}</h3>
+                <p>{% trans "تابع تغير الاستجابات بمرور الوقت مع معالم واضحة وإشعارات إكمال." %}</p>
             </div>
             <div class="card feature-card">
-                <h3 aria-label="Custom questions feature">🎯 Custom Questions</h3>
-                <p>Create reusable question banks with searchable options and multi-select flexibility.</p>
+                <h3 aria-label="{% trans 'ميزة الأسئلة المخصصة' %}">🎯 {% trans "أسئلة مخصصة" %}</h3>
+                <p>{% trans "أنشئ بنوك أسئلة قابلة لإعادة الاستخدام بخيارات قابلة للبحث ومرونة التحديد المتعدد." %}</p>
             </div>
         </div>
     </section>

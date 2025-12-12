@@ -4,6 +4,11 @@
     const sectionsContainer = document.getElementById('sections-container');
     const addSectionBtn = document.getElementById('add-section-btn');
     const loadSampleBtn = document.getElementById('load-sample-btn');
+    const builderLocaleEl = document.getElementById('builder-locale');
+    const builderLocale = builderLocaleEl ? JSON.parse(builderLocaleEl.textContent) : {};
+    const yesLabel = builderLocale.yes || 'Yes';
+    const noLabel = builderLocale.no || 'No';
+    const untitledLabel = builderLocale.untitled || 'Untitled survey';
 
     if (!sectionTemplate || !questionTemplate || !sectionsContainer) {
         return;
@@ -35,7 +40,7 @@
         if (typeValue === 'BINARY') {
             const listEl = questionEl.querySelector('.pill-list');
             if (listEl && !listEl.children.length) {
-                ['Yes', 'No'].forEach(opt => addOptionPill(listEl, opt));
+                [yesLabel, noLabel].forEach(opt => addOptionPill(listEl, opt));
             }
         }
     }
@@ -89,7 +94,7 @@
     }
 
     function collectSurvey() {
-        const surveyTitle = document.getElementById('survey-title')?.value || 'Untitled survey';
+        const surveyTitle = document.getElementById('survey-title')?.value || untitledLabel;
         const sections = Array.from(sectionsContainer.querySelectorAll('.section-block')).map(sectionEl => {
             const questions = Array.from(sectionEl.querySelectorAll('.question-block')).map(qEl => {
                 return {

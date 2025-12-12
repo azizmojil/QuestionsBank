@@ -1,14 +1,15 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Assessment Complete - QnR Platform{% endblock %}
+{% block title %}{% trans "انتهى التقييم - منصة QnR" %}{% endblock %}
 
 {% block content %}
     <div class="card text-center">
-        <p class="eyebrow">Well done</p>
-        <h2>Assessment Complete</h2>
-        <p class="lead">Thank you for taking the time to complete this assessment. Your responses have been recorded.</p>
+        <p class="eyebrow">{% trans "عمل رائع" %}</p>
+        <h2>{% trans "اكتمل التقييم" %}</h2>
+        <p class="lead">{% trans "شكراً لوقتك في إكمال هذا التقييم. تم تسجيل إجاباتك." %}</p>
         <div class="mt-2">
-            <a href="{% url 'survey_list' %}" class="btn">Return to survey list</a>
+            <a href="{% url 'survey_list' %}" class="btn">{% trans "العودة إلى قائمة الاستبيانات" %}</a>
         </div>
     </div>
 {% endblock %}

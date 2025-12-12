@@ -1,31 +1,52 @@
-{% load static %}
+{% load static i18n %}
 <!DOCTYPE html>
-<html lang="en">
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}QnR Platform{% endblock %}</title>
+    <title>{% block title %}{% trans "منصة QnR" %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <a class="skip-link" href="#main-content">{% trans "تخطي إلى المحتوى الرئيسي" %}</a>
     <header class="site-header">
         <div class="brand">
-            <a href="{% url 'home' %}" class="logo">QnR Platform</a>
-            <p class="tagline">Accessible, beautiful self assessments</p>
+            <a href="{% url 'home' %}" class="logo">{% trans "منصة QnR" %}</a>
+            <p class="tagline">{% trans "تقييمات ذاتية جميلة وسهلة الوصول" %}</p>
         </div>
         <nav aria-label="Primary navigation">
             <ul>
-                <li><a href="{% url 'survey_list' %}">Self Assessment</a></li>
-                <li><a href="{% url 'survey_builder' %}">Survey Builder</a></li>
+                <li><a href="{% url 'survey_list' %}">{% trans "التقييم الذاتي" %}</a></li>
+                <li><a href="{% url 'survey_builder' %}">{% trans "منشئ الاستبيان" %}</a></li>
             </ul>
         </nav>
         <div class="header-actions">
-            <a href="#" class="auth-link">Login</a>
-            <button class="theme-switch" id="theme-switch" type="button" aria-pressed="false">
+            <a href="#" class="auth-link">{% trans "تسجيل الدخول" %}</a>
+            <form id="language-switch-form" action="{% url 'set_language' %}" method="post" class="language-switch-form">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <input type="hidden" name="language" value="{% if LANGUAGE_CODE == 'ar' %}en{% else %}ar{% endif %}">
+                <button class="theme-switch language-switch" id="language-switch" type="submit"
+                        aria-pressed="false"
+                        data-current-language="{{ LANGUAGE_CODE }}"
+                        data-switch-to-en="{% trans 'التبديل إلى الإنجليزية' %}"
+                        data-switch-to-ar="{% trans 'التبديل إلى العربية' %}"
+                        data-label-ar="{% trans 'العربية' %}"
+                        data-label-en="{% trans 'English' %}">
+                    <span class="language-icon" aria-hidden="true">🌐</span>
+                    <span class="language-label">{% if LANGUAGE_CODE == 'ar' %}{% trans "العربية" %}{% else %}{% trans "English" %}{% endif %}</span>
+                </button>
+            </form>
+            <button class="theme-switch" id="theme-switch" type="button" aria-pressed="false"
+                    data-label-dark="{% trans 'التبديل إلى الوضع الداكن' %}"
+                    data-label-light="{% trans 'التبديل إلى الوضع الفاتح' %}"
+                    data-icon-sun="☀️"
+                    data-icon-moon="🌙">
                 <span class="theme-icon" aria-hidden="true">☀️</span>
-                <span class="theme-label">Theme</span>
+                <span class="theme-label">{% trans "السمة" %}</span>
                 <div class="theme-switch-toggle" aria-hidden="true"></div>
             </button>
         </div>
@@ -35,7 +56,7 @@
         {% endblock %}
     </main>
     <footer class="site-footer">
-        <p>Built for inclusive assessments with care for accessibility.</p>
+        <p>{% trans "صمم لتقييمات شاملة مع عناية بقابلية الوصول." %}</p>
     </footer>
     <script src="{% static 'js/base.js' %}"></script>
     {% block extra_js %}{% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n %}
 
-{% block title %}Survey Builder - QnR Platform{% endblock %}
+{% block title %}{% trans "منشئ الاستبيان - منصة QnR" %}{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'surveys/css/builder.css' %}">
@@ -10,35 +10,35 @@
 {% block content %}
 <section class="hero builder-hero">
     <div class="card hero-card">
-        <h1>Survey builder</h1>
-        <p class="lead">Create surveys with sections, varied question types (including matrix grids), and capture the responses you need.</p>
+        <h1>{% trans "منشئ الاستبيان" %}</h1>
+        <p class="lead">{% trans "أنشئ استبيانات بأقسام وأنواع أسئلة متنوعة (بما فيها المصفوفات)، واجمع الردود التي تحتاجها." %}</p>
         <div class="flex gap-2 mt-3 flex-wrap">
-            <a href="#builder-workspace" class="btn">Start assembling</a>
+            <a href="#builder-workspace" class="btn">{% trans "ابدأ التركيب" %}</a>
         </div>
     </div>
 </section>
 
 <section id="builder-workspace" class="builder-grid">
     <div class="card">
-        <h2>Structure your survey</h2>
+        <h2>{% trans "صمم هيكل استبيانك" %}</h2>
         <form id="builder-form">
             <label class="stacked">
-                Survey title
-                <input id="survey-title" name="survey_title" type="text" placeholder="Customer Experience Pulse" value="Customer Experience Pulse">
+                {% trans "عنوان الاستبيان" %}
+                <input id="survey-title" name="survey_title" type="text" placeholder="{% trans 'نبض تجربة العملاء' %}" value="{% trans 'نبض تجربة العملاء' %}">
             </label>
             <div class="flex gap-2 mt-2 wrap">
                 <div class="info-block">
-                    <p class="eyebrow">Sections</p>
-                    <p class="muted">Group related questions for better pacing.</p>
+                    <p class="eyebrow">{% trans "الأقسام" %}</p>
+                    <p class="muted">{% trans "اجمع الأسئلة ذات الصلة لتحسين التسلسل." %}</p>
                 </div>
                 <div class="info-block">
-                    <p class="eyebrow">Matrix questions</p>
-                    <p class="muted">Define rows, columns, and shared response options.</p>
+                    <p class="eyebrow">{% trans "أسئلة المصفوفة" %}</p>
+                    <p class="muted">{% trans "حدّد الصفوف والأعمدة وخيارات الاستجابة المشتركة." %}</p>
                 </div>
             </div>
             <div class="section-actions mt-3">
-                <button type="button" class="btn" id="add-section-btn">Add section</button>
-                <button type="button" class="btn btn-secondary" id="load-sample-btn">Load sample structure</button>
+                <button type="button" class="btn" id="add-section-btn">{% trans "إضافة قسم" %}</button>
+                <button type="button" class="btn btn-secondary" id="load-sample-btn">{% trans "تحميل نموذج هيكل" %}</button>
             </div>
             <div id="sections-container" class="section-container" aria-live="polite"></div>
         </form>
@@ -49,22 +49,22 @@
     <div class="card section-block">
         <div class="section-head">
             <div class="stacked">
-                <label>Section title
-                    <input type="text" class="section-name" placeholder="Section title">
+                <label>{% trans "عنوان القسم" %}
+                    <input type="text" class="section-name" placeholder="{% trans 'عنوان القسم' %}">
                 </label>
-                <label>Section description
-                    <textarea class="section-description" rows="2" placeholder="Briefly describe what this section covers"></textarea>
+                <label>{% trans "وصف القسم" %}
+                    <textarea class="section-description" rows="2" placeholder="{% trans 'صف بإيجاز ما يتضمنه هذا القسم' %}"></textarea>
                 </label>
             </div>
-            <button type="button" class="btn btn-secondary remove-section">Remove section</button>
+            <button type="button" class="btn btn-secondary remove-section">{% trans "حذف القسم" %}</button>
         </div>
         <div class="questions-area">
             <div class="section-header">
                 <div>
-                    <p class="eyebrow">Questions</p>
-                    <p class="muted">Add as many as you need. Switch response type to reveal options or matrix grids.</p>
+                    <p class="eyebrow">{% trans "الأسئلة" %}</p>
+                    <p class="muted">{% trans "أضف ما تشاء من الأسئلة. غيّر نوع الإجابة لإظهار الخيارات أو شبكات المصفوفة." %}</p>
                 </div>
-                <button type="button" class="btn add-question">Add question</button>
+                <button type="button" class="btn add-question">{% trans "إضافة سؤال" %}</button>
             </div>
             <div class="question-list"></div>
         </div>
@@ -74,11 +74,11 @@
 <template id="question-template">
     <div class="card question-block">
         <div class="question-top">
-            <label class="stacked full-width">Question text
-                <input type="text" class="question-text" placeholder="Ask your question clearly" required>
+            <label class="stacked full-width">{% trans "نص السؤال" %}
+                <input type="text" class="question-text" placeholder="{% trans 'اطرح سؤالك بوضوح' %}" required>
             </label>
             <div class="question-controls">
-                <label class="stacked">Response type
+                <label class="stacked">{% trans "نوع الإجابة" %}
                     <select class="response-type">
                         {% for rt in response_types %}
                             <option value="{{ rt.value }}">{{ rt.label }}</option>
@@ -87,36 +87,43 @@
                 </label>
                 <label class="checkbox">
                     <input type="checkbox" class="question-required">
-                    <span>Required</span>
+                    <span>{% trans "إلزامي" %}</span>
                 </label>
-                <button type="button" class="btn btn-secondary remove-question">Remove</button>
+                <button type="button" class="btn btn-secondary remove-question">{% trans "حذف" %}</button>
             </div>
         </div>
         <div class="option-editor hidden">
             <div class="option-row">
-                <label class="stacked full-width">Response option
-                    <input type="text" class="option-input" placeholder="Type an option then add it">
+                <label class="stacked full-width">{% trans "خيار إجابة" %}
+                    <input type="text" class="option-input" placeholder="{% trans 'اكتب خياراً ثم أضفه' %}">
                 </label>
-                <button type="button" class="btn add-option">Add option</button>
+                <button type="button" class="btn add-option">{% trans "إضافة خيار" %}</button>
             </div>
             <div class="pill-list" aria-live="polite"></div>
         </div>
         <div class="matrix-editor hidden">
             <div class="matrix-grid">
-                <label class="stacked full-width">Matrix rows
-                    <textarea class="matrix-rows" rows="3" placeholder="One row per line"></textarea>
+                <label class="stacked full-width">{% trans "صفوف المصفوفة" %}
+                    <textarea class="matrix-rows" rows="3" placeholder="{% trans 'سطر لكل صف' %}"></textarea>
                 </label>
-                <label class="stacked full-width">Matrix columns
-                    <textarea class="matrix-columns" rows="3" placeholder="One column per line"></textarea>
+                <label class="stacked full-width">{% trans "أعمدة المصفوفة" %}
+                    <textarea class="matrix-columns" rows="3" placeholder="{% trans 'سطر لكل عمود' %}"></textarea>
                 </label>
             </div>
-            <p class="muted">Rows often represent themes (e.g., usability, speed), columns represent channels (e.g., web, mobile).</p>
+            <p class="muted">{% trans "تمثل الصفوف محاور مثل سهولة الاستخدام أو السرعة، وتمثل الأعمدة القنوات مثل الويب أو الجوال." %}</p>
         </div>
     </div>
 </template>
 
 {{ response_types|json_script:"response-types-data" }}
 {{ sample_sections|json_script:"sample-sections-data" }}
+<script id="builder-locale" type="application/json">
+    {
+        "yes": "{% trans 'نعم' %}",
+        "no": "{% trans 'لا' %}",
+        "untitled": "{% trans 'استبيان بدون عنوان' %}"
+    }
+</script>
 {% endblock %}
 
 {% block extra_js %}

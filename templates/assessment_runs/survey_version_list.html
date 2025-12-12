@@ -1,30 +1,31 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Survey Versions - {{ survey.name }}{% endblock %}
+{% block title %}{% blocktrans with survey_name=survey.name %}إصدارات الاستبيان - {{ survey_name }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
     <div class="section-header">
         <div>
-            <p class="eyebrow">Survey: {{ survey.name }}</p>
-            <h2>Select a version</h2>
-            <p class="lead">Pick the version you want to run. Each version captures the state of your questions at a point in time.</p>
+            <p class="eyebrow">{% blocktrans with survey_name=survey.name %}الاستبيان: {{ survey_name }}{% endblocktrans %}</p>
+            <h2>{% trans "اختر إصداراً" %}</h2>
+            <p class="lead">{% trans "اختر الإصدار الذي تريد تشغيله. كل إصدار يحفظ حالة أسئلتك في لحظة زمنية." %}</p>
         </div>
     </div>
     <div class="card table-card">
         <table class="data-table" aria-describedby="version-list-caption">
-            <caption id="version-list-caption">Available versions for {{ survey.name }}</caption>
+            <caption id="version-list-caption">{% blocktrans with survey_name=survey.name %}الإصدارات المتاحة لـ {{ survey_name }}{% endblocktrans %}</caption>
             <thead>
                 <tr>
-                    <th scope="col">Version Label</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Date</th>
+                    <th scope="col">{% trans "اسم الإصدار" %}</th>
+                    <th scope="col">{% trans "الحالة" %}</th>
+                    <th scope="col">{% trans "التاريخ" %}</th>
                 </tr>
             </thead>
             <tbody>
                 {% for version in versions %}
                     <tr>
                         <td><a href="{% url 'survey_question_list' version.id %}">{{ version.version_label }}</a></td>
-                        <td><span class="status-pill" aria-label="Status: {{ version.get_status_display }}">{{ version.get_status_display }}</span></td>
+                        <td><span class="status-pill" aria-label="{% blocktrans with status=version.get_status_display %}الحالة: {{ status }}{% endblocktrans %}">{{ version.get_status_display }}</span></td>
                         <td>{{ version.version_date|date:"Y-m-d" }}</td>
                     </tr>
                 {% endfor %}

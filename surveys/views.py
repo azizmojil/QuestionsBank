@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.utils.translation import gettext_lazy as _
 
 from .models import SurveyQuestion
 
@@ -8,40 +9,40 @@ def survey_builder(request):
     feature_map = {
         SurveyQuestion.ResponseType.BINARY: {
             "supports_options": True,
-            "description": "Quick yes/no with predefined options.",
+            "description": _("خيار سريع بنعم/لا مع خيارات محددة مسبقاً."),
         },
         SurveyQuestion.ResponseType.SINGLE_CHOICE: {
             "supports_options": True,
-            "description": "Pick one option from a list.",
+            "description": _("اختر خياراً واحداً من القائمة."),
         },
         SurveyQuestion.ResponseType.MULTIPLE_CHOICE: {
             "supports_options": True,
-            "description": "Pick many options from a list.",
+            "description": _("اختر عدة خيارات من القائمة."),
         },
         SurveyQuestion.ResponseType.FREE_TEXT: {
             "supports_options": False,
-            "description": "Let respondents answer in their own words.",
+            "description": _("دع المجيبين يكتبون إجاباتهم بحرية."),
         },
         SurveyQuestion.ResponseType.NUMERIC: {
             "supports_options": False,
-            "description": "Capture counts or continuous values.",
+            "description": _("تسجيل أعداد أو قيم رقمية متصلة."),
         },
         SurveyQuestion.ResponseType.DATE: {
             "supports_options": False,
-            "description": "Ask for a calendar date.",
+            "description": _("اطلب تاريخاً محدداً."),
         },
         SurveyQuestion.ResponseType.DATETIME: {
             "supports_options": False,
-            "description": "Date and time together.",
+            "description": _("تاريخ ووقت معاً."),
         },
         SurveyQuestion.ResponseType.SCALE: {
             "supports_options": False,
-            "description": "Ratings such as 1–5 agreement scales.",
+            "description": _("تقييمات مثل مقياس الموافقة من 1 إلى 5."),
         },
         SurveyQuestion.ResponseType.MATRIX: {
             "supports_options": True,
             "supports_matrix": True,
-            "description": "Grid of rows and columns scored with shared options.",
+            "description": _("شبكة من الصفوف والأعمدة يتم تقييمها بخيارات مشتركة."),
         },
     }
 
@@ -56,23 +57,23 @@ def survey_builder(request):
 
     sample_sections = [
         {
-            "title": "Profile",
-            "description": "Baseline attributes to segment respondents.",
+            "title": _("الملف الشخصي"),
+            "description": _("سمات أساسية لتقسيم المجيبين."),
             "questions": [
                 {
-                    "text": "What best describes your role?",
+                    "text": _("ما الوصف الأفضل لدورك؟"),
                     "response_type": SurveyQuestion.ResponseType.SINGLE_CHOICE,
-                    "options": ["Founder", "Manager", "Individual contributor"],
+                    "options": [_("مؤسس"), _("مدير"), _("عضو مساهم")],
                     "required": True,
                 },
                 {
-                    "text": "Which tools do you use weekly?",
+                    "text": _("ما الأدوات التي تستخدمها أسبوعياً؟"),
                     "response_type": SurveyQuestion.ResponseType.MULTIPLE_CHOICE,
-                    "options": ["Notebooks", "Dashboards", "Custom scripts"],
+                    "options": [_("دفاتر ملاحظات"), _("لوحات معلومات"), _("برمجيات مخصصة")],
                     "required": False,
                 },
                 {
-                    "text": "Share one thing you'd improve today.",
+                    "text": _("ما الشيء الذي تود تحسينه اليوم؟"),
                     "response_type": SurveyQuestion.ResponseType.FREE_TEXT,
                     "options": [],
                     "required": False,
@@ -80,19 +81,19 @@ def survey_builder(request):
             ],
         },
         {
-            "title": "Experience matrix",
-            "description": "Rate each delivery channel across key moments.",
+            "title": _("مصفوفة التجربة"),
+            "description": _("قيّم كل قناة تقديم عبر اللحظات الأساسية."),
             "questions": [
                 {
-                    "text": "How does each channel perform?",
+                    "text": _("كيف يعمل كل مسار؟"),
                     "response_type": SurveyQuestion.ResponseType.MATRIX,
-                    "options": ["Excellent", "Good", "Fair", "Poor"],
+                    "options": [_("ممتاز"), _("جيد"), _("مقبول"), _("ضعيف")],
                     "matrix_rows": [
-                        "Account setup",
-                        "Finding answers",
-                        "Getting support",
+                        _("إعداد الحساب"),
+                        _("العثور على إجابات"),
+                        _("الحصول على الدعم"),
                     ],
-                    "matrix_columns": ["Web", "Mobile", "Chat"],
+                    "matrix_columns": [_("ويب"), _("جوال"), _("دردشة")],
                     "required": True,
                 }
             ],

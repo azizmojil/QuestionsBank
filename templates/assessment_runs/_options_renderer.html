@@ -1,7 +1,8 @@
+{% load i18n %}
 {% if question.allow_multiple_choices and question.use_searchable_dropdown %}
     <div class="multi-select-dropdown-container">
         <div class="selected-items-container"></div>
-        <input type="text" class="searchable-dropdown-input" placeholder="Search to add..." aria-label="Search options to add">
+        <input type="text" class="searchable-dropdown-input" placeholder="{% trans 'ابحث للإضافة...' %}" aria-label="{% trans 'ابحث عن خيارات لإضافتها' %}">
         <div class="searchable-dropdown-list">
             {% for option in option_list %}
                 <div class="searchable-dropdown-item multi-select-item"
@@ -15,7 +16,7 @@
                 </div>
             {% endfor %}
         </div>
-        <button class="confirm-btn">Continue</button>
+        <button class="confirm-btn">{% trans "متابعة" %}</button>
     </div>
 
 {% elif question.allow_multiple_choices %}
@@ -30,12 +31,12 @@
                 {% endif %}
             </label>
         {% endfor %}
-        <button class="confirm-btn">Continue</button>
+        <button class="confirm-btn">{% trans "متابعة" %}</button>
     </div>
 
 {% elif question.use_searchable_dropdown %}
     <div class="searchable-dropdown-container">
-        <input type="text" class="searchable-dropdown-input" placeholder="Search..." aria-label="Search options">
+        <input type="text" class="searchable-dropdown-input" placeholder="{% trans 'ابحث...' %}" aria-label="{% trans 'ابحث عن الخيارات' %}">
         <div class="searchable-dropdown-list">
             {% for option in option_list %}
                 <div class="searchable-dropdown-item" data-option-id="{{ option.id }}">
