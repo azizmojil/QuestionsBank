@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from assessment_flow.models import AssessmentQuestion, AssessmentFlowRule
 import json
 
@@ -49,7 +50,7 @@ class RewindAssessmentTestCase(TestCase):
         
         # Rewind to Q2
         response = self.client.post(
-            '/assessment/rewind/',
+            reverse('rewind_assessment'),
             data=json.dumps({'question_id': self.q2.id}),
             content_type='application/json'
         )
@@ -84,7 +85,7 @@ class RewindAssessmentTestCase(TestCase):
         
         # Rewind to Q1
         response = self.client.post(
-            '/assessment/rewind/',
+            reverse('rewind_assessment'),
             data=json.dumps({'question_id': self.q1.id}),
             content_type='application/json'
         )
@@ -115,7 +116,7 @@ class RewindAssessmentTestCase(TestCase):
         
         # Submit a new answer for Q2
         response = self.client.post(
-            '/assessment/next_question/',
+            reverse('get_next_question'),
             data=json.dumps({
                 'question_id': self.q2.id,
                 'option_ids': ['test_option']
