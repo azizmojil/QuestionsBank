@@ -22,7 +22,7 @@ class RewindAssessmentTestCase(TestCase):
         # Create rules
         self.rule_a = AssessmentFlowRule.objects.create(
             from_question=self.q2,
-            condition='{"conditions": [{"question": %d, "operator": "==", "value": "Yes"}]}' % self.q1.id,
+            condition=f'{{"conditions": [{{"question": {self.q1.id}, "operator": "==", "value": "Yes"}}]}}',
             priority=1,
             is_active=True,
             description="Rule A"
@@ -30,7 +30,7 @@ class RewindAssessmentTestCase(TestCase):
         
         self.rule_b = AssessmentFlowRule.objects.create(
             from_question=self.q3,
-            condition='{"conditions": [{"question": %d, "operator": "==", "value": "Option1"}]}' % self.q2.id,
+            condition=f'{{"conditions": [{{"question": {self.q2.id}, "operator": "==", "value": "Option1"}}]}}',
             priority=1,
             is_active=True,
             description="Rule B"
