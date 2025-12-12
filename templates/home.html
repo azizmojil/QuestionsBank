@@ -3,6 +3,26 @@
 {% block title %}Home - QnR Platform{% endblock %}
 
 {% block content %}
-    <h2>Welcome to the QnR Platform</h2>
-    <p>This is the home page.</p>
+    <div class="card text-center">
+        <h2>Welcome to the QnR Platform</h2>
+        <p>A comprehensive platform for creating and managing surveys, assessments, and questions.</p>
+        <div class="flex flex-center gap-2 mt-3">
+            <a href="{% url 'survey_list' %}" class="btn">Get Started with Self Assessment</a>
+        </div>
+    </div>
+
+    <div class="feature-grid">
+        <div class="card feature-card">
+            <h3>📋 Self Assessments</h3>
+            <p>Take comprehensive surveys to evaluate your knowledge and skills across various topics.</p>
+        </div>
+        <div class="card feature-card">
+            <h3>📊 Track Progress</h3>
+            <p>Monitor your assessment results and track your improvement over time.</p>
+        </div>
+        <div class="card feature-card">
+            <h3>🎯 Custom Questions</h3>
+            <p>Create and manage custom question banks tailored to your specific needs.</p>
+        </div>
+    </div>
 {% endblock %}
