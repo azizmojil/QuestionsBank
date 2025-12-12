@@ -104,8 +104,11 @@ def rewind_assessment(request):
         history = history[:rewind_index + 1]
         if 'answer' in history[-1]:
             del history[-1]['answer']
-        if 'rule_id' in history[-1]:
-            history[-1]['rule_id'] = None
+        # Note: We intentionally DO NOT clear rule_id here.
+        # The rule_id represents the rule that was used to navigate TO this question.
+        # Since we're still at this question, the rule should remain marked as used
+        # to prevent it from firing again. Only rules used AFTER this question
+        # are removed from history (via the truncation above).
 
         request.session['assessment_history'] = history
     except StopIteration:
