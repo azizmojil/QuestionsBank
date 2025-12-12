@@ -33,7 +33,7 @@ class ClassificationEngine:
 
     def __init__(self, rules: Optional[Iterable[QuestionClassificationRule]] = None):
         if rules is None:
-            rules = QuestionClassificationRule.objects.select_related("survey_question").filter(is_active=True)
+            rules = QuestionClassificationRule.objects.select_related("survey_question")
         self._rules: List[QuestionClassificationRule] = list(rules)
 
     # ------------------------------------------------------------------
@@ -48,6 +48,38 @@ class ClassificationEngine:
         """
         Return the classification for a single SurveyQuestion.
         """
+        normalized_responses = self._normalize_responses(responses)
+        return self._classify_with_normalized_responses(question, normalized_responses)
+
+    def classify_all(self, responses: Dict[int, Any]) -> Dict[int, ClassificationResult]:
+        """
+        Classify all questions that have at least one rule.
+        Returns a mapping of question_id -> ClassificationResult.
+        """
+        normalized_responses = self._normalize_responses(responses)
+        question_ids = {rule.survey_question_id for rule in self._rules if rule.is_active}
+        return {
+            qid: self._classify_with_normalized_responses(qid, normalized_responses)
+            for qid in question_ids
+        }
+
+    # ------------------------------------------------------------------
+    # Internal rule evaluation
+    # ------------------------------------------------------------------
+
+    def _resolve_question(self, question: SurveyQuestion | int) -> SurveyQuestion:
+        if isinstance(question, SurveyQuestion):
+            return question
+        try:
+            return SurveyQuestion.objects.get(pk=question)
+        except SurveyQuestion.DoesNotExist as exc:
+            raise ValueError(f"SurveyQuestion with id {question} does not exist") from exc
+
+    def _classify_with_normalized_responses(
+        self,
+        question: SurveyQuestion | int,
+        responses: Dict[str, Any],
+    ) -> ClassificationResult:
         question_obj = self._resolve_question(question)
         matched_rule = self._find_matching_rule(question_obj.id, responses)
 
@@ -60,30 +92,14 @@ class ClassificationEngine:
 
         return ClassificationResult(question=question_obj, classification=None, rule=None)
 
-    def classify_all(self, responses: Dict[int, Any]) -> Dict[int, ClassificationResult]:
-        """
-        Classify all questions that have at least one rule.
-        Returns a mapping of question_id -> ClassificationResult.
-        """
-        question_ids = {rule.survey_question_id for rule in self._rules if rule.is_active}
-        return {
-            qid: self.classify_question(qid, responses)
-            for qid in question_ids
-        }
-
-    # ------------------------------------------------------------------
-    # Internal rule evaluation
-    # ------------------------------------------------------------------
-
-    def _resolve_question(self, question: SurveyQuestion | int) -> SurveyQuestion:
-        if isinstance(question, SurveyQuestion):
-            return question
-        return SurveyQuestion.objects.get(pk=question)
+    @staticmethod
+    def _normalize_responses(responses: Dict[int, Any]) -> Dict[str, Any]:
+        return {str(k): v for k, v in responses.items()}
 
     def _find_matching_rule(
         self,
         question_id: int,
-        responses: Dict[int, Any],
+        responses: Dict[str, Any],
     ) -> Optional[QuestionClassificationRule]:
         """
         Iterate over all rules for the question, return the first matching rule.
@@ -129,7 +145,7 @@ class ClassificationEngine:
     def _evaluate_rule_dict(
         self,
         rule_dict: Any,
-        responses: Dict[int, Any],
+        responses: Dict[str, Any],
     ) -> bool:
         """
         Evaluate a rule JSON dict against responses.
@@ -164,7 +180,7 @@ class ClassificationEngine:
     def _evaluate_condition(
         self,
         cond: Dict[str, Any],
-        responses: Dict[int, Any],
+        responses: Dict[str, Any],
     ) -> bool:
         cond_type = cond.get("type") or "value"
         question_id = cond.get("question")
@@ -175,8 +191,6 @@ class ClassificationEngine:
             return False
 
         answer = responses.get(str(question_id))
-        if answer is None:
-            answer = responses.get(int(question_id))
 
         if cond_type == "count":
             count = self._coerce_count(answer)
