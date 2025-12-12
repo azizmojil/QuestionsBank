@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 import os
 import uuid
 
@@ -14,10 +15,10 @@ class AssessmentRun(models.Model):
     """A logical run/session of assessing a survey version."""
 
     class Status(models.TextChoices):
-        DRAFT = "DRAFT", "Draft"
-        IN_PROGRESS = "IN_PROGRESS", "In Progress"
-        COMPLETE = "COMPLETE", "Complete"
-        CANCELLED = "CANCELLED", "Cancelled"
+        DRAFT = "DRAFT", _("مسودة")
+        IN_PROGRESS = "IN_PROGRESS", _("قيد التنفيذ")
+        COMPLETE = "COMPLETE", _("مكتمل")
+        CANCELLED = "CANCELLED", _("ملغي")
 
     survey_version = models.ForeignKey(SurveyVersion, on_delete=models.CASCADE, related_name="assessment_runs")
     label = models.CharField(max_length=100, blank=True)
@@ -41,10 +42,10 @@ class AssessmentResult(models.Model):
     """Result for a single SurveyQuestion within an AssessmentRun."""
 
     class Status(models.TextChoices):
-        NOT_VISITED = "NOT_VISITED", "Not Visited"
-        IN_PROGRESS = "IN_PROGRESS", "In Progress"
-        COMPLETE = "COMPLETE", "Complete"
-        PENDING_UPLOAD = "PENDING_UPLOAD", "Pending File Upload"
+        NOT_VISITED = "NOT_VISITED", _("لم تتم زيارته")
+        IN_PROGRESS = "IN_PROGRESS", _("قيد التنفيذ")
+        COMPLETE = "COMPLETE", _("مكتمل")
+        PENDING_UPLOAD = "PENDING_UPLOAD", _("بانتظار رفع ملف")
 
     assessment_run = models.ForeignKey(AssessmentRun, on_delete=models.CASCADE, related_name="results")
     survey_question = models.ForeignKey(SurveyQuestion, on_delete=models.CASCADE, related_name="assessment_results")
@@ -74,7 +75,7 @@ class QuestionClassificationRule(models.Model):
     classification = models.CharField(max_length=100)
     condition = models.TextField(
         blank=True,
-        help_text="JSON logic evaluated by the ClassificationEngine.",
+        help_text=_("منطق JSON يتم تقييمه بواسطة محرك التصنيف."),
     )
     priority = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)

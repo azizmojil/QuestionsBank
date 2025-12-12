@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-12 18:05+0000\n"
+"POT-Creation-Date: 2025-12-12 18:27+0000\n"
 "PO-Revision-Date: 2025-12-12 18:07+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: QnR/models.py:12
+msgid "نوع الاستجابة (مثل اختيار واحد أو رقمي)."
+msgstr "Response type (e.g., single choice or numeric)."
+
+#: QnR/models.py:19
+msgid "نوع الاستجابة"
+msgstr "Response type"
+
+#: QnR/models.py:20
+msgid "أنواع الاستجابة"
+msgstr "Response types"
+
+#: QnR/models.py:27 QnR/models.py:42
+msgid "النص بالعربية"
+msgstr "Text in Arabic"
+
+#: QnR/models.py:28 QnR/models.py:43
+msgid "النص بالإنجليزية"
+msgstr "Text in English"
+
+#: QnR/models.py:34
+msgid "إجابة"
+msgstr "Response"
+
+#: QnR/models.py:35
+msgid "إجابات"
+msgstr "Responses"
+
+#: QnR/models.py:53
+msgid "حدد الإجابات المحتملة لأسئلة الاختيار."
+msgstr "Select possible responses for choice questions."
+
+#: QnR/models.py:60
+msgid "سؤال استبيان"
+msgstr "Survey question"
+
+#: QnR/models.py:61
+msgid "أسئلة الاستبيان"
+msgstr "Survey questions"
+
 #: QuestionsBank/settings.py:117
 msgid "Arabic"
 msgstr "Arabic"
@@ -25,86 +65,173 @@ msgstr "Arabic"
 msgid "English"
 msgstr "English"
 
-#: indicators/models.py:14
-msgid "National"
-msgstr "National"
+#: assessment_flow/models.py:26
+msgid "خيارات ثابتة"
+msgstr "Static options"
 
-#: indicators/models.py:15
-msgid "Regional"
-msgstr "Regional"
+#: assessment_flow/models.py:27
+msgid "ديناميكي (من اختيار متعدد سابق)"
+msgstr "Dynamic (from previous multi-select)"
 
-#: indicators/models.py:16
-msgid "International"
-msgstr "International"
+#: assessment_flow/models.py:28
+msgid "ديناميكي (أسئلة الاستبيان)"
+msgstr "Dynamic (survey questions)"
 
-#: indicators/models.py:20
-msgid "Human-readable name of the indicator."
-msgstr "Human-readable name of the indicator."
+#: assessment_flow/models.py:29
+msgid "قائمة المؤشرات"
+msgstr "Indicator list"
 
-#: indicators/models.py:26
-msgid "Optional code, e.g. IND_01 or SDG_8_5_2."
-msgstr "Optional code, e.g. IND_01 or SDG_8_5_2."
+#: assessment_flow/models.py:32
+msgid "توضيح اختياري للمقيّمين."
+msgstr "Optional explanation for assessors."
 
-#: indicators/models.py:33
-msgid "Classification of the indicator."
-msgstr "Classification of the indicator."
+#: assessment_flow/models.py:55
+msgid "خيار محدد مسبقاً"
+msgstr "Predefined choice"
 
-#: indicators/models.py:39
-#, python-format
-msgid "Unit of measure, e.g. % or 'persons'."
-msgstr "Unit of measure, e.g. % or 'persons'."
+#: assessment_flow/models.py:56
+msgid "إدخال نصي حر"
+msgstr "Free text input"
 
-#: indicators/models.py:45
-msgid "Frequency of publication, e.g. monthly, quarterly."
-msgstr "Frequency of publication, e.g. monthly, quarterly."
+#: assessment_flow/models.py:57
+msgid "إدخال رقمي"
+msgstr "Numerical input"
 
-#: indicators/models.py:50
-msgid "Optional URL to methodology or metadata documentation."
-msgstr "Optional URL to methodology or metadata documentation."
+#: assessment_flow/models.py:58
+msgid "إدخال رابط"
+msgstr "URL input"
 
-#: indicators/models.py:55
-msgid "Free-form notes or methodological comments."
-msgstr "Free-form notes or methodological comments."
+#: assessment_flow/models.py:83
+msgid "تعبير يُقيّمه محرك التوجيه، مثل \"option == 'CODE_A' -> 'NEXT_Q_CODE'\""
+msgstr "Expression evaluated by the routing engine, e.g., \"option == 'CODE_A' -> 'NEXT_Q_CODE'\""
 
-#: indicators/models.py:75
-msgid "Tracked by the authority"
-msgstr "Tracked by the authority"
-
-#: indicators/models.py:76
-msgid "Not tracked by the authority"
-msgstr "Not tracked by the authority"
-
-#: indicators/models.py:86
-msgid "Name of the indicator list item."
-msgstr "Name of the indicator list item."
-
-#: indicators/models.py:92
-msgid "Optional code for the list item."
-msgstr "Optional code for the list item."
-
-#: indicators/models.py:100
-msgid "Whether this specific item is tracked by the authority."
-msgstr "Whether this specific item is tracked by the authority."
-
-#: indicators/models.py:109
-msgid "Survey version this indicator list item is defined on."
-msgstr "Survey version this indicator list item is defined on."
-
-#: indicators/models.py:118
-msgid "Survey question that defines or feeds this indicator list item."
-msgstr "Survey question that defines or feeds this indicator list item."
-
-#: surveys/models.py:18
+#: assessment_runs/models.py:18 surveys/models.py:18 surveys/models.py:88
 msgid "مسودة"
 msgstr "Draft"
 
-#: surveys/models.py:19
+#: assessment_runs/models.py:19 assessment_runs/models.py:46
+msgid "قيد التنفيذ"
+msgstr "In progress"
+
+#: assessment_runs/models.py:20 assessment_runs/models.py:47
+msgid "مكتمل"
+msgstr "Complete"
+
+#: assessment_runs/models.py:21
+msgid "ملغي"
+msgstr "Cancelled"
+
+#: assessment_runs/models.py:45
+msgid "لم تتم زيارته"
+msgstr "Not visited"
+
+#: assessment_runs/models.py:48
+msgid "بانتظار رفع ملف"
+msgstr "Pending file upload"
+
+#: assessment_runs/models.py:78
+msgid "منطق JSON يتم تقييمه بواسطة محرك التصنيف."
+msgstr "JSON logic evaluated by the ClassificationEngine."
+
+#: indicators/models.py:14
+msgid "وطني"
+msgstr "National"
+
+#: indicators/models.py:15
+msgid "إقليمي"
+msgstr "Regional"
+
+#: indicators/models.py:16
+msgid "دولي"
+msgstr "International"
+
+#: indicators/models.py:20
+msgid "اسم المؤشر المقروء."
+msgstr "Human-readable name of the indicator."
+
+#: indicators/models.py:26
+msgid "رمز اختياري مثل IND_01 أو SDG_8_5_2."
+msgstr "Optional code, e.g. IND_01 or SDG_8_5_2."
+
+#: indicators/models.py:33
+msgid "تصنيف المؤشر."
+msgstr "Classification of the indicator."
+
+#: indicators/models.py:39
+msgid "وحدة القياس مثل % أو 'أشخاص'."
+msgstr "Unit of measure, e.g. % or 'persons'."
+
+#: indicators/models.py:45
+msgid "تواتر النشر مثل شهري أو ربع سنوي."
+msgstr "Frequency of publication, e.g. monthly, quarterly."
+
+#: indicators/models.py:50
+msgid "رابط اختياري لمنهجية أو وثائق بيانات."
+msgstr "Optional URL to methodology or metadata documentation."
+
+#: indicators/models.py:55
+msgid "ملاحظات حرة أو تعليقات منهجية."
+msgstr "Free-form notes or methodological comments."
+
+#: indicators/models.py:75
+msgid "متابع من الجهة المختصة"
+msgstr "Tracked by the authority"
+
+#: indicators/models.py:76
+msgid "غير متابع من الجهة المختصة"
+msgstr "Not tracked by the authority"
+
+#: indicators/models.py:86
+msgid "اسم عنصر قائمة المؤشر."
+msgstr "Name of the indicator list item."
+
+#: indicators/models.py:92
+msgid "رمز اختياري لعنصر القائمة."
+msgstr "Optional code for the list item."
+
+#: indicators/models.py:100
+msgid "ما إذا كان هذا العنصر متابعاً من الجهة المختصة."
+msgstr "Whether this specific item is tracked by the authority."
+
+#: indicators/models.py:109
+msgid "نسخة الاستبيان التي يُعرَّف عليها هذا العنصر."
+msgstr "Survey version this indicator list item is defined on."
+
+#: indicators/models.py:118
+msgid "سؤال الاستبيان الذي يعرّف أو يرفد هذا العنصر."
+msgstr "Survey question that defines or feeds this indicator list item."
+
+#: surveys/models.py:19 surveys/models.py:89
 msgid "نشط"
 msgstr "Active"
 
-#: surveys/models.py:20
+#: surveys/models.py:20 surveys/models.py:91
 msgid "مؤرشف"
 msgstr "Archived"
+
+#: surveys/models.py:27
+msgid "رمز قصير اختياري مثل LFS_2025."
+msgstr "Optional short code, e.g. LFS_2025."
+
+#: surveys/models.py:33
+msgid "يُنشأ تلقائياً من الاسم إذا تُرك فارغاً."
+msgstr "Auto-generated from name if left blank."
+
+#: surveys/models.py:41
+msgid "مسودة: قيد التصميم. نشط: قيد الاستخدام. مؤرشف: لم يعد مستخدماً."
+msgstr "Draft: still being designed. Active: in use. Archived: no longer used."
+
+#: surveys/models.py:50
+msgid "المسؤول الأساسي عن هذا الاستبيان."
+msgstr "Primary responsible person for this survey."
+
+#: surveys/models.py:57
+msgid "المستخدمون المسموح لهم بتعديل هيكل الاستبيان."
+msgstr "Users allowed to edit survey structure."
+
+#: surveys/models.py:90
+msgid "مقفل"
+msgstr "Locked"
 
 #: surveys/models.py:94
 msgid "شهري"
@@ -121,6 +248,28 @@ msgstr "Biannually"
 #: surveys/models.py:97
 msgid "سنوي"
 msgstr "Annually"
+
+#: surveys/models.py:108
+msgid "تسمية ودية مثل '2025-03' أو 'الجولة 1-2025'."
+msgstr "Human-friendly label, e.g. '2025-03' or 'Round 1-2025'."
+
+#: surveys/models.py:113
+msgid "تاريخ الإشارة لهذه النسخة/الموجة."
+msgstr "Reference date of this version/wave."
+
+#: surveys/models.py:119
+msgid "تواتر الاستبيان."
+msgstr "The frequency of the survey."
+
+#: surveys/models.py:126
+msgid ""
+"مسودة: قابلة للتحرير؛ نشطة: قيد الجمع؛ مقفلة: هيكل ثابت؛ مؤرشفة: للاطلاع "
+"التاريخي."
+msgstr "Draft: editable; Active: in collection; Locked: structure frozen; Archived: historic."
+
+#: surveys/models.py:132
+msgid "بيانات وصفية اختيارية مثل معلومات إطار العينة أو الملاحظات."
+msgstr "Optional metadata, e.g. sampling frame info, notes, etc."
 
 #: surveys/models.py:168
 msgid "نعم/لا (ثنائي)"
@@ -157,6 +306,40 @@ msgstr "Scale (e.g. 1–5)"
 #: surveys/models.py:176
 msgid "مصفوفة"
 msgstr "Matrix"
+
+#: surveys/models.py:187
+msgid "رمز سؤال اختياري مثل Q1 أو A01."
+msgstr "Optional question code, e.g. Q1, A01, etc."
+
+#: surveys/models.py:190
+msgid "النص الكامل للسؤال كما يراه المجيب."
+msgstr "Full text of the question as seen by the respondent."
+
+#: surveys/models.py:194
+msgid "نص مساعدة اختياري أو تعليمات للمُعِد."
+msgstr "Optional help text / enumerator instructions."
+
+#: surveys/models.py:200
+msgid "تسمية قسم منطقية للتقارير فقط."
+msgstr "Optional logical section/group name for reporting only."
+
+#: surveys/models.py:207
+msgid ""
+"النوع الأساسي المتوقع للإجابة؛ يمكن أن تعيش الترميزات أو التحقق التفصيلي في "
+"مكان آخر."
+msgstr "Basic expected response type; detailed coding/validation can live elsewhere."
+
+#: surveys/models.py:212
+msgid "هل يجب الإجابة على السؤال أثناء جمع البيانات."
+msgstr "Whether the question must be answered in data collection."
+
+#: surveys/models.py:218
+msgid "بنية إضافية اختيارية (القيم المسموحة، النطاقات، شروط التخطي، إلخ)."
+msgstr "Optional extra structure (allowed values, ranges, skip tags, etc.)."
+
+#: surveys/tests.py:12 templates/base.html:23 templates/surveys/builder.html:13
+msgid "منشئ الاستبيان"
+msgstr "Survey Builder"
 
 #: surveys/views.py:12
 msgid "خيار سريع بنعم/لا مع خيارات محددة مسبقاً."
@@ -444,8 +627,7 @@ msgid "اختر إصداراً"
 msgstr "Select a version"
 
 #: templates/assessment_runs/survey_version_list.html:11
-msgid ""
-"اختر الإصدار الذي تريد تشغيله. كل إصدار يحفظ حالة أسئلتك في لحظة زمنية."
+msgid "اختر الإصدار الذي تريد تشغيله. كل إصدار يحفظ حالة أسئلتك في لحظة زمنية."
 msgstr ""
 "Pick the version you want to run. Each version captures the state of your "
 "questions at a point in time."
@@ -478,10 +660,6 @@ msgstr "Accessible, beautiful self assessments"
 #: templates/base.html:22
 msgid "التقييم الذاتي"
 msgstr "Self Assessment"
-
-#: templates/base.html:23 templates/surveys/builder.html:13
-msgid "منشئ الاستبيان"
-msgstr "Survey Builder"
 
 #: templates/base.html:27
 msgid "تسجيل الدخول"
@@ -621,8 +799,7 @@ msgstr "Track Progress"
 #: templates/home.html:57
 msgid "تابع تغير الاستجابات بمرور الوقت مع معالم واضحة وإشعارات إكمال."
 msgstr ""
-"See how responses change over time with clear milestones and completion "
-"cues."
+"See how responses change over time with clear milestones and completion cues."
 
 #: templates/home.html:60
 msgid "ميزة الأسئلة المخصصة"
@@ -646,8 +823,8 @@ msgstr "Survey Builder - QnR Platform"
 
 #: templates/surveys/builder.html:14
 msgid ""
-"أنشئ استبيانات بأقسام وأنواع أسئلة متنوعة (بما فيها المصفوفات)، واجمع الردود"
-" التي تحتاجها."
+"أنشئ استبيانات بأقسام وأنواع أسئلة متنوعة (بما فيها المصفوفات)، واجمع الردود "
+"التي تحتاجها."
 msgstr ""
 "Create surveys with sections, varied question types (including matrix "
 "grids), and capture the responses you need."
@@ -786,3 +963,55 @@ msgstr "No"
 #: templates/surveys/builder.html:124
 msgid "استبيان بدون عنوان"
 msgstr "Untitled survey"
+
+#~ msgid "National"
+#~ msgstr "National"
+
+#~ msgid "Regional"
+#~ msgstr "Regional"
+
+#~ msgid "International"
+#~ msgstr "International"
+
+#~ msgid "Human-readable name of the indicator."
+#~ msgstr "Human-readable name of the indicator."
+
+#~ msgid "Optional code, e.g. IND_01 or SDG_8_5_2."
+#~ msgstr "Optional code, e.g. IND_01 or SDG_8_5_2."
+
+#~ msgid "Classification of the indicator."
+#~ msgstr "Classification of the indicator."
+
+#, python-format
+#~ msgid "Unit of measure, e.g. % or 'persons'."
+#~ msgstr "Unit of measure, e.g. % or 'persons'."
+
+#~ msgid "Frequency of publication, e.g. monthly, quarterly."
+#~ msgstr "Frequency of publication, e.g. monthly, quarterly."
+
+#~ msgid "Optional URL to methodology or metadata documentation."
+#~ msgstr "Optional URL to methodology or metadata documentation."
+
+#~ msgid "Free-form notes or methodological comments."
+#~ msgstr "Free-form notes or methodological comments."
+
+#~ msgid "Tracked by the authority"
+#~ msgstr "Tracked by the authority"
+
+#~ msgid "Not tracked by the authority"
+#~ msgstr "Not tracked by the authority"
+
+#~ msgid "Name of the indicator list item."
+#~ msgstr "Name of the indicator list item."
+
+#~ msgid "Optional code for the list item."
+#~ msgstr "Optional code for the list item."
+
+#~ msgid "Whether this specific item is tracked by the authority."
+#~ msgstr "Whether this specific item is tracked by the authority."
+
+#~ msgid "Survey version this indicator list item is defined on."
+#~ msgstr "Survey version this indicator list item is defined on."
+
+#~ msgid "Survey question that defines or feeds this indicator list item."
+#~ msgstr "Survey question that defines or feeds this indicator list item."
