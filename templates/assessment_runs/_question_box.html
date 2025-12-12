@@ -1,8 +1,8 @@
-<div class="question-box" data-question-id="{{ question.id }}">
-    <h3>{{ question.text }}</h3>
-    <p class="explanation">{{ question.explanation }}</p>
+<div class="question-box" data-question-id="{{ question.id }}" role="group" aria-labelledby="question-{{ question.id }}">
+    <h3 id="question-{{ question.id }}">{{ question.text }}</h3>
+    <p class="explanation" id="explanation-{{ question.id }}">{{ question.explanation }}</p>
 
-    <div class="selected-answer-placeholder"></div>
+    <div class="selected-answer-placeholder" aria-live="polite"></div>
 
     <div class="options">
         {# Determine which list of options to use #}

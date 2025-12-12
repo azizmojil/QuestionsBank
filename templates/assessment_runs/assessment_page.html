@@ -8,7 +8,13 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Assessment</h2>
+    <div class="section-header">
+        <div>
+            <p class="eyebrow">Live assessment</p>
+            <h2>Assessment</h2>
+            <p class="lead">Progress through each question. Your choices remain accessible for screen readers and keyboard users.</p>
+        </div>
+    </div>
     <div id="assessment-container">
         {% include 'assessment_runs/_question_box.html' with question=question %}
     </div>

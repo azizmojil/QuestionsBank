@@ -3,26 +3,62 @@
 {% block title %}Home - QnR Platform{% endblock %}
 
 {% block content %}
-    <div class="card text-center">
-        <h2>Welcome to the QnR Platform</h2>
-        <p>A comprehensive platform for creating and managing surveys, assessments, and questions.</p>
-        <div class="flex flex-center gap-2 mt-3">
-            <a href="{% url 'survey_list' %}" class="btn">Get Started with Self Assessment</a>
+    <section class="hero">
+        <div class="card hero-card">
+            <span class="hero-highlight" aria-hidden="true">Inclusive by design</span>
+            <h1>Welcome to the QnR Platform</h1>
+            <p class="lead">Create thoughtful surveys, guide learners through assessments, and keep every interaction accessible and beautiful.</p>
+            <div class="flex gap-2 mt-3 flex-wrap">
+                <a href="{% url 'survey_list' %}" class="btn">Start a self assessment</a>
+                <a href="#features" class="btn btn-secondary">Explore features</a>
+            </div>
+            <div class="stat-grid" role="list">
+                <div class="stat" role="listitem">
+                    <p class="value">Accessible</p>
+                    <p class="label">Keyboard-first navigation</p>
+                </div>
+                <div class="stat" role="listitem">
+                    <p class="value">Dark & Light</p>
+                    <p class="label">Theme aware experience</p>
+                </div>
+                <div class="stat" role="listitem">
+                    <p class="value">Responsive</p>
+                    <p class="label">Optimized for every screen</p>
+                </div>
+            </div>
         </div>
-    </div>
+        <div class="card">
+            <p class="eyebrow">What you can do</p>
+            <h3>Design clear, guided surveys</h3>
+            <ul>
+                <li>Craft question banks and assessment flows tailored to your audience.</li>
+                <li>Offer rich option types, from single choice to searchable dropdowns.</li>
+                <li>Keep respondents focused with distraction-free cards and call-to-actions.</li>
+            </ul>
+        </div>
+    </section>
 
-    <div class="feature-grid">
-        <div class="card feature-card">
-            <h3>📋 Self Assessments</h3>
-            <p>Take comprehensive surveys to evaluate your knowledge and skills across various topics.</p>
+    <section id="features">
+        <div class="section-header">
+            <div>
+                <p class="eyebrow">Highlights</p>
+                <h2>Built-in clarity and polish</h2>
+            </div>
+            <div class="hero-highlight">WCAG-friendly palettes</div>
         </div>
-        <div class="card feature-card">
-            <h3>📊 Track Progress</h3>
-            <p>Monitor your assessment results and track your improvement over time.</p>
+        <div class="feature-grid">
+            <div class="card feature-card">
+                <h3 aria-label="Self assessments feature">📋 Self Assessments</h3>
+                <p>Guide learners through intentional, structured questions that adapt to any topic.</p>
+            </div>
+            <div class="card feature-card">
+                <h3 aria-label="Track progress feature">📊 Track Progress</h3>
+                <p>See how responses change over time with clear milestones and completion cues.</p>
+            </div>
+            <div class="card feature-card">
+                <h3 aria-label="Custom questions feature">🎯 Custom Questions</h3>
+                <p>Create reusable question banks with searchable options and multi-select flexibility.</p>
+            </div>
         </div>
-        <div class="card feature-card">
-            <h3>🎯 Custom Questions</h3>
-            <p>Create and manage custom question banks tailored to your specific needs.</p>
-        </div>
-    </div>
+    </section>
 {% endblock %}

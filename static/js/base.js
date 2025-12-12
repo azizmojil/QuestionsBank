@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const themeSwitch = document.getElementById('theme-switch');
     const body = document.body;
+    const themeIcon = themeSwitch.querySelector('.theme-icon');
 
     // Check for saved theme in local storage
     if (localStorage.getItem('theme') === 'dark') {
@@ -9,20 +10,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Add keyboard accessibility to theme switch
     themeSwitch.setAttribute('role', 'button');
-    themeSwitch.setAttribute('aria-label', 'Toggle dark mode');
     themeSwitch.setAttribute('tabindex', '0');
+
+    function syncThemeState() {
+        const isDark = body.classList.contains('dark-mode');
+        themeSwitch.setAttribute('aria-pressed', isDark.toString());
+        themeSwitch.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+        if (themeIcon) {
+            themeIcon.textContent = isDark ? '🌙' : '☀️';
+        }
+    }
 
     function toggleTheme() {
         body.classList.toggle('dark-mode');
-
-        // Save theme preference to local storage
-        if (body.classList.contains('dark-mode')) {
-            localStorage.setItem('theme', 'dark');
-            themeSwitch.setAttribute('aria-label', 'Toggle light mode');
-        } else {
-            localStorage.setItem('theme', 'light');
-            themeSwitch.setAttribute('aria-label', 'Toggle dark mode');
-        }
+        localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+        syncThemeState();
     }
 
     themeSwitch.addEventListener('click', toggleTheme);
@@ -34,6 +36,8 @@ document.addEventListener('DOMContentLoaded', function () {
             toggleTheme();
         }
     });
+
+    syncThemeState();
 
     // Add smooth scrolling to anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {

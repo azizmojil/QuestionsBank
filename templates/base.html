@@ -9,24 +9,34 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <header>
-        <h1><a href="{% url 'home' %}" class="logo">QnR Platform</a></h1>
-        <nav>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header class="site-header">
+        <div class="brand">
+            <a href="{% url 'home' %}" class="logo">QnR Platform</a>
+            <p class="tagline">Accessible, beautiful self assessments</p>
+        </div>
+        <nav aria-label="Primary navigation">
             <ul>
                 <li><a href="{% url 'survey_list' %}">Self Assessment</a></li>
             </ul>
         </nav>
         <div class="header-actions">
             <a href="#" class="auth-link">Login</a>
-            <div class="theme-switch" id="theme-switch">
-                <div class="theme-switch-toggle"></div>
-            </div>
+            <button class="theme-switch" id="theme-switch" type="button" aria-pressed="false">
+                <span class="theme-icon" aria-hidden="true">☀️</span>
+                <span class="theme-label">Theme</span>
+                <span class="sr-only">Toggle dark mode</span>
+                <div class="theme-switch-toggle" aria-hidden="true"></div>
+            </button>
         </div>
     </header>
-    <main>
+    <main id="main-content" class="page-content" role="main">
         {% block content %}
         {% endblock %}
     </main>
+    <footer class="site-footer">
+        <p>Built for inclusive assessments with care for accessibility.</p>
+    </footer>
     <script src="{% static 'js/base.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
