@@ -1,13 +1,17 @@
+import json
+import logging
+from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.utils import timezone
-import json
 from surveys.models import Survey, SurveyVersion, SurveyQuestion
 from assessment_flow.models import AssessmentQuestion, AssessmentOption
 from indicators.models import IndicatorListItem
 from assessment_flow.engine import RoutingEngine
 from .models import AssessmentRun, AssessmentResult
+
+log = logging.getLogger(__name__)
 
 def survey_list(request):
     surveys = Survey.objects.all()
@@ -42,13 +46,20 @@ def assessment_page(request, question_id):
 
     survey_question_id = request.GET.get('survey_question_id')
     assessment_metadata = {}
-    if survey_question_id:
-        survey_question = SurveyQuestion.objects.filter(pk=survey_question_id).first()
-        if survey_question:
-            assessment_metadata = {
-                'survey_question_id': survey_question.id,
-                'survey_version_id': survey_question.survey_version_id,
-            }
+    survey_question = None
+    try:
+        survey_question_id = int(survey_question_id) if survey_question_id else None
+        if survey_question_id:
+            survey_question = SurveyQuestion.objects.filter(pk=survey_question_id).first()
+    except (TypeError, ValueError):
+        survey_question_id = None
+        survey_question = None
+    if survey_question:
+        assessment_metadata = {
+            'survey_question_id': survey_question.id,
+            'survey_version_id': survey_question.survey_version_id,
+        }
+    assessment_metadata['started_at'] = timezone.now().timestamp()
     request.session['assessment_metadata'] = assessment_metadata
 
     # Start a fresh assessment history
@@ -161,19 +172,39 @@ def assessment_complete(request):
     survey_question = None
     survey_version = None
     if metadata:
-        survey_question = SurveyQuestion.objects.filter(pk=metadata.get('survey_question_id')).first()
-        survey_version = SurveyVersion.objects.filter(pk=metadata.get('survey_version_id')).first()
+        survey_version_id = metadata.get('survey_version_id')
+        if survey_version_id:
+            survey_version = SurveyVersion.objects.filter(pk=survey_version_id).first()
+
+        survey_question_id = metadata.get('survey_question_id')
+        if survey_question_id:
+            survey_question = (
+                SurveyQuestion.objects.select_related('survey_version')
+                .filter(pk=survey_question_id)
+                .first()
+            )
+            if survey_question and survey_version is None:
+                survey_version = survey_question.survey_version
 
     assessment_run = None
+    raw_started_at = metadata.get('started_at')
+    started_at = None
+    if raw_started_at is not None:
+        try:
+            started_at = timezone.make_aware(
+                datetime.fromtimestamp(float(raw_started_at)),
+                timezone.get_default_timezone(),
+            )
+        except (TypeError, ValueError):
+            log.warning("Invalid started_at timestamp in assessment session: %s", raw_started_at)
     if survey_version:
         assessment_run = AssessmentRun.objects.create(
             survey_version=survey_version,
             status=AssessmentRun.Status.COMPLETE,
-            started_at=timezone.now(),
+            started_at=started_at or timezone.now(),
             completed_at=timezone.now(),
             created_by=request.user if request.user.is_authenticated else None,
         )
-
     if assessment_run and survey_question:
         AssessmentResult.objects.update_or_create(
             assessment_run=assessment_run,
