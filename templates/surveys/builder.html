@@ -10,32 +10,10 @@
 {% block content %}
 <section class="hero builder-hero">
     <div class="card hero-card">
-        <p class="eyebrow">Design-first</p>
         <h1>Survey builder</h1>
-        <p class="lead">Compose sections, add questions, and shape responses—including matrix grids—in a single focused workspace.</p>
+        <p class="lead">Create surveys with sections, varied question types (including matrix grids), and capture the responses you need.</p>
         <div class="flex gap-2 mt-3 flex-wrap">
             <a href="#builder-workspace" class="btn">Start assembling</a>
-            <a href="{% url 'survey_list' %}" class="btn btn-secondary">Preview respondent view</a>
-        </div>
-    </div>
-    <div class="card">
-        <h3>Response types available</h3>
-        <div class="type-grid" role="list">
-            {% for rt in response_types %}
-                <div class="type-pill" role="listitem">
-                    <div>
-                        <p class="type-label">{{ rt.label }}</p>
-                        <p class="type-desc">{{ rt.description }}</p>
-                    </div>
-                    {% if rt.supports_matrix %}
-                        <span class="badge">Matrix-ready</span>
-                    {% elif rt.supports_options %}
-                        <span class="badge">Options</span>
-                    {% else %}
-                        <span class="badge neutral">Freeform</span>
-                    {% endif %}
-                </div>
-            {% endfor %}
         </div>
     </div>
 </section>
@@ -64,22 +42,6 @@
             </div>
             <div id="sections-container" class="section-container" aria-live="polite"></div>
         </form>
-    </div>
-
-    <div class="card preview-card">
-        <div class="section-header">
-            <div>
-                <p class="eyebrow">Live blueprint</p>
-                <h3>JSON preview</h3>
-            </div>
-            <button type="button" class="btn btn-secondary" id="refresh-preview">Refresh preview</button>
-        </div>
-        <p class="muted">Review the structure you are building, including sections, question text, response types, and any matrix rows/columns.</p>
-        <pre id="survey-preview" class="preview-block" aria-live="polite">{}</pre>
-        <div class="hints">
-            <p><strong>Tip:</strong> Matrix questions accept both rows and columns. Regular questions allow you to set required status and add response options for single or multi-select types.</p>
-            <p class="muted">This builder saves in the browser for now—perfect for prototyping and sharing a plan with your team.</p>
-        </div>
     </div>
 </section>
 
