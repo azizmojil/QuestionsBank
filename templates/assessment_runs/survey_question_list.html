@@ -6,7 +6,7 @@
 {% block content %}
     <div class="section-header">
         <div>
-            <p class="eyebrow">{% blocktrans with survey_name=version.survey.name %}الاستبيان: {{ survey_name }}{% endblocktrans %}</p>
+            <p class="eyebrow">{% blocktrans with survey_name=version.survey.display_name %}الاستبيان: {{ survey_name }}{% endblocktrans %}</p>
             <h2>{% blocktrans with version_label=version.version_label %}الأسئلة في {{ version_label }}{% endblocktrans %}</h2>
             <p class="lead">{% trans "عاين الأسئلة وابدأ التقييم من أي سؤال." %}</p>
         </div>
@@ -23,7 +23,7 @@
             <tbody>
                 {% for question in questions %}
                     <tr>
-                        <td>{{ question.text }}</td>
+                        <td>{{ question.display_text }}</td>
                         <td>
                             {% if first_assessment_question %}
                                 <a href="{% url 'assessment_page' first_assessment_question.id %}?survey_question_id={{ question.id }}" class="btn btn-secondary">{% trans "ابدأ التقييم" %}</a>

@@ -24,14 +24,14 @@ class SurveyVersionInline(admin.TabularInline):
 
 @admin.register(Survey)
 class SurveyAdmin(admin.ModelAdmin):
-    list_display = ("name", "code", "status", "created_at")
+    list_display = ("display_name", "code", "status", "created_at")
     list_filter = ("status",)
-    search_fields = ("name", "code", "description")
+    search_fields = ("name", "name_ar", "name_en", "code", "description")
     prepopulated_fields = {"slug": ("name",)}
 
     fieldsets = (
         (None, {
-            "fields": ("name", "code", "slug", "description", "status"),
+            "fields": ("name", "name_ar", "name_en", "code", "slug", "description", "status"),
         }),
     )
 
@@ -45,6 +45,8 @@ class SurveyQuestionInline(admin.TabularInline):
     show_change_link = True
     fields = (
         "text",
+        "text_ar",
+        "text_en",
         "section_label",
         "code",
     )

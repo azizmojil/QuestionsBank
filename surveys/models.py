@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import get_language
 import datetime
 
 User = get_user_model()
@@ -20,6 +21,16 @@ class Survey(models.Model):
         ARCHIVED = "ARCHIVED", _("مؤرشف")
 
     name = models.CharField(max_length=255, unique=True)
+    name_ar = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("الاسم بالعربية"),
+    )
+    name_en = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("الاسم بالإنجليزية"),
+    )
     code = models.CharField(
         max_length=50,
         unique=True,
@@ -64,12 +75,23 @@ class Survey(models.Model):
         ordering = ["name"]
 
     def __str__(self) -> str:
-        return self.name
+        return self.display_name
+
+    @property
+    def display_name(self) -> str:
+        lang = (get_language() or "ar")[:2]
+        if lang == "ar" and self.name_ar:
+            return self.name_ar
+        if lang == "en" and self.name_en:
+            return self.name_en
+        # Fallbacks for missing translations
+        return self.name or self.name_en or self.name_ar
 
     def save(self, *args, **kwargs):
         # Auto-generate slug from name if missing
-        if not self.slug and self.name:
-            self.slug = slugify(self.name, allow_unicode=True)
+        base_name = self.name or self.name_ar or self.name_en
+        if not self.slug and base_name:
+            self.slug = slugify(base_name, allow_unicode=True)
 
         # If code is empty, you can optionally derive a default from slug
         if not self.code and self.slug:
@@ -140,7 +162,7 @@ class SurveyVersion(models.Model):
         unique_together = ("survey", "version_label")
 
     def __str__(self) -> str:
-        return f"{self.survey.name} - {self.version_label or '(new)'}"
+        return f"{self.survey.display_name} - {self.version_label or '(new)'}"
 
     def _generate_version_label(self):
         """Generate a label based on interval and date."""
@@ -188,6 +210,16 @@ class SurveyQuestion(models.Model):
     )
 
     text = models.TextField(help_text=_("النص الكامل للسؤال كما يراه المجيب."))
+    text_ar = models.TextField(
+        blank=True,
+        verbose_name=_("النص بالعربية"),
+        help_text=_("النص الكامل للسؤال باللغة العربية."),
+    )
+    text_en = models.TextField(
+        blank=True,
+        verbose_name=_("النص بالإنجليزية"),
+        help_text=_("النص الكامل للسؤال باللغة الإنجليزية."),
+    )
 
     help_text = models.TextField(
         blank=True,
@@ -226,10 +258,21 @@ class SurveyQuestion(models.Model):
 
     def __str__(self) -> str:
         prefix = f"{self.code} - " if self.code else ""
-        short = self.text[:60] + ("..." if len(self.text) > 60 else "")
+        text = self.display_text
+        short = text[:60] + ("..." if len(text) > 60 else "")
         return f"{prefix}{short}"
 
     def short_text(self) -> str:
-        return self.text[:150] + ("..." if len(self.text) > 150 else "")
+        text = self.display_text
+        return text[:150] + ("..." if len(text) > 150 else "")
 
     short_text.short_description = "Question Text"
+
+    @property
+    def display_text(self) -> str:
+        lang = (get_language() or "ar")[:2]
+        if lang == "ar" and self.text_ar:
+            return self.text_ar
+        if lang == "en" and self.text_en:
+            return self.text_en
+        return self.text or self.text_en or self.text_ar

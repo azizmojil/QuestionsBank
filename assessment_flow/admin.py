@@ -14,7 +14,7 @@ from .models import AssessmentQuestion, AssessmentOption, AssessmentFlowRule
 class StaticOptionsInline(admin.TabularInline):
     model = AssessmentOption
     extra = 0
-    fields = ("text", "response_type", "explanation")
+    fields = ("text", "text_ar", "text_en", "response_type", "explanation", "explanation_ar", "explanation_en")
     verbose_name = "Static Option"
     verbose_name_plural = "Static Options"
     formfield_overrides = {
@@ -33,15 +33,15 @@ class AssessmentFlowRuleInline(admin.TabularInline):
 
 @admin.register(AssessmentQuestion)
 class AssessmentQuestionAdmin(admin.ModelAdmin):
-    list_display = ("text", "id", "option_type")
+    list_display = ("display_text", "id", "option_type")
     list_filter = ("option_type",)
-    search_fields = ("text", "id")
+    search_fields = ("text", "text_ar", "text_en", "id")
 
     # Define all possible inlines
     inlines = [StaticOptionsInline, AssessmentFlowRuleInline]
 
     def get_fieldsets(self, request, obj=None):
-        base_fields = ("text", "explanation", "option_type", "allow_multiple_choices", "use_searchable_dropdown")
+        base_fields = ("text", "text_ar", "text_en", "explanation", "explanation_ar", "explanation_en", "option_type", "allow_multiple_choices", "use_searchable_dropdown")
         
         fieldsets = [
             ("Question Details", {"fields": base_fields}),
@@ -83,6 +83,6 @@ class AssessmentQuestionAdmin(admin.ModelAdmin):
 
 @admin.register(AssessmentOption)
 class AssessmentOptionAdmin(admin.ModelAdmin):
-    search_fields = ("code", "text", "question__text")
+    search_fields = ("text", "text_ar", "text_en", "question__text", "question__text_ar", "question__text_en")
     def get_model_perms(self, request):
         return {}

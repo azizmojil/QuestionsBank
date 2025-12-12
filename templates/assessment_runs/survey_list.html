@@ -24,7 +24,7 @@
             <tbody>
                 {% for survey in surveys %}
                     <tr>
-                        <td><a href="{% url 'survey_version_list' survey.id %}">{{ survey.name }}</a></td>
+                        <td><a href="{% url 'survey_version_list' survey.id %}">{{ survey.display_name }}</a></td>
                         <td><span class="status-pill neutral" aria-label="{% blocktrans with status=survey.get_status_display %}الحالة: {{ status }}{% endblocktrans %}">{{ survey.get_status_display }}</span></td>
                         <td>{{ survey.created_at|date:"Y-m-d" }}</td>
                     </tr>

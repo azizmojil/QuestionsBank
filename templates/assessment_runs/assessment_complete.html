@@ -10,6 +10,9 @@
         <p class="lead">{% trans "شكراً لوقتك في إكمال هذا التقييم. تم تسجيل إجاباتك." %}</p>
         <div class="mt-2">
             <a href="{% url 'survey_list' %}" class="btn">{% trans "العودة إلى قائمة الاستبيانات" %}</a>
+            {% if survey_version %}
+                <a href="{% url 'survey_question_list' survey_version.id %}" class="btn btn-secondary">{% trans "عرض أسئلة هذا الإصدار" %}</a>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
