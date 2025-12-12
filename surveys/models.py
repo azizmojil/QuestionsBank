@@ -212,12 +212,12 @@ class SurveyQuestion(models.Model):
     text = models.TextField(help_text=_("النص الكامل للسؤال كما يراه المجيب."))
     text_ar = models.TextField(
         blank=True,
-        verbose_name=_("النص بالعربية"),
+        verbose_name=_("السؤال [عربية]"),
         help_text=_("النص الكامل للسؤال باللغة العربية."),
     )
     text_en = models.TextField(
         blank=True,
-        verbose_name=_("النص بالإنجليزية"),
+        verbose_name=_("السؤال [إنجليزية]"),
         help_text=_("النص الكامل للسؤال باللغة الإنجليزية."),
     )
 

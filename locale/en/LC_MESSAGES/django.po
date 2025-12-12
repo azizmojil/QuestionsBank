@@ -29,13 +29,23 @@ msgstr "Response type"
 msgid "أنواع الاستجابة"
 msgstr "Response types"
 
-#: QnR/models.py:27 QnR/models.py:42
-msgid "النص بالعربية"
-msgstr "Text in Arabic"
+#: QnR/models.py:27 QnR/models.py:42 assessment_flow/models.py:33
+#: assessment_flow/models.py:85 surveys/models.py:214
+msgid "السؤال [عربية]"
+msgstr "Question [Arabic]"
 
-#: QnR/models.py:28 QnR/models.py:43
-msgid "النص بالإنجليزية"
-msgstr "Text in English"
+#: QnR/models.py:28 QnR/models.py:43 assessment_flow/models.py:34
+#: assessment_flow/models.py:86 surveys/models.py:218
+msgid "السؤال [إنجليزية]"
+msgstr "Question [English]"
+
+#: assessment_flow/models.py:36 assessment_flow/models.py:88
+msgid "التوضيح [عربية]"
+msgstr "Explanation [Arabic]"
+
+#: assessment_flow/models.py:37 assessment_flow/models.py:89
+msgid "التوضيح [إنجليزية]"
+msgstr "Explanation [English]"
 
 #: QnR/models.py:34
 msgid "إجابة"

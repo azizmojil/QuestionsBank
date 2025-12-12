@@ -24,8 +24,8 @@ class Response(models.Model):
     """
     Represents a single predefined answer/choice.
     """
-    text_ar = models.CharField(max_length=255, verbose_name=_("النص بالعربية"))
-    text_en = models.CharField(max_length=255, verbose_name=_("النص بالإنجليزية"))
+    text_ar = models.CharField(max_length=255, verbose_name=_("السؤال [عربية]"))
+    text_en = models.CharField(max_length=255, verbose_name=_("السؤال [إنجليزية]"))
 
     def __str__(self):
         return f"{self.text_en} / {self.text_ar}"
@@ -39,8 +39,8 @@ class SurveyQuestion(models.Model):
     """
     A single question in a survey.
     """
-    text_ar = models.TextField(verbose_name=_("النص بالعربية"))
-    text_en = models.TextField(verbose_name=_("النص بالإنجليزية"))
+    text_ar = models.TextField(verbose_name=_("السؤال [عربية]"))
+    text_en = models.TextField(verbose_name=_("السؤال [إنجليزية]"))
     response_type = models.ForeignKey(
         ResponseType,
         on_delete=models.PROTECT,  # Prevent deleting a type that is in use
