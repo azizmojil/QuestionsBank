@@ -17,3 +17,9 @@ class SurveyBuilderViewTests(TestCase):
         self.assertTrue(
             any(rt["value"] == SurveyQuestion.ResponseType.MATRIX for rt in response_types)
         )
+
+    def test_builder_page_focuses_on_survey_only(self):
+        response = self.client.get(reverse("survey_builder"))
+        self.assertNotContains(response, "Live blueprint")
+        self.assertNotContains(response, "Response types available")
+        self.assertNotContains(response, "Design-first")

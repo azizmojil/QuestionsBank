@@ -6,7 +6,7 @@
 
 .builder-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr;
     gap: 1.5rem;
     align-items: start;
 }
@@ -15,47 +15,6 @@
     .builder-grid {
         grid-template-columns: 1fr;
     }
-}
-
-.type-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 0.75rem;
-    margin-top: 0.75rem;
-}
-
-.type-pill {
-    border: 1px solid rgba(0, 90, 156, 0.14);
-    border-radius: 12px;
-    padding: 0.75rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.75rem;
-}
-
-.type-label {
-    margin: 0;
-    font-weight: 700;
-}
-
-.type-desc {
-    margin: 0.1rem 0 0;
-    color: var(--muted);
-}
-
-.badge {
-    background: #e0f2fe;
-    color: #0f172a;
-    padding: 0.35rem 0.65rem;
-    border-radius: 999px;
-    font-weight: 700;
-    font-size: 0.85rem;
-}
-
-.badge.neutral {
-    background: #f4f4f5;
-    color: #111827;
 }
 
 .builder-grid .card {

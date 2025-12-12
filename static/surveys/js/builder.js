@@ -4,8 +4,6 @@
     const sectionsContainer = document.getElementById('sections-container');
     const addSectionBtn = document.getElementById('add-section-btn');
     const loadSampleBtn = document.getElementById('load-sample-btn');
-    const refreshPreviewBtn = document.getElementById('refresh-preview');
-    const previewBlock = document.getElementById('survey-preview');
 
     if (!sectionTemplate || !questionTemplate || !sectionsContainer) {
         return;
@@ -113,24 +111,16 @@
         return { title: surveyTitle, sections };
     }
 
-    function renderPreview() {
-        const survey = collectSurvey();
-        previewBlock.textContent = JSON.stringify(survey, null, 2);
-    }
-
     function loadSample() {
         sectionsContainer.innerHTML = '';
         sampleSections.forEach(section => addSection(section));
-        renderPreview();
     }
 
     addSectionBtn?.addEventListener('click', () => {
         addSection();
-        renderPreview();
     });
 
     loadSampleBtn?.addEventListener('click', loadSample);
-    refreshPreviewBtn?.addEventListener('click', renderPreview);
 
     // Start with the provided sample blueprint
     loadSample();
