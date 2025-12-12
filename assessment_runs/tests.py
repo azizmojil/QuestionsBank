@@ -1,9 +1,9 @@
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from assessment_flow.models import AssessmentQuestion, AssessmentFlowRule
+from assessment_flow.models import AssessmentQuestion, AssessmentFlowRule, AssessmentOption
 from assessment_runs.engine import ClassificationEngine
-from assessment_runs.models import QuestionClassificationRule
+from assessment_runs.models import QuestionClassificationRule, AssessmentResult, AssessmentRun
 from surveys.models import Survey, SurveyVersion, SurveyQuestion
 import json
 
@@ -197,3 +197,50 @@ class ClassificationEngineTestCase(TestCase):
 
         self.assertEqual(result.classification, "LOW")
         self.assertEqual(result.rule, fallback_rule)
+
+
+class AssessmentCompletionSaveTestCase(TestCase):
+    """Ensure completing an assessment stores results and links back to the question list."""
+
+    def setUp(self):
+        self.client = Client()
+        self.survey = Survey.objects.create(name="Demo Survey", code="DEMO-SAVE")
+        self.version = SurveyVersion.objects.create(
+            survey=self.survey,
+            interval=SurveyVersion.SurveyInterval.ANNUALLY,
+        )
+        self.survey_question = SurveyQuestion.objects.create(
+            survey_version=self.version,
+            text="Survey Question",
+        )
+        self.assessment_question = AssessmentQuestion.objects.create(text="Assess this")
+        self.option = AssessmentOption.objects.create(question=self.assessment_question, text="Yes")
+
+    def test_complete_saves_assessment_result(self):
+        start_url = reverse('assessment_page', args=[self.assessment_question.id])
+        start_url = f"{start_url}?survey_question_id={self.survey_question.id}"
+        self.client.get(start_url)
+
+        self.client.post(
+            reverse('get_next_question'),
+            data=json.dumps({
+                'question_id': self.assessment_question.id,
+                'option_ids': [self.option.id],
+            }),
+            content_type='application/json'
+        )
+
+        response = self.client.get(reverse('assessment_complete'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(AssessmentRun.objects.count(), 1)
+
+        run = AssessmentRun.objects.first()
+        self.assertEqual(run.survey_version, self.version)
+        self.assertEqual(run.status, AssessmentRun.Status.COMPLETE)
+
+        result = AssessmentResult.objects.get(assessment_run=run, survey_question=self.survey_question)
+        self.assertEqual(result.status, AssessmentResult.Status.COMPLETE)
+        self.assertEqual(result.assessment_path[0]['answer'], self.option.text)
+
+        self.assertContains(response, reverse('survey_question_list', args=[self.version.id]))
