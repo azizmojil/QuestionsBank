@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Survey Versions - {{ survey.name }}{% endblock %}
+
+{% block content %}
+    <h2>Select a Version for {{ survey.name }}</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Version Label</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for version in versions %}
+                <tr>
+                    <td><a href="{% url 'survey_question_list' version.id %}">{{ version.version_label }}</a></td>
+                    <td>{{ version.get_status_display }}</td>
+                    <td>{{ version.version_date|date:"Y-m-d" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

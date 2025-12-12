@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Survey Questions - {{ version.version_label }}{% endblock %}
+
+{% block content %}
+    <h2>Questions for {{ version.survey.name }} - {{ version.version_label }}</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Question Text</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for question in questions %}
+                <tr>
+                    <td>{{ question.text }}</td>
+                    <td>
+                        {% if first_assessment_question %}
+                            <a href="{% url 'assessment_page' first_assessment_question.id %}?survey_question_id={{ question.id }}">Start Assessment</a>
+                        {% else %}
+                            No assessment configured
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

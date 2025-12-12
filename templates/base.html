@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}QnR Platform{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <h1><a href="{% url 'home' %}" class="logo">QnR Platform</a></h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'survey_list' %}">Self Assessment</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <a href="#" class="auth-link">Login</a>
+            <div class="theme-switch" id="theme-switch">
+                <div class="theme-switch-toggle"></div>
+            </div>
+        </div>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <script src="{% static 'js/base.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

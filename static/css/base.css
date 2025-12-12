@@ -1,0 +1,193 @@
+/* Base styles for the QnR Platform */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    transition: background-color 0.3s, color 0.3s;
+    padding: 0 2rem;
+    line-height: 1.6;
+}
+
+/* Light Mode (Default) */
+body {
+    background-color: #f6f5f4; /* Django light gray */
+    color: #333333;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: #000000;
+}
+
+h1 { font-size: 2.25rem; margin-bottom: 1rem; }
+h2 { font-size: 1.75rem; margin-bottom: 1rem; }
+h3 { font-size: 1.25rem; margin-bottom: 0.75rem; }
+
+p {
+    margin-bottom: 1rem;
+}
+
+a {
+    color: #005a9c; /* A professional blue */
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: #003f6b; /* Darker blue on hover */
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    background-color: transparent;
+    border-bottom: 1px solid #dcdcdc;
+    margin-bottom: 2rem;
+}
+
+.logo {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #000000;
+    text-decoration: none;
+}
+
+nav {
+    flex-grow: 1;
+    margin-left: 2rem;
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
+
+nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.auth-link {
+    font-weight: 500;
+}
+
+/* Dark Mode */
+body.dark-mode {
+    background-color: #201f1f; /* Django dark background */
+    color: #cccccc;
+}
+
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4, body.dark-mode h5, body.dark-mode h6 {
+    color: #e8e6e3;
+}
+
+body.dark-mode a {
+    color: #82d1f5;
+}
+
+body.dark-mode a:hover {
+    color: #a9e1fa;
+}
+
+body.dark-mode header {
+    border-bottom: 1px solid #444444;
+}
+
+body.dark-mode .logo {
+    color: #e8e6e3;
+}
+
+body.dark-mode nav a {
+    color: #cccccc;
+}
+
+/* Pill Switch */
+.theme-switch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    background-color: #e0e0e0;
+    border-radius: 9999px;
+    padding: 4px;
+    width: 48px;
+    height: 24px;
+    position: relative;
+}
+
+body.dark-mode .theme-switch {
+    background-color: #444444;
+}
+
+.theme-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.theme-switch-toggle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.3s;
+    left: 4px;
+}
+
+body.dark-mode .theme-switch-toggle {
+    transform: translateX(24px);
+}
+
+/* Table Styles */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+    background-color: #ffffff;
+}
+
+.data-table th, .data-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.data-table th {
+    background-color: #f9f9f9;
+    font-weight: 600;
+    color: #000000;
+}
+
+.data-table tr:hover {
+    background-color: #f0f0f0;
+}
+
+body.dark-mode .data-table {
+    background-color: #2c2c2c;
+    border: 1px solid #444;
+}
+
+body.dark-mode .data-table th, body.dark-mode .data-table td {
+    border-bottom: 1px solid #444444;
+}
+
+body.dark-mode .data-table th {
+    background-color: #3a3a3a;
+    color: #e8e6e3;
+}
+
+body.dark-mode .data-table tr:hover {
+    background-color: #333333;
+}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Surveys - QnR Platform{% endblock %}
+
+{% block content %}
+    <h2>Select a Survey</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Survey Name</th>
+                <th>Status</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for survey in surveys %}
+                <tr>
+                    <td><a href="{% url 'survey_version_list' survey.id %}">{{ survey.name }}</a></td>
+                    <td>{{ survey.get_status_display }}</td>
+                    <td>{{ survey.created_at|date:"Y-m-d" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

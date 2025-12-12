@@ -1,0 +1,62 @@
+{% if question.allow_multiple_choices and question.use_searchable_dropdown %}
+    <div class="multi-select-dropdown-container">
+        <div class="selected-items-container"></div>
+        <input type="text" class="searchable-dropdown-input" placeholder="Search to add...">
+        <div class="searchable-dropdown-list">
+            {% for option in option_list %}
+                <div class="searchable-dropdown-item multi-select-item"
+                     data-option-id="{{ option.id }}"
+                     data-option-text="{% if question.option_type == 'INDICATOR_LIST' %}{{ option.name }}{% else %}{{ option.text }}{% endif %}">
+                    {% if question.option_type == 'INDICATOR_LIST' %}
+                        {{ option.name }}
+                    {% else %}
+                        {{ option.text }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <button class="confirm-btn" style="margin-top: 10px;">Continue</button>
+    </div>
+
+{% elif question.allow_multiple_choices %}
+    <div class="multi-choice-container">
+        {% for option in option_list %}
+            <label class="multi-choice-option">
+                <input type="checkbox" name="option_{{ question.id }}" value="{{ option.id }}">
+                {% if question.option_type == 'INDICATOR_LIST' %}
+                    {{ option.name }}
+                {% else %}
+                    {{ option.text }}
+                {% endif %}
+            </label>
+        {% endfor %}
+        <button class="confirm-btn">Continue</button>
+    </div>
+
+{% elif question.use_searchable_dropdown %}
+    <div class="searchable-dropdown-container">
+        <input type="text" class="searchable-dropdown-input" placeholder="Search...">
+        <div class="searchable-dropdown-list">
+            {% for option in option_list %}
+                <div class="searchable-dropdown-item" data-option-id="{{ option.id }}">
+                    {% if question.option_type == 'INDICATOR_LIST' %}
+                        {{ option.name }}
+                    {% else %}
+                        {{ option.text }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% else %}
+    {% for option in option_list %}
+        <button class="option-btn" data-option-id="{{ option.id }}">
+            {% if question.option_type == 'INDICATOR_LIST' %}
+                {{ option.name }}
+            {% else %}
+                {{ option.text }}
+            {% endif %}
+        </button>
+    {% endfor %}
+{% endif %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Assessment{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'assessment_runs/css/assessment.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h2>Assessment</h2>
+    <div id="assessment-container">
+        {% include 'assessment_runs/_question_box.html' with question=question %}
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'assessment_runs/js/assessment.js' %}"></script>
+{% endblock %}

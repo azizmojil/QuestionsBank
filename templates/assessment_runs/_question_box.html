@@ -1,0 +1,19 @@
+<div class="question-box" data-question-id="{{ question.id }}">
+    <h3>{{ question.text }}</h3>
+    <p class="explanation">{{ question.explanation }}</p>
+
+    <div class="selected-answer-placeholder"></div>
+
+    <div class="options">
+        {# Determine which list of options to use #}
+        {% if question.option_type == 'STATIC' %}
+            {% with option_list=question.options.all %}
+                {% include "assessment_runs/_options_renderer.html" %}
+            {% endwith %}
+        {% elif question.option_type == 'INDICATOR_LIST' %}
+            {% with option_list=options %}
+                {% include "assessment_runs/_options_renderer.html" %}
+            {% endwith %}
+        {% endif %}
+    </div>
+</div>
