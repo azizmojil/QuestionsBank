@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import AssessmentRun, AssessmentResult, AssessmentFile
+from .models import AssessmentRun, AssessmentResult, AssessmentFile, QuestionClassificationRule
 
 
 @admin.register(AssessmentRun)
@@ -25,3 +25,11 @@ class AssessmentFileAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False
+
+
+@admin.register(QuestionClassificationRule)
+class QuestionClassificationRuleAdmin(admin.ModelAdmin):
+    list_display = ("survey_question", "classification", "priority", "is_active", "updated_at")
+    list_filter = ("is_active", "survey_question__survey_version__survey")
+    search_fields = ("survey_question__text", "classification", "description")
+    ordering = ("survey_question_id", "priority", "id")

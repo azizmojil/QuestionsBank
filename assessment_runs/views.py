@@ -48,7 +48,14 @@ def assessment_page(request, question_id):
 def get_next_question_view(request):
     data = json.loads(request.body)
     question_id = int(data.get('question_id'))
-    option_ids = data.get('option_ids', [])
+    option_ids_raw = data.get('option_ids', [])
+
+    option_ids = []
+    for raw_id in option_ids_raw:
+        try:
+            option_ids.append(int(raw_id))
+        except (TypeError, ValueError):
+            continue
 
     history = request.session.get('assessment_history', [])
 
