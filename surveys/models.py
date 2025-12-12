@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 import datetime
 
 User = get_user_model()
@@ -14,9 +15,9 @@ class Survey(models.Model):
     """
 
     class Status(models.TextChoices):
-        DRAFT = "DRAFT", "Draft"
-        ACTIVE = "ACTIVE", "Active"
-        ARCHIVED = "ARCHIVED", "Archived"
+        DRAFT = "DRAFT", _("مسودة")
+        ACTIVE = "ACTIVE", _("نشط")
+        ARCHIVED = "ARCHIVED", _("مؤرشف")
 
     name = models.CharField(max_length=255, unique=True)
     code = models.CharField(
@@ -90,10 +91,10 @@ class SurveyVersion(models.Model):
         ARCHIVED = "ARCHIVED", "Archived"
 
     class SurveyInterval(models.TextChoices):
-        MONTHLY = "M", "Monthly"
-        QUARTERLY = "Q", "Quarterly"
-        BIANNUALLY = "B", "Biannually"
-        ANNUALLY = "A", "Annually"
+        MONTHLY = "M", _("شهري")
+        QUARTERLY = "Q", _("ربع سنوي")
+        BIANNUALLY = "B", _("نصف سنوي")
+        ANNUALLY = "A", _("سنوي")
 
     survey = models.ForeignKey(
         Survey,
@@ -164,15 +165,15 @@ class SurveyQuestion(models.Model):
     """
 
     class ResponseType(models.TextChoices):
-        BINARY = "BINARY", "Yes/No (Binary)"
-        SINGLE_CHOICE = "SINGLE_CHOICE", "Single Choice"
-        MULTIPLE_CHOICE = "MULTIPLE_CHOICE", "Multiple Choice"
-        FREE_TEXT = "FREE_TEXT", "Free Text"
-        NUMERIC = "NUMERIC", "Numeric"
-        DATE = "DATE", "Date"
-        DATETIME = "DATETIME", "Date & Time"
-        SCALE = "SCALE", "Scale (e.g. 1–5)"
-        MATRIX = "MATRIX", "Matrix"
+        BINARY = "BINARY", _("نعم/لا (ثنائي)")
+        SINGLE_CHOICE = "SINGLE_CHOICE", _("اختيار واحد")
+        MULTIPLE_CHOICE = "MULTIPLE_CHOICE", _("اختيارات متعددة")
+        FREE_TEXT = "FREE_TEXT", _("نص حر")
+        NUMERIC = "NUMERIC", _("رقمي")
+        DATE = "DATE", _("تاريخ")
+        DATETIME = "DATETIME", _("تاريخ ووقت")
+        SCALE = "SCALE", _("مقياس (مثلاً 1–5)")
+        MATRIX = "MATRIX", _("مصفوفة")
 
     survey_version = models.ForeignKey(
         SurveyVersion,

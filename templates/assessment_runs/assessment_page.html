@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n %}
 
-{% block title %}Assessment{% endblock %}
+{% block title %}{% trans "التقييم" %}{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'assessment_runs/css/assessment.css' %}">
@@ -10,12 +10,12 @@
 {% block content %}
     <div class="section-header">
         <div>
-            <p class="eyebrow">Live assessment</p>
-            <h2>Assessment</h2>
-            <p class="lead">Progress through each question. Your choices remain accessible for screen readers and keyboard users.</p>
+            <p class="eyebrow">{% trans "تقييم مباشر" %}</p>
+            <h2>{% trans "التقييم" %}</h2>
+            <p class="lead">{% trans "تقدم خلال كل سؤال. اختياراتك تبقى متاحة لقارئات الشاشة ولمستخدمي لوحة المفاتيح." %}</p>
         </div>
     </div>
-    <div id="assessment-container">
+    <div id="assessment-container" data-select-required="{% trans 'يرجى اختيار خيار واحد على الأقل.' %}">
         {% include 'assessment_runs/_question_box.html' with question=question %}
     </div>
 {% endblock %}

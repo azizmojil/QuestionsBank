@@ -22,6 +22,18 @@ body {
     color: var(--ink);
 }
 
+html[dir="rtl"] body {
+    direction: rtl;
+}
+
+html[dir="rtl"] nav ul {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .header-actions {
+    flex-direction: row-reverse;
+}
+
 @media (max-width: 768px) {
     body {
         padding: 0 1rem;

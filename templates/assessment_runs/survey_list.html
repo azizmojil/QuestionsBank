@@ -1,30 +1,31 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Surveys - QnR Platform{% endblock %}
+{% block title %}{% trans "الاستبيانات - منصة QnR" %}{% endblock %}
 
 {% block content %}
     <div class="section-header">
         <div>
-            <p class="eyebrow">Self assessments</p>
-            <h2>Select a survey</h2>
-            <p class="lead">Choose a survey to start assessing yourself or your team.</p>
+            <p class="eyebrow">{% trans "التقييمات الذاتية" %}</p>
+            <h2>{% trans "اختر استبياناً" %}</h2>
+            <p class="lead">{% trans "اختر استبياناً لبدء تقييم نفسك أو فريقك." %}</p>
         </div>
     </div>
     <div class="card table-card">
         <table class="data-table" aria-describedby="survey-list-caption">
-            <caption id="survey-list-caption">Available surveys with their status and creation date</caption>
+            <caption id="survey-list-caption">{% trans "الاستبيانات المتاحة مع حالتها وتاريخ إنشائها" %}</caption>
             <thead>
                 <tr>
-                    <th scope="col">Survey Name</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Created</th>
+                    <th scope="col">{% trans "اسم الاستبيان" %}</th>
+                    <th scope="col">{% trans "الحالة" %}</th>
+                    <th scope="col">{% trans "تاريخ الإنشاء" %}</th>
                 </tr>
             </thead>
             <tbody>
                 {% for survey in surveys %}
                     <tr>
                         <td><a href="{% url 'survey_version_list' survey.id %}">{{ survey.name }}</a></td>
-                        <td><span class="status-pill neutral" aria-label="Status: {{ survey.get_status_display }}">{{ survey.get_status_display }}</span></td>
+                        <td><span class="status-pill neutral" aria-label="{% blocktrans with status=survey.get_status_display %}الحالة: {{ status }}{% endblocktrans %}">{{ survey.get_status_display }}</span></td>
                         <td>{{ survey.created_at|date:"Y-m-d" }}</td>
                     </tr>
                 {% endfor %}

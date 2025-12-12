@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const assessmentContainer = document.getElementById('assessment-container');
+    const selectRequiredMessage = assessmentContainer?.dataset?.selectRequired || "Please select at least one option.";
     let multiSelectStore = {};
 
     assessmentContainer.addEventListener('click', function (e) {
@@ -52,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
             collapseQuestion(questionBox, selectedTexts);
             fetchNextQuestion(questionId, optionIds);
         } else {
-            alert("Please select at least one option.");
+            alert(selectRequiredMessage);
         }
     }
 

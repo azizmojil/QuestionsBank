@@ -1,42 +1,84 @@
 document.addEventListener('DOMContentLoaded', function () {
     const themeSwitch = document.getElementById('theme-switch');
+    const languageSwitch = document.getElementById('language-switch');
+    const languageForm = document.getElementById('language-switch-form');
+    const languageInput = languageForm ? languageForm.querySelector('input[name="language"]') : null;
     const body = document.body;
-    const themeIcon = themeSwitch.querySelector('.theme-icon');
+    const themeIcon = themeSwitch ? themeSwitch.querySelector('.theme-icon') : null;
 
-    // Check for saved theme in local storage
-    if (localStorage.getItem('theme') === 'dark') {
-        body.classList.add('dark-mode');
-    }
-
-    // Add keyboard accessibility to theme switch
-    themeSwitch.setAttribute('tabindex', '0');
-
-    function syncThemeState() {
-        const isDark = body.classList.contains('dark-mode');
-        themeSwitch.setAttribute('aria-pressed', isDark.toString());
-        themeSwitch.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
-        if (themeIcon) {
-            themeIcon.textContent = isDark ? '🌙' : '☀️';
+    if (themeSwitch) {
+        // Check for saved theme in local storage
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
         }
-    }
 
-    function toggleTheme() {
-        body.classList.toggle('dark-mode');
-        localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+        // Add keyboard accessibility to theme switch
+        themeSwitch.setAttribute('tabindex', '0');
+
+        function syncThemeState() {
+            const isDark = body.classList.contains('dark-mode');
+            const labelLight = themeSwitch.dataset.labelLight || 'Switch to light mode';
+            const labelDark = themeSwitch.dataset.labelDark || 'Switch to dark mode';
+            themeSwitch.setAttribute('aria-pressed', isDark.toString());
+            themeSwitch.setAttribute('aria-label', isDark ? labelLight : labelDark);
+            if (themeIcon) {
+                const moonIcon = themeSwitch.dataset.iconMoon || '🌙';
+                const sunIcon = themeSwitch.dataset.iconSun || '☀️';
+                themeIcon.textContent = isDark ? moonIcon : sunIcon;
+            }
+        }
+
+        function toggleTheme() {
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+            syncThemeState();
+        }
+
+        themeSwitch.addEventListener('click', toggleTheme);
+        
+        // Add keyboard support for theme switch
+        themeSwitch.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleTheme();
+            }
+        });
+
         syncThemeState();
     }
 
-    themeSwitch.addEventListener('click', toggleTheme);
-    
-    // Add keyboard support for theme switch
-    themeSwitch.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            toggleTheme();
-        }
-    });
+    if (languageSwitch && languageForm && languageInput) {
+        const syncLanguageState = () => {
+            const currentLang = languageSwitch.dataset.currentLanguage || 'ar';
+            const nextLang = currentLang === 'ar' ? 'en' : 'ar';
+            languageInput.value = nextLang;
+            const label = currentLang === 'ar' ? languageSwitch.dataset.labelAr : languageSwitch.dataset.labelEn;
+            const ariaLabel = currentLang === 'ar' ? languageSwitch.dataset.switchToEn : languageSwitch.dataset.switchToAr;
+            languageSwitch.setAttribute('aria-label', ariaLabel || '');
+            languageSwitch.setAttribute('aria-pressed', currentLang === 'en');
+            const labelSpan = languageSwitch.querySelector('.language-label');
+            if (labelSpan && label) {
+                labelSpan.textContent = label;
+            }
+        };
 
-    syncThemeState();
+        languageSwitch.addEventListener('click', (e) => {
+            e.preventDefault();
+            const currentLang = languageSwitch.dataset.currentLanguage || 'ar';
+            const nextLang = currentLang === 'ar' ? 'en' : 'ar';
+            languageInput.value = nextLang;
+            languageForm.submit();
+        });
+
+        languageSwitch.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                languageSwitch.click();
+            }
+        });
+
+        syncLanguageState();
+    }
 
     // Add smooth scrolling to anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
