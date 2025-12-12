@@ -24,7 +24,7 @@
                 {% for survey in surveys %}
                     <tr>
                         <td><a href="{% url 'survey_version_list' survey.id %}">{{ survey.name }}</a></td>
-                        <td><span class="status-pill neutral">{{ survey.get_status_display }}</span></td>
+                        <td><span class="status-pill neutral" aria-label="Status: {{ survey.get_status_display }}">{{ survey.get_status_display }}</span></td>
                         <td>{{ survey.created_at|date:"Y-m-d" }}</td>
                     </tr>
                 {% endfor %}

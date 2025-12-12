@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Add keyboard accessibility to theme switch
-    themeSwitch.setAttribute('role', 'button');
     themeSwitch.setAttribute('tabindex', '0');
 
     function syncThemeState() {

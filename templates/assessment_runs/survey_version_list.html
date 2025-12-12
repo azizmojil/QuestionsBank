@@ -24,7 +24,7 @@
                 {% for version in versions %}
                     <tr>
                         <td><a href="{% url 'survey_question_list' version.id %}">{{ version.version_label }}</a></td>
-                        <td><span class="status-pill">{{ version.get_status_display }}</span></td>
+                        <td><span class="status-pill" aria-label="Status: {{ version.get_status_display }}">{{ version.get_status_display }}</span></td>
                         <td>{{ version.version_date|date:"Y-m-d" }}</td>
                     </tr>
                 {% endfor %}
