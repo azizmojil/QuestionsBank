@@ -57,11 +57,13 @@ def get_next_question_view(request):
     numeric_option_ids = []
     freeform_answers = []
     for raw_id in raw_option_ids:
+        raw_str = "" if raw_id is None else str(raw_id).strip()
+        if not raw_str:
+            continue
         try:
-            numeric_option_ids.append(int(raw_id))
-        except (TypeError, ValueError):
-            if raw_id not in (None, ""):
-                freeform_answers.append(str(raw_id))
+            numeric_option_ids.append(int(raw_str))
+        except ValueError:
+            freeform_answers.append(raw_str)
 
     answer_texts = []
     if question.option_type == AssessmentQuestion.OptionType.INDICATOR_LIST:
@@ -73,7 +75,16 @@ def get_next_question_view(request):
 
     answer_texts.extend(freeform_answers)
 
-    answer_to_store = answer_texts[0] if len(answer_texts) == 1 else answer_texts
+    # Preserve existing structure: store a scalar for single answers, list for multiple;
+    # keep empty answers as [] because downstream history consumers expect list-like values.
+    def _normalize_answer_payload(values):
+        if not values:
+            return []
+        if len(values) == 1:
+            return values[0]
+        return values
+
+    answer_to_store = _normalize_answer_payload(answer_texts)
 
     # Update the current question's entry in history with the answer
     # We need to find the entry for this question. It should be the last one, but let's be safe.
@@ -81,7 +92,6 @@ def get_next_question_view(request):
         if item['question_id'] == question_id:
             item['answer'] = answer_to_store
             break
-    request.session['assessment_history'] = history
 
     # NOW reconstruct responses and used rules from the UPDATED history
     responses = {str(item['question_id']): item.get('answer') for item in history if 'answer' in item}
@@ -93,15 +103,18 @@ def get_next_question_view(request):
         used_rule_ids=used_rule_ids
     )
 
+    response = None
     if result and result.next_question:
         # Add the new step to history
         history.append({'question_id': result.next_question.id, 'rule_id': result.rule.id if result.rule else None})
-        request.session['assessment_history'] = history
 
         context = _prepare_context(result.next_question)
-        return render(request, 'assessment_runs/_question_box.html', context)
+        response = render(request, 'assessment_runs/_question_box.html', context)
     else:
-        return HttpResponse(status=204)
+        response = HttpResponse(status=204)
+
+    request.session['assessment_history'] = history
+    return response
 
 @require_POST
 def rewind_assessment(request):
