@@ -63,6 +63,32 @@ class AssessmentResult(models.Model):
         return f"Result: {self.survey_question} in {self.assessment_run}"
 
 
+class QuestionClassificationRule(models.Model):
+    """Rule used to classify a SurveyQuestion after an assessment run."""
+
+    survey_question = models.ForeignKey(
+        SurveyQuestion,
+        on_delete=models.CASCADE,
+        related_name="classification_rules",
+    )
+    classification = models.CharField(max_length=100)
+    condition = models.TextField(
+        blank=True,
+        help_text="JSON logic evaluated by the ClassificationEngine.",
+    )
+    priority = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    description = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["survey_question_id", "priority", "id"]
+
+    def __str__(self):
+        return self.description or f"{self.classification} for {self.survey_question}"
+
+
 class AssessmentFile(models.Model):
     """File uploaded as part of an assessment result."""
     assessment_result = models.ForeignKey(AssessmentResult, on_delete=models.CASCADE, related_name="files")

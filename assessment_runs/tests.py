@@ -2,6 +2,9 @@ from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from assessment_flow.models import AssessmentQuestion, AssessmentFlowRule
+from assessment_runs.engine import ClassificationEngine
+from assessment_runs.models import QuestionClassificationRule
+from surveys.models import Survey, SurveyVersion, SurveyQuestion
 import json
 
 User = get_user_model()
@@ -134,3 +137,63 @@ class RewindAssessmentTestCase(TestCase):
         self.assertIsNotNone(q2_entry)
         self.assertEqual(q2_entry['rule_id'], self.rule_a.id)
         self.assertEqual(q2_entry.get('answer'), 'test_option')
+
+
+class ClassificationEngineTestCase(TestCase):
+    """Test cases for the ClassificationEngine to ensure rule evaluation works like routing logic."""
+
+    def setUp(self):
+        self.survey = Survey.objects.create(name="Demo Survey", code="DEMO")
+        self.version = SurveyVersion.objects.create(survey=self.survey, interval=SurveyVersion.SurveyInterval.ANNUALLY)
+        self.q1 = SurveyQuestion.objects.create(survey_version=self.version, text="Survey Question 1")
+        self.q2 = SurveyQuestion.objects.create(survey_version=self.version, text="Survey Question 2")
+
+    def test_classify_question_matches_value_condition(self):
+        rule = QuestionClassificationRule.objects.create(
+            survey_question=self.q1,
+            classification="HIGH",
+            condition=json.dumps({
+                "conditions": [
+                    {"question": self.q1.id, "operator": "==", "value": "Yes"}
+                ]
+            }),
+            priority=1,
+            is_active=True,
+        )
+
+        engine = ClassificationEngine()
+        responses = {str(self.q1.id): "Yes"}
+
+        result = engine.classify_question(self.q1, responses)
+
+        self.assertEqual(result.question, self.q1)
+        self.assertEqual(result.classification, "HIGH")
+        self.assertEqual(result.rule, rule)
+
+    def test_fallback_rule_used_when_no_conditions_match(self):
+        QuestionClassificationRule.objects.create(
+            survey_question=self.q2,
+            classification="CRITICAL",
+            condition=json.dumps({
+                "conditions": [
+                    {"question": self.q1.id, "operator": "==", "value": "No"}
+                ]
+            }),
+            priority=1,
+            is_active=True,
+        )
+        fallback_rule = QuestionClassificationRule.objects.create(
+            survey_question=self.q2,
+            classification="LOW",
+            condition=json.dumps({"fallback": True}),
+            priority=99,
+            is_active=True,
+        )
+
+        engine = ClassificationEngine()
+        responses = {str(self.q1.id): "Yes"}
+
+        result = engine.classify_question(self.q2, responses)
+
+        self.assertEqual(result.classification, "LOW")
+        self.assertEqual(result.rule, fallback_rule)
