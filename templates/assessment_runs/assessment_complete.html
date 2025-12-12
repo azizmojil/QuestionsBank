@@ -8,7 +8,11 @@
         <h2>Assessment Complete</h2>
         <p class="lead">Thank you for taking the time to complete this assessment. Your responses have been recorded.</p>
         <div class="mt-2">
-            <a href="{% url 'survey_list' %}" class="btn">Return to survey list</a>
+            {% if survey_version %}
+                <a href="{% url 'survey_question_list' survey_version.id %}" class="btn">Return to question list</a>
+            {% else %}
+                <a href="{% url 'survey_list' %}" class="btn">Return to survey list</a>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

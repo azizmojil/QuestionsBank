@@ -1,11 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
+from django.utils import timezone
 import json
 from surveys.models import Survey, SurveyVersion, SurveyQuestion
 from assessment_flow.models import AssessmentQuestion, AssessmentOption
 from indicators.models import IndicatorListItem
 from assessment_flow.engine import RoutingEngine
+from .models import AssessmentRun, AssessmentResult
 
 def survey_list(request):
     surveys = Survey.objects.all()
@@ -37,6 +39,17 @@ def _prepare_context(question):
 
 def assessment_page(request, question_id):
     question = get_object_or_404(AssessmentQuestion, pk=question_id)
+
+    survey_question_id = request.GET.get('survey_question_id')
+    assessment_metadata = {}
+    if survey_question_id:
+        survey_question = SurveyQuestion.objects.filter(pk=survey_question_id).first()
+        if survey_question:
+            assessment_metadata = {
+                'survey_question_id': survey_question.id,
+                'survey_version_id': survey_question.survey_version_id,
+            }
+    request.session['assessment_metadata'] = assessment_metadata
 
     # Start a fresh assessment history
     request.session['assessment_history'] = [{'question_id': question_id, 'rule_id': None}]
@@ -142,5 +155,34 @@ def rewind_assessment(request):
     return JsonResponse({'status': 'ok'})
 
 def assessment_complete(request):
-    request.session.pop('assessment_history', None)
-    return render(request, 'assessment_runs/assessment_complete.html')
+    history = request.session.pop('assessment_history', [])
+    metadata = request.session.pop('assessment_metadata', {})
+
+    survey_question = None
+    survey_version = None
+    if metadata:
+        survey_question = SurveyQuestion.objects.filter(pk=metadata.get('survey_question_id')).first()
+        survey_version = SurveyVersion.objects.filter(pk=metadata.get('survey_version_id')).first()
+
+    assessment_run = None
+    if survey_version:
+        assessment_run = AssessmentRun.objects.create(
+            survey_version=survey_version,
+            status=AssessmentRun.Status.COMPLETE,
+            started_at=timezone.now(),
+            completed_at=timezone.now(),
+            created_by=request.user if request.user.is_authenticated else None,
+        )
+
+    if assessment_run and survey_question:
+        AssessmentResult.objects.update_or_create(
+            assessment_run=assessment_run,
+            survey_question=survey_question,
+            defaults={
+                'status': AssessmentResult.Status.COMPLETE,
+                'assessed_by': request.user if request.user.is_authenticated else None,
+                'assessment_path': history or [],
+            },
+        )
+
+    return render(request, 'assessment_runs/assessment_complete.html', {'survey_version': survey_version})
