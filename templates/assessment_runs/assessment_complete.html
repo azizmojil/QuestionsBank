@@ -3,7 +3,12 @@
 {% block title %}Assessment Complete - QnR Platform{% endblock %}
 
 {% block content %}
-    <h2>Assessment Complete</h2>
-    <p>Thank you for completing the assessment.</p>
-    <p><a href="{% url 'survey_list' %}">Return to Survey List</a></p>
+    <div class="card text-center">
+        <p class="eyebrow">Well done</p>
+        <h2>Assessment Complete</h2>
+        <p class="lead">Thank you for taking the time to complete this assessment. Your responses have been recorded.</p>
+        <div class="mt-2">
+            <a href="{% url 'survey_list' %}" class="btn">Return to survey list</a>
+        </div>
+    </div>
 {% endblock %}

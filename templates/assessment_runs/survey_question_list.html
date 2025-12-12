@@ -3,27 +3,36 @@
 {% block title %}Survey Questions - {{ version.version_label }}{% endblock %}
 
 {% block content %}
-    <h2>Questions for {{ version.survey.name }} - {{ version.version_label }}</h2>
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Question Text</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for question in questions %}
+    <div class="section-header">
+        <div>
+            <p class="eyebrow">Survey: {{ version.survey.name }}</p>
+            <h2>Questions in {{ version.version_label }}</h2>
+            <p class="lead">Preview the questions and start an assessment from any entry.</p>
+        </div>
+    </div>
+    <div class="card table-card">
+        <table class="data-table" aria-describedby="question-list-caption">
+            <caption id="question-list-caption">Questions and assessment actions</caption>
+            <thead>
                 <tr>
-                    <td>{{ question.text }}</td>
-                    <td>
-                        {% if first_assessment_question %}
-                            <a href="{% url 'assessment_page' first_assessment_question.id %}?survey_question_id={{ question.id }}">Start Assessment</a>
-                        {% else %}
-                            No assessment configured
-                        {% endif %}
-                    </td>
+                    <th scope="col">Question Text</th>
+                    <th scope="col">Action</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for question in questions %}
+                    <tr>
+                        <td>{{ question.text }}</td>
+                        <td>
+                            {% if first_assessment_question %}
+                                <a href="{% url 'assessment_page' first_assessment_question.id %}?survey_question_id={{ question.id }}" class="btn btn-secondary">Start assessment</a>
+                            {% else %}
+                                No assessment configured
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% if question.allow_multiple_choices and question.use_searchable_dropdown %}
     <div class="multi-select-dropdown-container">
         <div class="selected-items-container"></div>
-        <input type="text" class="searchable-dropdown-input" placeholder="Search to add...">
+        <input type="text" class="searchable-dropdown-input" placeholder="Search to add..." aria-label="Search options to add">
         <div class="searchable-dropdown-list">
             {% for option in option_list %}
                 <div class="searchable-dropdown-item multi-select-item"
@@ -35,7 +35,7 @@
 
 {% elif question.use_searchable_dropdown %}
     <div class="searchable-dropdown-container">
-        <input type="text" class="searchable-dropdown-input" placeholder="Search...">
+        <input type="text" class="searchable-dropdown-input" placeholder="Search..." aria-label="Search options">
         <div class="searchable-dropdown-list">
             {% for option in option_list %}
                 <div class="searchable-dropdown-item" data-option-id="{{ option.id }}">

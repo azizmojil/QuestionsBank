@@ -3,23 +3,32 @@
 {% block title %}Survey Versions - {{ survey.name }}{% endblock %}
 
 {% block content %}
-    <h2>Select a Version for {{ survey.name }}</h2>
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Version Label</th>
-                <th>Status</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for version in versions %}
+    <div class="section-header">
+        <div>
+            <p class="eyebrow">Survey: {{ survey.name }}</p>
+            <h2>Select a version</h2>
+            <p class="lead">Pick the version you want to run. Each version captures the state of your questions at a point in time.</p>
+        </div>
+    </div>
+    <div class="card table-card">
+        <table class="data-table" aria-describedby="version-list-caption">
+            <caption id="version-list-caption">Available versions for {{ survey.name }}</caption>
+            <thead>
                 <tr>
-                    <td><a href="{% url 'survey_question_list' version.id %}">{{ version.version_label }}</a></td>
-                    <td>{{ version.get_status_display }}</td>
-                    <td>{{ version.version_date|date:"Y-m-d" }}</td>
+                    <th scope="col">Version Label</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Date</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for version in versions %}
+                    <tr>
+                        <td><a href="{% url 'survey_question_list' version.id %}">{{ version.version_label }}</a></td>
+                        <td><span class="status-pill" aria-label="Status: {{ version.get_status_display }}">{{ version.get_status_display }}</span></td>
+                        <td>{{ version.version_date|date:"Y-m-d" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
