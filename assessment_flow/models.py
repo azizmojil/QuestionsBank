@@ -77,6 +77,7 @@ class AssessmentQuestion(models.Model):
         if lang == "en" and self.text_en:
             return self.text_en
         return self.text_en or self.text_ar
+    display_text.fget.short_description = _("السؤال")
 
     @property
     def display_explanation(self) -> str:
@@ -97,8 +98,8 @@ class AssessmentOption(models.Model):
         URL = "URL", _("إدخال رابط")
 
     question = models.ForeignKey(AssessmentQuestion, related_name="options", on_delete=models.CASCADE)
-    text_ar = models.TextField(blank=True, verbose_name=_("السؤال [عربية]"))
-    text_en = models.TextField(blank=True, verbose_name=_("السؤال [إنجليزية]"))
+    text_ar = models.TextField(blank=True, verbose_name=_("الجواب [عربية]"))
+    text_en = models.TextField(blank=True, verbose_name=_("الجواب [إنجليزية]"))
     explanation_ar = models.TextField(blank=True, verbose_name=_("التوضيح [عربية]"))
     explanation_en = models.TextField(blank=True, verbose_name=_("التوضيح [إنجليزية]"))
     response_type = models.CharField(

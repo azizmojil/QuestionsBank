@@ -1,19 +1,28 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import get_language
 
 
 class ResponseType(models.Model):
     """
     Defines a type of response, e.g., 'Single Choice', 'Free Text'.
     """
-    name = models.CharField(
+    name_ar = models.CharField(
         max_length=100,
         unique=True,
-        verbose_name=_("نوع الاستجابة"),
+        verbose_name=_("نوع الاستجابة [عربية]"),
+    )
+    name_en = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_("نوع الاستجابة [إنجليزية]"),
     )
 
     def __str__(self):
-        return self.name
+        lang = get_language()
+        if lang == 'ar':
+            return self.name_ar
+        return self.name_en
 
     class Meta:
         verbose_name = _("نوع الاستجابة")
@@ -28,7 +37,14 @@ class Response(models.Model):
     text_en = models.CharField(max_length=255, verbose_name=_("الجواب [إنجليزية]"))
 
     def __str__(self):
-        return f"{self.text_en} / {self.text_ar}"
+        return self.display_text
+
+    @property
+    def display_text(self):
+        lang = get_language()
+        if lang == 'ar':
+            return self.text_ar
+        return self.text_en
 
     class Meta:
         verbose_name = _("إجابة")
@@ -53,19 +69,20 @@ class SurveyQuestion(models.Model):
     """
     text_ar = models.TextField(verbose_name=_("السؤال [عربية]"))
     text_en = models.TextField(verbose_name=_("السؤال [إنجليزية]"))
-    response_type = models.ForeignKey(
-        ResponseType,
-        on_delete=models.PROTECT,  # Prevent deleting a type that is in use
+    response_groups = models.ManyToManyField(
+        ResponseGroup,
         related_name="questions",
-    )
-    possible_responses = models.ManyToManyField(
-        Response,
-        blank=True,  # Not all questions have predefined responses (e.g., free text)
-        related_name="questions",
-        help_text=_("حدد الإجابات المحتملة لأسئلة الاختيار."),
+        verbose_name=_("مجموعات الإجابات"),
     )
 
     def __str__(self):
+        return self.display_text
+
+    @property
+    def display_text(self):
+        lang = get_language()
+        if lang == 'ar':
+            return self.text_ar
         return self.text_en
 
     class Meta:

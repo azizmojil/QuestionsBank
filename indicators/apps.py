@@ -1,10 +1,10 @@
 # indicators/apps.py
 
 from django.apps import AppConfig
+from django.utils.translation import gettext_lazy as _
 
 
 class IndicatorsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "indicators"
-    verbose_name = "Indicators"
-
+    verbose_name = _("المؤشرات")

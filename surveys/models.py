@@ -80,6 +80,7 @@ class Survey(models.Model):
             return self.name_en
         # Fallbacks for missing translations
         return self.name_en or self.name_ar
+    display_name.fget.short_description = _("اسم الاستبيان")
 
     def save(self, *args, **kwargs):
         # If code is empty, you can optionally derive a default from slug
@@ -208,6 +209,7 @@ class SurveyQuestion(models.Model):
     code = models.CharField(
         max_length=50,
         blank=True,
+        verbose_name=_("الرمز"),
         help_text=_("رمز سؤال اختياري مثل Q1 أو A01."),
     )
 
@@ -230,6 +232,7 @@ class SurveyQuestion(models.Model):
     section_label = models.CharField(
         max_length=255,
         blank=True,
+        verbose_name=_("مسمى القسم"),
         help_text=_("تسمية قسم منطقية للتقارير فقط."),
     )
 
@@ -263,8 +266,7 @@ class SurveyQuestion(models.Model):
     def short_text(self) -> str:
         text = self.display_text
         return text[:150] + ("..." if len(text) > 150 else "")
-
-    short_text.short_description = "Question Text"
+    short_text.short_description = _("السؤال")
 
     @property
     def display_text(self) -> str:

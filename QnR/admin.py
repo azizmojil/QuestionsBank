@@ -5,14 +5,22 @@ from django.utils.translation import gettext_lazy as _
 
 @admin.register(ResponseType)
 class ResponseTypeAdmin(admin.ModelAdmin):
-    list_display = ("name",)
-    search_fields = ("name",)
+    list_display = ("display_name", "id")
+    search_fields = ("name_ar", "name_en")
+
+    def display_name(self, obj):
+        return str(obj)
+    display_name.short_description = _("نوع الاستجابة")
 
 
 @admin.register(Response)
 class ResponseAdmin(admin.ModelAdmin):
-    list_display = ("text_en", "text_ar")
+    list_display = ("display_text", "id")
     search_fields = ("text_en", "text_ar")
+
+    def display_text(self, obj):
+        return obj.display_text
+    display_text.short_description = _("الجواب")
 
 
 class ResponseInline(admin.TabularInline):
@@ -24,13 +32,25 @@ class ResponseInline(admin.TabularInline):
 
 @admin.register(ResponseGroup)
 class ResponseGroupAdmin(admin.ModelAdmin):
+    search_fields = ("name",)
     inlines = [ResponseInline]
     exclude = ("responses",)
 
 
+class ResponseGroupInline(admin.TabularInline):
+    model = SurveyQuestion.response_groups.through
+    verbose_name = _("مجموعة الإجابات")
+    verbose_name_plural = _("مجموعات الإجابات")
+    extra = 1
+
+
 @admin.register(SurveyQuestion)
 class SurveyQuestionAdmin(admin.ModelAdmin):
-    list_display = ("text_en", "response_type")
-    list_filter = ("response_type",)
+    list_display = ("display_text",)
     search_fields = ("text_en", "text_ar")
-    filter_horizontal = ("possible_responses",)  # Use a more user-friendly widget for many-to-many
+    inlines = [ResponseGroupInline]
+    exclude = ("response_groups",)
+
+    def display_text(self, obj):
+        return obj.display_text
+    display_text.short_description = _("السؤال")

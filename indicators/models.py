@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import get_language
 
 from surveys.models import SurveyVersion, SurveyQuestion
 
@@ -10,117 +11,128 @@ class Indicator(models.Model):
     Example: Unemployment rate, Internet penetration, etc.
     """
 
-    class Classification(models.TextChoices):
-        NATIONAL = "NATIONAL", _("وطني")
-        REGIONAL = "REGIONAL", _("إقليمي")
-        INTERNATIONAL = "INTERNATIONAL", _("دولي")
+    class Meta:
+        verbose_name = _("المؤشر")
+        verbose_name_plural = _("المؤشرات")
+        ordering = ["-created_at"]
 
-    name = models.CharField(
+    name_ar = models.CharField(
         max_length=255,
-        help_text=_("اسم المؤشر المقروء."),
+        verbose_name=_("الاسم [عربية]"),
+    )
+    name_en = models.CharField(
+        max_length=255,
+        verbose_name=_("الاسم [إنجليزية]"),
     )
 
     code = models.CharField(
         max_length=50,
         blank=True,
-        help_text=_("رمز اختياري مثل IND_01 أو SDG_8_5_2."),
-    )
-
-    classification = models.CharField(
-        max_length=20,
-        choices=Classification.choices,
-        default=Classification.NATIONAL,
-        help_text=_("تصنيف المؤشر."),
-    )
-
-    unit = models.CharField(
-        max_length=100,
-        blank=True,
-        help_text=_("وحدة القياس مثل % أو 'أشخاص'."),
-    )
-
-    frequency = models.CharField(
-        max_length=50,
-        blank=True,
-        help_text=_("تواتر النشر مثل شهري أو ربع سنوي."),
-    )
-
-    methodology_reference = models.URLField(
-        blank=True,
-        help_text=_("رابط اختياري لمنهجية أو وثائق بيانات."),
-    )
-
-    notes = models.TextField(
-        blank=True,
-        help_text=_("ملاحظات حرة أو تعليقات منهجية."),
+        verbose_name=_("الرمز"),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        ordering = ["-created_at"]
-
     def __str__(self) -> str:
-        base = self.name
+        lang = get_language()
+        name = self.name_en if lang == 'en' else self.name_ar
         if self.code:
-            base = f"{self.code} - {base}"
-        return base
+            return f"{self.code} - {name}"
+        return name
+
+
+class Classification(models.Model):
+    name_ar = models.CharField(max_length=100, unique=True, verbose_name=_("الاسم [عربية]"))
+    name_en = models.CharField(max_length=100, unique=True, verbose_name=_("الاسم [إنجليزية]"))
+
+    def __str__(self):
+        lang = get_language()
+        return self.name_en if lang == 'en' else self.name_ar
+
+    class Meta:
+        verbose_name = _("تصنيف")
+        verbose_name_plural = _("التصنيفات")
+
+
+class ClassificationIndicatorListItem(models.Model):
+    classification = models.ForeignKey(Classification, on_delete=models.CASCADE)
+    indicatorlistitem = models.ForeignKey("IndicatorListItem", on_delete=models.CASCADE, verbose_name=_("اسم المؤشر"))
+
+    class Meta:
+        verbose_name = _("عنصر قائمة مؤشر التصنيف")
+        verbose_name_plural = _("عناصر قائمة مؤشر التصنيف")
+
+
+class IndicatorClassification(models.Model):
+    indicator = models.ForeignKey(
+        Indicator,
+        on_delete=models.CASCADE,
+        related_name="classifications",
+        verbose_name=_("المؤشر"),
+    )
+    classification = models.ForeignKey(
+        Classification,
+        on_delete=models.CASCADE,
+        verbose_name=_("التصنيف"),
+    )
+
+    class Meta:
+        verbose_name = _("تصنيف المؤشر")
+        verbose_name_plural = _("تصنيفات المؤشر")
+        unique_together = ("indicator", "classification")
+
+
+class IndicatorTracking(models.Model):
+    class TrackingStatus(models.TextChoices):
+        TRACKED = "TRACKED", _("متابع")
+        NOT_TRACKED = "NOT_TRACKED", _("غير متابع")
+
+    indicator_list_item = models.ForeignKey(
+        "IndicatorListItem",
+        on_delete=models.CASCADE,
+        related_name="tracking_info",
+        verbose_name=_("عنصر قائمة المؤشر"),
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=TrackingStatus.choices,
+        verbose_name=_("الحالة"),
+    )
+
+    class Meta:
+        verbose_name = _("تتبع المؤشر")
+        verbose_name_plural = _("معلومات تتبع المؤشر")
 
 
 class IndicatorListItem(models.Model):
     """Individual item within an Indicator, representing a specific survey question or data point."""
 
-    class TrackingStatus(models.TextChoices):
-        TRACKED = "TRACKED", _("متابع من الجهة المختصة")
-        NOT_TRACKED = "NOT_TRACKED", _("غير متابع من الجهة المختصة")
+    class Meta:
+        verbose_name = _("اسم المؤشر")
+        verbose_name_plural = _("أسماء المؤشرات")
+        ordering = ["id"]
+        unique_together = ("indicator", "name")
 
     indicator = models.ForeignKey(
         Indicator,
         on_delete=models.CASCADE,
         related_name="items",
+        verbose_name=_("المؤشر"),
     )
 
     name = models.CharField(
         max_length=255,
+        verbose_name=_("الاسم"),
         help_text=_("اسم عنصر قائمة المؤشر."),
     )
 
     code = models.CharField(
         max_length=50,
         blank=True,
+        verbose_name=_("الرمز"),
         help_text=_("رمز اختياري لعنصر القائمة."),
     )
 
-    tracking_status = models.CharField(
-        max_length=20,
-        choices=TrackingStatus.choices,
-        blank=True,
-        null=True,
-        help_text=_("ما إذا كان هذا العنصر متابعاً من الجهة المختصة."),
-    )
-
-    survey_version = models.ForeignKey(
-        SurveyVersion,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="indicator_list_items",
-        help_text=_("نسخة الاستبيان التي يُعرَّف عليها هذا العنصر."),
-    )
-
-    survey_question = models.ForeignKey(
-        SurveyQuestion,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="indicator_list_items",
-        help_text=_("سؤال الاستبيان الذي يعرّف أو يرفد هذا العنصر."),
-    )
-
-    class Meta:
-        ordering = ["id"]
-        unique_together = ("indicator", "name")
-
     def __str__(self) -> str:
-        return f"{self.indicator.name} - {self.name}"
+        return f"{self.indicator} - {self.name}"
