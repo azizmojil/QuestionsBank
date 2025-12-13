@@ -16,10 +16,10 @@
 - **Authentication/Authorization:** Core assessment and survey views are publicly accessible without authentication or authorization; only the Django admin is gated. There is no role-based access control around assessment creation/run endpoints.
 - **Input handling:** CSRF middleware is enabled and templates auto-escape by default. Assessment AJAX calls include the CSRF token. JSON payloads are minimally validated; option IDs are coerced to ints but lack deeper validation/throttling.
 - **File uploads:** AssessmentFile uses a FileField without content-type/size validation or storage segregation; upload path helper indirection is present but no sanitization or AV scanning is applied.
-- **Dependency posture:** `requirements.txt` references local build artifacts and cannot be installed in this environment, so Django is not available here and the test suite cannot run. Dependency provenance/pinning is unclear.
+- **Dependency posture:** `requirements.txt` references local build artifacts instead of pinned releases, hindering reproducibility and supply-chain verification; Django should come from trusted indexes before deployment.
 - **Frontend:** Theme/language scripts rely on `innerText` and avoid unsanitized HTML. Server-rendered fragments are injected via `innerHTML`; they rely on backend escaping. No Content Security Policy or other browser hardening headers are configured.
 - **Data protection/ops:** SQLite is used by default with no encryption. No settings for secure cookies, session expiry, rate limiting, or audit logging are present.
-- **Testing status:** `python manage.py test` fails because Django is not installed (requirements file references local build paths).
+- **Testing status:** Baseline `python manage.py test` could not run here because Django was not installable from the current requirements file (local build paths).
 
 ### Future improvements (prioritized)
 - Move secrets (SECRET_KEY, database creds) and environment-specific settings out of source control; set DEBUG=False and define ALLOWED_HOSTS for deployed environments.
