@@ -13,6 +13,7 @@ class SurveyBuilderViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, _("منشئ الاستبيان"))
         self.assertIn("response_types", response.context)
+        self.assertIn("available_questions", response.context)
 
     def test_matrix_response_type_is_available(self):
         response = self.client.get(reverse("survey_builder"))
@@ -26,6 +27,29 @@ class SurveyBuilderViewTests(TestCase):
         self.assertNotContains(response, "Live blueprint")
         self.assertNotContains(response, "Response types available")
         self.assertNotContains(response, "Design-first")
+
+    def test_builder_uses_question_bank_choices(self):
+        survey = Survey.objects.create(
+            name_ar="بنك الأسئلة",
+            name_en="Question Bank",
+            code="BANK1",
+        )
+        version = SurveyVersion.objects.create(
+            survey=survey,
+            interval=SurveyVersion.SurveyInterval.MONTHLY,
+        )
+        question = SurveyQuestion.objects.create(
+            survey_version=version,
+            text_ar="سؤال من القاعدة",
+            text_en="Banked question",
+            response_type=SurveyQuestion.ResponseType.SINGLE_CHOICE,
+        )
+
+        response = self.client.get(reverse("survey_builder"))
+
+        self.assertContains(response, question.display_text)
+        self.assertContains(response, f'value="{question.id}"')
+        self.assertNotContains(response, 'class="question-text"')
 
 
 class SurveyVersionStatusTranslationTests(TestCase):
