@@ -1,3 +1,4 @@
+from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -38,9 +39,9 @@ class SurveyVersionStatusTranslationTests(TestCase):
 class SurveyLocalizationTests(TestCase):
     def setUp(self):
         self.survey = Survey.objects.create(
-            name="Localized Survey",
             name_ar="استبيان مترجم",
             name_en="Localized Survey",
+            code="LOCALIZED",
         )
         self.version = SurveyVersion.objects.create(
             survey=self.survey,
@@ -48,7 +49,6 @@ class SurveyLocalizationTests(TestCase):
         )
         self.question = SurveyQuestion.objects.create(
             survey_version=self.version,
-            text="Legacy text",
             text_ar="نص السؤال",
             text_en="Question text",
         )
@@ -64,3 +64,26 @@ class SurveyLocalizationTests(TestCase):
             self.assertEqual(self.question.display_text, "نص السؤال")
         with override("en"):
             self.assertEqual(self.question.display_text, "Question text")
+
+
+class SurveyConstraintTests(TestCase):
+    def test_survey_names_are_unique(self):
+        Survey.objects.create(
+            name_ar="استبيان ١",
+            name_en="Survey 1",
+            code="SURV1",
+        )
+
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            Survey.objects.create(
+                name_ar="استبيان ١",
+                name_en="Survey 2",
+                code="SURV2",
+            )
+
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            Survey.objects.create(
+                name_ar="استبيان ٢",
+                name_en="Survey 1",
+                code="SURV3",
+            )

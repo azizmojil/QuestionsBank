@@ -18,10 +18,12 @@ class Indicator(models.Model):
 
     name_ar = models.CharField(
         max_length=255,
+        unique=True,
         verbose_name=_("الاسم [عربية]"),
     )
     name_en = models.CharField(
         max_length=255,
+        unique=True,
         verbose_name=_("الاسم [إنجليزية]"),
     )
 
