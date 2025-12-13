@@ -19,9 +19,9 @@ class RewindAssessmentTestCase(TestCase):
         self.client = Client()
         
         # Create test questions
-        self.q1 = AssessmentQuestion.objects.create(text="Question 1", text_ar="سؤال 1")
-        self.q2 = AssessmentQuestion.objects.create(text="Question 2", text_ar="سؤال 2")
-        self.q3 = AssessmentQuestion.objects.create(text="Question 3", text_ar="سؤال 3")
+        self.q1 = AssessmentQuestion.objects.create(text_en="Question 1", text_ar="سؤال 1")
+        self.q2 = AssessmentQuestion.objects.create(text_en="Question 2", text_ar="سؤال 2")
+        self.q3 = AssessmentQuestion.objects.create(text_en="Question 3", text_ar="سؤال 3")
         
         # Create rules
         self.rule_a = AssessmentFlowRule.objects.create(
@@ -144,10 +144,10 @@ class ClassificationEngineTestCase(TestCase):
     """Test cases for the ClassificationEngine to ensure rule evaluation works like routing logic."""
 
     def setUp(self):
-        self.survey = Survey.objects.create(name="Demo Survey", name_ar="استبيان تجريبي", name_en="Demo Survey", code="DEMO")
+        self.survey = Survey.objects.create(name_ar="استبيان تجريبي", name_en="Demo Survey", code="DEMO")
         self.version = SurveyVersion.objects.create(survey=self.survey, interval=SurveyVersion.SurveyInterval.ANNUALLY)
-        self.q1 = SurveyQuestion.objects.create(survey_version=self.version, text="Survey Question 1", text_ar="سؤال استبيان 1", text_en="Survey Question 1")
-        self.q2 = SurveyQuestion.objects.create(survey_version=self.version, text="Survey Question 2", text_ar="سؤال استبيان 2", text_en="Survey Question 2")
+        self.q1 = SurveyQuestion.objects.create(survey_version=self.version, text_ar="سؤال استبيان 1", text_en="Survey Question 1")
+        self.q2 = SurveyQuestion.objects.create(survey_version=self.version, text_ar="سؤال استبيان 2", text_en="Survey Question 2")
 
     def test_classify_question_matches_value_condition(self):
         rule = QuestionClassificationRule.objects.create(
@@ -202,10 +202,9 @@ class ClassificationEngineTestCase(TestCase):
 
 class AssessmentLocalizationTests(TestCase):
     def test_option_display_text_switches_language(self):
-        question = AssessmentQuestion.objects.create(text="Assess", text_ar="قيّم")
+        question = AssessmentQuestion.objects.create(text_en="Assess", text_ar="قيّم")
         option = AssessmentOption.objects.create(
             question=question,
-            text="Yes",
             text_ar="نعم",
             text_en="Yes",
         )
@@ -224,21 +223,19 @@ class AssessmentCompletionSaveTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.survey = Survey.objects.create(name="Demo Survey", name_ar="استبيان تجريبي", name_en="Demo Survey", code="DEMO-SAVE")
+        self.survey = Survey.objects.create(name_ar="استبيان تجريبي", name_en="Demo Survey", code="DEMO-SAVE")
         self.version = SurveyVersion.objects.create(
             survey=self.survey,
             interval=SurveyVersion.SurveyInterval.ANNUALLY,
         )
         self.survey_question = SurveyQuestion.objects.create(
             survey_version=self.version,
-            text="Survey Question",
             text_ar="سؤال استبيان",
             text_en="Survey Question",
         )
-        self.assessment_question = AssessmentQuestion.objects.create(text="Assess this", text_ar="قيّم هذا", text_en="Assess this")
+        self.assessment_question = AssessmentQuestion.objects.create(text_ar="قيّم هذا", text_en="Assess this")
         self.option = AssessmentOption.objects.create(
             question=self.assessment_question,
-            text="Yes",
             text_ar="نعم",
             text_en="Yes",
         )

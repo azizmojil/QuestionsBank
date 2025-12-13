@@ -38,7 +38,6 @@ class SurveyVersionStatusTranslationTests(TestCase):
 class SurveyLocalizationTests(TestCase):
     def setUp(self):
         self.survey = Survey.objects.create(
-            name="Localized Survey",
             name_ar="استبيان مترجم",
             name_en="Localized Survey",
         )
@@ -48,7 +47,6 @@ class SurveyLocalizationTests(TestCase):
         )
         self.question = SurveyQuestion.objects.create(
             survey_version=self.version,
-            text="Legacy text",
             text_ar="نص السؤال",
             text_en="Question text",
         )

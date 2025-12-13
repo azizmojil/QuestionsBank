@@ -9,10 +9,10 @@ class RoutingEngineTestCase(TestCase):
     def setUp(self):
         """Set up test questions and rules."""
         # Create test questions
-        self.q1 = AssessmentQuestion.objects.create(text="Question 1")
-        self.q2 = AssessmentQuestion.objects.create(text="Question 2")
-        self.q3 = AssessmentQuestion.objects.create(text="Question 3")
-        self.q4 = AssessmentQuestion.objects.create(text="Question 4")
+        self.q1 = AssessmentQuestion.objects.create(text_en="Question 1", text_ar="سؤال 1")
+        self.q2 = AssessmentQuestion.objects.create(text_en="Question 2", text_ar="سؤال 2")
+        self.q3 = AssessmentQuestion.objects.create(text_en="Question 3", text_ar="سؤال 3")
+        self.q4 = AssessmentQuestion.objects.create(text_en="Question 4", text_ar="سؤال 4")
         
         # Create rules
         # Rule A: If Q1 answer is "Yes", show Q2
