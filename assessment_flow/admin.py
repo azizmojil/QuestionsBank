@@ -34,7 +34,7 @@ class AssessmentFlowRuleInline(admin.TabularInline):
 
 @admin.register(AssessmentQuestion)
 class AssessmentQuestionAdmin(admin.ModelAdmin):
-    list_display = ("display_text", "id", "option_type")
+    list_display = ("display_text", "id")
     list_filter = ("option_type",)
     search_fields = ("text_ar", "text_en", "id")
 

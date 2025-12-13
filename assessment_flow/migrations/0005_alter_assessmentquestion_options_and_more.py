@@ -17,6 +17,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='assessmentflowrule',
             name='condition',
-            field=models.TextField(blank=True, help_text='تعبير يُقيّمه محرك التوجيه، مثل "option == \'CODE_A\' -> \'NEXT_Q_CODE\'"', verbose_name='الشرط'),
+            field=models.TextField(blank=True, help_text='تعبير يُقيّمه محرك التوجيه، مثل "option == \'CODE_A\' -> \'NEXT_Q_CODE\'"', verbose_name='قاعدة التوجيه'),
         ),
     ]
