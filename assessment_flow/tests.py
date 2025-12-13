@@ -1,5 +1,8 @@
 from django.test import TestCase
-from .models import AssessmentQuestion, AssessmentFlowRule
+from django.utils import translation
+
+from surveys.models import Survey, SurveyVersion
+from .models import AssessmentQuestion, AssessmentFlowRule, ReevaluationQuestion
 from .engine import RoutingEngine
 
 
@@ -126,3 +129,34 @@ class RoutingEngineTestCase(TestCase):
         # Rule A should not fire again (it's in used_rules)
         if result.rule:
             self.assertNotEqual(result.rule.id, self.rule_a.id)
+
+
+class ReevaluationQuestionModelTestCase(TestCase):
+    def setUp(self):
+        self.survey = Survey.objects.create(name_ar="استبيان", name_en="Survey")
+        self.survey_version = SurveyVersion.objects.create(
+            survey=self.survey,
+            interval=SurveyVersion.SurveyInterval.MONTHLY,
+        )
+
+    def test_display_text_respects_language(self):
+        question = ReevaluationQuestion.objects.create(
+            survey_version=self.survey_version,
+            text_ar="سؤال إعادة التقييم",
+            text_en="Reevaluation question",
+        )
+
+        with translation.override("ar"):
+            self.assertEqual(question.display_text, "سؤال إعادة التقييم")
+
+        with translation.override("en"):
+            self.assertEqual(question.display_text, "Reevaluation question")
+
+        question_missing_en = ReevaluationQuestion.objects.create(
+            survey_version=self.survey_version,
+            text_ar="سؤال بالعربية فقط",
+            text_en="",
+        )
+
+        with translation.override("en"):
+            self.assertEqual(question_missing_en.display_text, "سؤال بالعربية فقط")

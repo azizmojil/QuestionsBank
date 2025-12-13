@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
-from .models import AssessmentQuestion, AssessmentOption, AssessmentFlowRule
+from .models import AssessmentQuestion, AssessmentOption, AssessmentFlowRule, ReevaluationQuestion
 
 
 # ---------------------------------------------------------------------------
@@ -87,3 +87,14 @@ class AssessmentOptionAdmin(admin.ModelAdmin):
     search_fields = ("text_ar", "text_en", "question__text_ar", "question__text_en")
     def get_model_perms(self, request):
         return {}
+
+
+@admin.register(ReevaluationQuestion)
+class ReevaluationQuestionAdmin(admin.ModelAdmin):
+    list_display = ("display_text", "survey_version", "id")
+    search_fields = (
+        "text_ar",
+        "text_en",
+        "survey_version__survey__name_ar",
+        "survey_version__survey__name_en",
+    )
