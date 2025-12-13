@@ -23,12 +23,12 @@ class Survey(models.Model):
 
     name_ar = models.CharField(
         max_length=255,
-        blank=True,
+        unique=True,
         verbose_name=_("اسم المسح [عربية]"),
     )
     name_en = models.CharField(
         max_length=255,
-        blank=True,
+        unique=True,
         verbose_name=_("اسم المسح [انجليزية]"),
     )
     code = models.CharField(

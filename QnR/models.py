@@ -52,7 +52,7 @@ class Response(models.Model):
 
 
 class ResponseGroup(models.Model):
-    name = models.CharField(max_length=255, verbose_name=_("اسم المجموعة"))
+    name = models.CharField(max_length=255, unique=True, verbose_name=_("اسم المجموعة"))
     responses = models.ManyToManyField(Response, verbose_name=_("الإجابات"))
 
     def __str__(self):
