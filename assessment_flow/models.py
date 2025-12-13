@@ -164,3 +164,36 @@ class AssessmentFlowRule(models.Model):
 
     def __str__(self):
         return self.description or f"Rule for Q{self.from_question_id}"
+
+
+class ReevaluationQuestion(models.Model):
+    """Questions used when reassessing future survey versions."""
+
+    survey_version = models.ForeignKey(
+        SurveyVersion,
+        on_delete=models.CASCADE,
+        related_name="reevaluation_questions",
+        verbose_name=_("إصدار الاستبيان"),
+    )
+    text_ar = models.CharField(max_length=512, blank=True, verbose_name=_("السؤال [عربية]"))
+    text_en = models.CharField(max_length=512, blank=True, verbose_name=_("السؤال [إنجليزية]"))
+    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated At"), auto_now=True)
+
+    class Meta:
+        ordering = ["id"]
+        verbose_name = _("سؤال إعادة التقييم")
+        verbose_name_plural = _("اسئلة إعادة التقييم")
+
+    def __str__(self):
+        return self.display_text
+
+    @property
+    def display_text(self) -> str:
+        lang = (get_language() or "ar")[:2]
+        if lang == "ar" and self.text_ar:
+            return self.text_ar
+        if lang == "en" and self.text_en:
+            return self.text_en
+        return self.text_en or self.text_ar
+    display_text.fget.short_description = _("السؤال")
