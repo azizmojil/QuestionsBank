@@ -23,7 +23,7 @@
 
 ### Future improvements (prioritized)
 - Move secrets (SECRET_KEY, database creds) and environment-specific settings out of source control; set DEBUG=False and define ALLOWED_HOSTS for deployed environments.
-- Enable security headers and HTTPS hardening (SECURE_SSL_REDIRECT, HSTS, SECURE_REFERRER_POLICY, CSP, X-Content-Type-Options, X-Frame-Options), and mark cookies `Secure`/`HttpOnly`/`SameSite`.
+- Enable security headers and HTTPS hardening (SECURE_SSL_REDIRECT, HSTS, SECURE_REFERRER_POLICY, CSP, X-Content-Type-Options, X-Frame-Options), and mark cookies `Secure`/`HttpOnly` with explicit `SameSite=Lax` (or `Strict` where possible).
 - Introduce authentication/authorization for assessment and survey routes; add role-based permissions for authors, reviewers, and respondents. Protect admin with MFA and IP allowlists where possible.
 - Validate and sanitize user-controlled data paths: enforce option ID ownership, add rate limiting/throttling on POST endpoints, and add stricter JSON schema validation.
 - Harden file uploads with size/type checks, randomized storage paths, virus scanning, and signed download URLs; consider segregated storage buckets with least privilege.
