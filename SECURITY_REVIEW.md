@@ -27,10 +27,13 @@
 - Add security headers (CSP, X-Content-Type-Options, X-Frame-Options) with a default restrictive policy.
 - Mark cookies `Secure`/`HttpOnly` with explicit `SameSite=Lax` (or `Strict` where possible).
 - Introduce authentication/authorization for assessment and survey routes; add role-based permissions for authors, reviewers, and respondents. Protect admin with MFA and IP allowlists where possible.
-- Validate and sanitize user-controlled data paths: enforce option ID ownership, add rate limiting/throttling on POST endpoints, and add stricter JSON schema validation.
+- Enforce option ID ownership/authorization on assessment submissions.
+- Add rate limiting/throttling on POST endpoints.
+- Add stricter JSON schema validation for assessment payloads.
 - Harden file uploads with size/type checks, randomized storage paths, virus scanning, and signed download URLs; consider segregated storage buckets with least privilege.
 - Fix dependency supply chain: replace local path references in `requirements.txt` with pinned versions from trusted indexes, add dependency scanning, and automate security update notifications and testing.
-- Add CSP and other frontend protections; avoid injecting server strings via `innerHTML` when they may contain user-generated HTML, or sanitize before insertion.
+- Add CSP and other frontend protections.
+- Avoid inserting untrusted HTML via `innerHTML`; sanitize before insertion if needed.
 - Migrate to a production-grade database with encryption at rest and backups; configure database credentials and rotations via environment variables.
 - Add audit logging for admin and critical actions, operational monitoring, and backup/restore runbooks.
 - Expand automated tests to cover security controls (authz rules, CSRF on JSON endpoints, file upload validation) and ensure the test suite runs in CI with a reproducible dependency set.
