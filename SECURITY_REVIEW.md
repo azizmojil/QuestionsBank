@@ -34,7 +34,7 @@
 - Replace local path references in `requirements.txt` with pinned versions from trusted indices (e.g., PyPI or an internal mirror) to harden the supply chain.
 - Add dependency scanning and automate security update notifications and testing.
 - Add CSP and other frontend protections.
-- Avoid inserting untrusted HTML via `innerHTML`; sanitize (e.g., DOMPurify) or use `textContent`/`innerText` when inserting user-controlled strings.
+- Avoid inserting user-generated HTML via `innerHTML`; keep server-rendered fragments trusted, and sanitize (e.g., DOMPurify) or use `textContent` when handling any user-controlled strings.
 - Migrate to a production-grade database with encryption at rest and backups; configure database credentials and rotations via environment variables.
 - Add audit logging for admin and critical actions, operational monitoring, and backup/restore runbooks.
 - Expand automated tests to cover security controls (authz rules, CSRF on JSON endpoints, file upload validation) and ensure the test suite runs in CI with a reproducible dependency set.
