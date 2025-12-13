@@ -1,11 +1,27 @@
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 
-from .models import SurveyQuestion
+from .models import SurveyQuestion, SurveyVersion
 
 
 def survey_builder(request):
     response_types = []
+    available_questions_qs = (
+        SurveyQuestion.objects.select_related("survey_version")
+        .exclude(survey_version__status=SurveyVersion.Status.ARCHIVED)
+        .only("id", "text_ar", "text_en", "response_type", "code", "created_at", "survey_version__status")
+        .order_by("-created_at")
+    )
+    available_questions = [
+        {
+            "id": question.id,
+            "label": question.display_text,
+            "response_type": question.response_type,
+            "code": question.code,
+            "created_at": question.created_at.isoformat(),
+        }
+        for question in available_questions_qs
+    ]
     feature_map = {
         SurveyQuestion.ResponseType.BINARY: {
             "supports_options": True,
@@ -106,5 +122,6 @@ def survey_builder(request):
         {
             "response_types": response_types,
             "sample_sections": sample_sections,
+            "available_questions": available_questions,
         },
     )

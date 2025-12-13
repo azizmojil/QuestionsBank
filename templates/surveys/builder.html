@@ -74,8 +74,15 @@
 <template id="question-template">
     <div class="card question-block">
         <div class="question-top">
-            <label class="stacked full-width">{% trans "نص السؤال" %}
-                <input type="text" class="question-text" placeholder="{% trans 'اطرح سؤالك بوضوح' %}" required>
+            <label class="stacked full-width">{% trans "السؤال" %}
+                <select class="question-select" required>
+                    <option value="" disabled selected>{% trans "اختر سؤالاً من قاعدة البيانات" %}</option>
+                    {% for q in available_questions %}
+                        <option value="{{ q.id }}" data-response-type="{{ q.response_type }}">{{ q.label }}</option>
+                    {% empty %}
+                        <option value="" disabled>{% trans "لا توجد أسئلة متاحة بعد" %}</option>
+                    {% endfor %}
+                </select>
             </label>
             <div class="question-controls">
                 <label class="stacked">{% trans "نوع الإجابة" %}
@@ -116,6 +123,7 @@
 </template>
 
 {{ response_types|json_script:"response-types-data" }}
+{{ available_questions|json_script:"available-questions-data" }}
 {{ sample_sections|json_script:"sample-sections-data" }}
 <script id="builder-locale" type="application/json">
     {
