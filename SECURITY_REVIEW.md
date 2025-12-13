@@ -16,7 +16,7 @@
 - **Authentication/Authorization:** Core assessment and survey views are publicly accessible without authentication or authorization; only the Django admin is gated. There is no role-based access control around assessment creation/run endpoints.
 - **Input handling:** CSRF middleware is enabled and templates auto-escape by default. Assessment AJAX calls include the CSRF token. JSON payloads are minimally validated; option IDs are coerced to ints but lack deeper validation/throttling.
 - **File uploads:** AssessmentFile uses a FileField without content-type/size validation or storage segregation; upload path helper indirection is present but no sanitization or AV scanning is applied.
-- **Dependency status:** `requirements.txt` references local build artifacts instead of pinned releases, hindering reproducibility and supply-chain verification; Django should come from trusted indices before deployment.
+- **Dependency status:** `requirements.txt` references local build artifacts instead of pinned releases, hampering reproducibility and supply-chain verification; Django should come from trusted indices before deployment.
 - **Frontend:** Theme/language scripts rely on `innerText` and avoid unsanitized HTML. Server-rendered fragments are injected via `innerHTML`; they rely on backend escaping. No Content Security Policy or other browser hardening headers are configured.
 - **Data protection/ops:** SQLite is used by default with no encryption. No settings for secure cookies, session expiry, rate limiting, or audit logging are present.
 - **Testing status:** Baseline `python manage.py test` could not run here because Django was not installable from the current requirements file (local build paths).
@@ -31,10 +31,10 @@
 - Add rate limiting/throttling on POST endpoints.
 - Add stricter JSON schema validation for assessment payloads.
 - Harden file uploads with size/type checks, randomized storage paths, virus scanning, and signed download URLs; consider segregated storage buckets with least privilege.
-- Replace local path references in `requirements.txt` with pinned versions from trusted indices to harden the supply chain.
+- Replace local path references in `requirements.txt` with pinned versions from trusted indices (e.g., PyPI or an internal mirror) to harden the supply chain.
 - Add dependency scanning and automate security update notifications and testing.
 - Add CSP and other frontend protections.
-- Avoid inserting untrusted HTML via `innerHTML`; sanitize before insertion if needed.
+- Avoid inserting untrusted HTML via `innerHTML`; sanitize (e.g., DOMPurify) or use `textContent`/`innerText` when inserting user-controlled strings.
 - Migrate to a production-grade database with encryption at rest and backups; configure database credentials and rotations via environment variables.
 - Add audit logging for admin and critical actions, operational monitoring, and backup/restore runbooks.
 - Expand automated tests to cover security controls (authz rules, CSRF on JSON endpoints, file upload validation) and ensure the test suite runs in CI with a reproducible dependency set.
