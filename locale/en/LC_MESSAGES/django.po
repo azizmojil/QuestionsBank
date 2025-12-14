@@ -1008,14 +1008,6 @@ msgstr "Matrix Item Group"
 msgid "اختر مجموعة مصفوفة"
 msgstr "Matrix Item Group"
 
-#: .\templates\surveys\builder.html:154
-msgid "نعم"
-msgstr ""
-
-#: .\templates\surveys\builder.html:155
-msgid "لا"
-msgstr ""
-
 #: .\templates\surveys\builder.html:156
 msgid "استبيان بدون عنوان"
 msgstr "Untitled survey"
