@@ -48,12 +48,6 @@ erDiagram
         datetime updated_at
     }
 
-    SURVEY_EDITORS {
-        bigint id PK
-        bigint survey_id
-        bigint user_id
-    }
-
     SURVEY_VERSION {
         bigint id PK
         bigint survey_id
@@ -231,22 +225,10 @@ erDiagram
         varchar name
     }
 
-    RESPONSE_GROUP_RESPONSES {
-        bigint id PK
-        bigint responsegroup_id
-        bigint response_id
-    }
-
     QBANK_SURVEY_QUESTION {
         bigint id PK
         text text_ar
         text text_en
-    }
-
-    QBANK_SURVEY_QUESTION_RESPONSE_GROUPS {
-        bigint id PK
-        bigint surveyquestion_id
-        bigint responsegroup_id
     }
 
     MATRIX_ITEM {
@@ -258,12 +240,6 @@ erDiagram
     MATRIX_ITEM_GROUP {
         bigint id PK
         varchar name
-    }
-
-    MATRIX_ITEM_GROUP_ITEMS {
-        bigint id PK
-        bigint matrixitemgroup_id
-        bigint matrixitem_id
     }
 
     SURVEY ||--o{ SURVEY_VERSION : has_versions
@@ -299,24 +275,21 @@ erDiagram
 
     SURVEY_QUESTION ||--o{ QUESTION_CLASSIFICATION_RULE : has_classification_rules
 
-    RESPONSE_GROUP ||--o{ RESPONSE_GROUP_RESPONSES : contains_responses
-    RESPONSE }o--o{ RESPONSE_GROUP_RESPONSES : in_groups
+    RESPONSE_GROUP }o--o{ RESPONSE : contains_responses
 
-    QBANK_SURVEY_QUESTION ||--o{ QBANK_SURVEY_QUESTION_RESPONSE_GROUPS : uses_groups
-    RESPONSE_GROUP ||--o{ QBANK_SURVEY_QUESTION_RESPONSE_GROUPS : attached
+    QBANK_SURVEY_QUESTION }o--o{ RESPONSE_GROUP : uses_groups
 
-    MATRIX_ITEM_GROUP ||--o{ MATRIX_ITEM_GROUP_ITEMS : contains_items
-    MATRIX_ITEM }o--o{ MATRIX_ITEM_GROUP_ITEMS : grouped
+    MATRIX_ITEM_GROUP }o--o{ MATRIX_ITEM : contains_items
 ```
 
 *Notes:*
 - **Field types & constraints:** The ERD now includes precise field types (e.g., `varchar(255)`, `text`, `bool`, `json`, `file`, `date`, `datetime`) with unique constraints (UK) and foreign keys (FK) explicitly marked.
-- **Many-to-Many relationships:** M2M relationships are shown via intermediate junction tables (`SURVEY_EDITORS`, `RESPONSE_GROUP_RESPONSES`, `QBANK_SURVEY_QUESTION_RESPONSE_GROUPS`, `MATRIX_ITEM_GROUP_ITEMS`) to clarify the actual database structure.
+- **Many-to-Many relationships:** M2M relationships are shown directly between the models (e.g., `RESPONSE_GROUP }o--o{ RESPONSE`) to reflect the Django model definitions, rather than showing the auto-generated junction tables.
 - **SURVEY_QUESTION** refers to `surveys.SurveyQuestion` (per survey version). Progress is stored against these questions even though navigation is handled by `AssessmentQuestion` nodes, keeping outcomes aligned with the canonical survey content being reviewed.
 - **QBANK_SURVEY_QUESTION**, `RESPONSE_GROUP`, and `RESPONSE` map to the `Qbank` and `Rbank` app models (`Qbank.SurveyQuestion`, `Rbank.ResponseGroup`, `Rbank.Response`) used for reusable option banks. `MATRIX_ITEM` and `MATRIX_ITEM_GROUP` from `Qbank` support matrix-style question construction.
 - **Uploaded files:** `AssessmentFile` records always point back to the owning `AssessmentResult` and, when available, the triggering `AssessmentOption`. Each file references at most one option, while an option can have many uploaded files.
 - **Flow rules:** Hang off a source `AssessmentQuestion` and store option-specific logic inside their `condition` text. Dynamic option types may derive choices from other assessment questions or survey questions at runtime rather than via direct foreign keys.
-- **User relationships:** `AUTH_USER` is referenced by `SURVEY` (owner), `SURVEY_EDITORS` (M2M for editors), `ASSESSMENT_RUN` (created_by, assigned_to), `ASSESSMENT_RESULT` (assessed_by), and `ASSESSMENT_FILE` (uploaded_by).
+- **User relationships:** `AUTH_USER` is referenced by `SURVEY` (owner), `SURVEY` (M2M for editors), `ASSESSMENT_RUN` (created_by, assigned_to), `ASSESSMENT_RESULT` (assessed_by), and `ASSESSMENT_FILE` (uploaded_by).
 - **Auto-generated fields:** `SURVEY_VERSION.version_label` is auto-generated from survey code, interval, and version date. Unique constraints exist on `SURVEY_VERSION (survey_id, version_label)`, `INDICATOR_LIST_ITEM (indicator_id, name)`, `INDICATOR_CLASSIFICATION (indicator_id, classification_id)`, and each M2M join table pair.
 
 ### Critical data points
