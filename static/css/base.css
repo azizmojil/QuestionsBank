@@ -10,8 +10,8 @@
     --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
     --popover: #ffffff;
     --primary: #5423e7;
-    --font-mono: "Jetbrainsmono", monospace;
-    --font-sans: "Inter", "Circularpro book", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+    --font-sans: "Inter", "Circular Pro", "Circular Pro Book", sans-serif;
     --secondary: #f7f7f8;
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -33,36 +33,9 @@
     --surface: var(--card);
     --ink: var(--foreground);
     --glow: rgba(84, 35, 231, 0.12);
-    --color-card: var(--card);
-    --color-ring: var(--ring);
-    --color-input: var(--input);
-    --color-muted: var(--muted);
-    --color-accent: var(--accent);
-    --color-border: var(--border);
-    --color-radius: var(--radius);
-    --color-shadow: var(--shadow);
-    --color-popover: var(--popover);
-    --color-primary: var(--primary);
-    --color-font-mono: var(--font-mono);
-    --color-font-sans: var(--font-sans);
-    --color-secondary: var(--secondary);
-    --color-shadow-lg: var(--shadow-lg);
-    --color-shadow-md: var(--shadow-md);
-    --color-shadow-sm: var(--shadow-sm);
-    --color-shadow-xl: var(--shadow-xl);
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --color-shadow-2xl: var(--shadow-2xl);
-    --color-destructive: var(--destructive);
-    --color-card-foreground: var(--card-foreground);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-destructive-foreground: var(--destructive-foreground);
 }
 
+/* Support legacy body.dark-mode styles alongside the new .dark root scope */
 .dark, body.dark-mode {
     --card: #191919;
     --ring: #ffc233;
@@ -81,7 +54,7 @@
     --accent-foreground: #121217;
     --popover-foreground: #e8e8ed;
     --primary-foreground: #ffffff;
-    --secondary-foreground: #fff9;
+    --secondary-foreground: rgba(255, 255, 255, 0.6);
     --destructive-foreground: #ffffff;
     --primary-dark: #5c33d6;
     --surface: var(--card);

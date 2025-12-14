@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Add keyboard accessibility to theme switch
         themeSwitch.setAttribute('tabindex', '0');
 
+        // Keep both .dark (CSS variables) and .dark-mode (legacy styles) in sync
         const isDarkMode = () => body.classList.contains('dark-mode') || root.classList.contains('dark');
 
         function setTheme(isDark) {
