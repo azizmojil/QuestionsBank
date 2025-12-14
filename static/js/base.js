@@ -4,19 +4,31 @@ document.addEventListener('DOMContentLoaded', function () {
     const languageForm = document.getElementById('language-switch-form');
     const languageInput = languageForm ? languageForm.querySelector('input[name="language"]') : null;
     const body = document.body;
+    const root = document.documentElement;
     const themeIcon = themeSwitch ? themeSwitch.querySelector('.theme-icon') : null;
 
     if (themeSwitch) {
-        // Check for saved theme in local storage
-        if (localStorage.getItem('theme') === 'dark') {
-            body.classList.add('dark-mode');
-        }
-
         // Add keyboard accessibility to theme switch
         themeSwitch.setAttribute('tabindex', '0');
 
+        const isDarkMode = () => body.classList.contains('dark-mode') || root.classList.contains('dark');
+
+        function setTheme(isDark) {
+            body.classList.toggle('dark-mode', isDark);
+            root.classList.toggle('dark', isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            syncThemeState();
+        }
+
+        // Check for saved theme in local storage or system preference
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            setTheme(true);
+        }
+
         function syncThemeState() {
-            const isDark = body.classList.contains('dark-mode');
+            const isDark = isDarkMode();
             const labelLight = themeSwitch.dataset.labelLight || 'Switch to light mode';
             const labelDark = themeSwitch.dataset.labelDark || 'Switch to dark mode';
             themeSwitch.setAttribute('aria-pressed', isDark.toString());
@@ -29,9 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         function toggleTheme() {
-            body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
-            syncThemeState();
+            setTheme(!isDarkMode());
         }
 
         themeSwitch.addEventListener('click', toggleTheme);
