@@ -38,232 +38,240 @@ erDiagram
 
     SURVEY {
         bigint id PK
-        varchar(255) name_ar UK "Survey name (Arabic)"
-        varchar(255) name_en UK "Survey name (English)"
-        varchar(50) code UK "Unique survey code"
-        text description "Survey description"
+        varchar(255) name_ar UK
+        varchar(255) name_en UK
+        varchar(50) code UK
+        text description
         varchar(20) status "DRAFT, ACTIVE, ARCHIVED"
-        bigint owner_id FK "References AUTH_USER"
+        bigint owner_id FK "AUTH_USER.id, nullable"
         datetime created_at
         datetime updated_at
     }
 
     SURVEY_EDITORS {
         bigint id PK
-        bigint survey_id FK "References SURVEY"
-        bigint user_id FK "References AUTH_USER"
+        bigint survey_id FK "SURVEY.id"
+        bigint user_id FK "AUTH_USER.id"
+        UK(survey_id, user_id)
     }
 
     SURVEY_VERSION {
         bigint id PK
-        bigint survey_id FK "References SURVEY"
-        varchar(50) version_label "Auto-generated label"
-        date version_date "Reference date for version"
-        varchar(20) interval "M, Q, B, A (Monthly, Quarterly, etc.)"
+        bigint survey_id FK "SURVEY.id"
+        varchar(50) version_label "Generated from survey code/date/interval"
+        date version_date "Default: today()"
+        varchar(20) interval "M, Q, B, A"
         varchar(20) status "DRAFT, ACTIVE, LOCKED, ARCHIVED"
         datetime created_at
         datetime updated_at
+        UK(survey_id, version_label)
     }
 
     SURVEY_QUESTION {
         bigint id PK
-        bigint survey_version_id FK "References SURVEY_VERSION"
-        varchar(50) code "Optional question code"
-        text text_ar "Question text (Arabic)"
-        text text_en "Question text (English)"
-        text help_text "Help text for data collector"
-        varchar(255) section_label "Logical section label"
-        bool is_required "Must be answered during collection"
+        bigint survey_version_id FK "SURVEY_VERSION.id"
+        varchar(50) code
+        text text_ar
+        text text_en
+        text help_text
+        varchar(255) section_label
+        bool is_required "Default: False"
         datetime created_at
         datetime updated_at
     }
 
     ASSESSMENT_QUESTION {
         bigint id PK
-        varchar(512) text_ar "Question text (Arabic)"
-        varchar(512) text_en "Question text (English)"
-        text explanation_ar "Explanation (Arabic)"
-        text explanation_en "Explanation (English)"
+        varchar(512) text_ar
+        varchar(512) text_en
+        text explanation_ar
+        text explanation_en
         varchar(50) option_type "STATIC, DYNAMIC_FROM_PREVIOUS_MULTI_SELECT, DYNAMIC_SURVEY_QUESTIONS, INDICATOR_LIST"
-        bool use_searchable_dropdown "Enable searchable dropdown UI"
-        bool allow_multiple_choices "Allow multiple selections"
-        bigint dynamic_option_source_question_id FK "References ASSESSMENT_QUESTION (self)"
-        bigint indicator_source_id FK "References INDICATOR"
+        bool use_searchable_dropdown "Default: False"
+        bool allow_multiple_choices "Default: False"
+        bigint dynamic_option_source_question_id FK "ASSESSMENT_QUESTION.id, nullable"
+        bigint indicator_source_id FK "INDICATOR.id, nullable"
         datetime created_at
         datetime updated_at
     }
 
     ASSESSMENT_OPTION {
         bigint id PK
-        bigint question_id FK "References ASSESSMENT_QUESTION"
-        text text_ar "Option text (Arabic)"
-        text text_en "Option text (English)"
-        text explanation_ar "Explanation (Arabic)"
-        text explanation_en "Explanation (English)"
+        bigint question_id FK "ASSESSMENT_QUESTION.id"
+        text text_ar
+        text text_en
+        text explanation_ar
+        text explanation_en
         varchar(20) response_type "PREDEFINED, FREE_TEXT, NUMERICAL, URL"
-        bool requires_file_upload "Requires file upload"
-        text file_upload_explanation "File upload instructions"
+        bool requires_file_upload "Default: False"
+        text file_upload_explanation
     }
 
     ASSESSMENT_FLOW_RULE {
         bigint id PK
-        bigint from_question_id FK "References ASSESSMENT_QUESTION"
-        text condition "Routing logic expression"
-        int priority "Rule evaluation order"
-        bool is_active "Rule enabled/disabled"
-        varchar(255) description "Human-readable description"
+        bigint from_question_id FK "ASSESSMENT_QUESTION.id"
+        text condition
+        int priority "Default: 0"
+        bool is_active "Default: True"
+        varchar(255) description
         datetime created_at
         datetime updated_at
     }
 
     ASSESSMENT_RUN {
         bigint id PK
-        bigint survey_version_id FK "References SURVEY_VERSION"
-        varchar(100) label "Run label/identifier"
+        bigint survey_version_id FK "SURVEY_VERSION.id"
+        varchar(100) label
         varchar(20) status "DRAFT, IN_PROGRESS, COMPLETE, CANCELLED"
-        bigint created_by_id FK "References AUTH_USER"
-        bigint assigned_to_id FK "References AUTH_USER"
-        datetime started_at "Run start timestamp"
-        datetime completed_at "Run completion timestamp"
-        text notes "Run notes"
+        bigint created_by_id FK "AUTH_USER.id, nullable"
+        bigint assigned_to_id FK "AUTH_USER.id, nullable"
+        datetime started_at
+        datetime completed_at
+        text notes
         datetime created_at
         datetime updated_at
     }
 
     ASSESSMENT_RESULT {
         bigint id PK
-        bigint assessment_run_id FK "References ASSESSMENT_RUN"
-        bigint survey_question_id FK "References SURVEY_QUESTION"
+        bigint assessment_run_id FK "ASSESSMENT_RUN.id"
+        bigint survey_question_id FK "SURVEY_QUESTION.id"
         varchar(20) status "NOT_VISITED, IN_PROGRESS, COMPLETE, PENDING_UPLOAD"
-        bigint assessed_by_id FK "References AUTH_USER"
-        json assessment_path "Navigation path through assessment"
-        text summary_comment "Assessor's summary comment"
-        json flags "Additional flags/metadata"
-        datetime assessed_at "Last assessment timestamp"
+        bigint assessed_by_id FK "AUTH_USER.id, nullable"
+        json assessment_path "Default: []"
+        text summary_comment
+        json flags "Default: {}"
+        datetime assessed_at "Auto-updated"
+        UK(assessment_run_id, survey_question_id)
     }
 
     ASSESSMENT_FILE {
         bigint id PK
-        bigint assessment_result_id FK "References ASSESSMENT_RESULT"
-        bigint triggering_option_id FK "References ASSESSMENT_OPTION"
-        file file "Uploaded file path"
-        varchar(255) original_filename "Original filename"
-        text description "File description"
-        bigint uploaded_by_id FK "References AUTH_USER"
+        bigint assessment_result_id FK "ASSESSMENT_RESULT.id"
+        bigint triggering_option_id FK "ASSESSMENT_OPTION.id, nullable"
+        file file
+        varchar(255) original_filename
+        text description
+        bigint uploaded_by_id FK "AUTH_USER.id, nullable"
         datetime uploaded_at
     }
 
     QUESTION_CLASSIFICATION_RULE {
         bigint id PK
-        bigint survey_question_id FK "References SURVEY_QUESTION"
-        varchar(100) classification "Classification label"
-        text condition "Classification logic (JSON)"
-        int priority "Rule evaluation order"
-        bool is_active "Rule enabled/disabled"
-        varchar(255) description "Human-readable description"
+        bigint survey_question_id FK "SURVEY_QUESTION.id"
+        varchar(100) classification
+        text condition
+        int priority "Default: 0"
+        bool is_active "Default: True"
+        varchar(255) description
         datetime created_at
         datetime updated_at
     }
 
     REEVALUATION_QUESTION {
         bigint id PK
-        bigint survey_version_id FK "References SURVEY_VERSION"
-        varchar(512) text_ar "Question text (Arabic)"
-        varchar(512) text_en "Question text (English)"
+        bigint survey_version_id FK "SURVEY_VERSION.id"
+        varchar(512) text_ar
+        varchar(512) text_en
         datetime created_at
         datetime updated_at
     }
 
     INDICATOR {
         bigint id PK
-        varchar(255) name_ar UK "Indicator name (Arabic)"
-        varchar(255) name_en UK "Indicator name (English)"
-        varchar(50) code "Indicator code"
+        varchar(255) name_ar UK
+        varchar(255) name_en UK
+        varchar(50) code
         datetime created_at
         datetime updated_at
     }
 
     INDICATOR_LIST_ITEM {
         bigint id PK
-        bigint indicator_id FK "References INDICATOR"
-        varchar(255) name "Item name"
-        varchar(50) code "Item code"
+        bigint indicator_id FK "INDICATOR.id"
+        varchar(255) name
+        varchar(50) code
+        UK(indicator_id, name)
     }
 
     INDICATOR_TRACKING {
         bigint id PK
-        bigint indicator_list_item_id FK "References INDICATOR_LIST_ITEM"
+        bigint indicator_list_item_id FK "INDICATOR_LIST_ITEM.id"
         varchar(20) status "TRACKED, NOT_TRACKED"
     }
 
     CLASSIFICATION {
         bigint id PK
-        varchar(100) name_ar UK "Classification name (Arabic)"
-        varchar(100) name_en UK "Classification name (English)"
+        varchar(100) name_ar UK
+        varchar(100) name_en UK
     }
 
     INDICATOR_CLASSIFICATION {
         bigint id PK
-        bigint indicator_id FK "References INDICATOR"
-        bigint classification_id FK "References CLASSIFICATION"
+        bigint indicator_id FK "INDICATOR.id"
+        bigint classification_id FK "CLASSIFICATION.id"
+        UK(indicator_id, classification_id)
     }
 
     CLASSIFICATION_INDICATOR_LIST_ITEM {
         bigint id PK
-        bigint classification_id FK "References CLASSIFICATION"
-        bigint indicatorlistitem_id FK "References INDICATOR_LIST_ITEM"
+        bigint classification_id FK "CLASSIFICATION.id"
+        bigint indicatorlistitem_id FK "INDICATOR_LIST_ITEM.id"
     }
 
     RESPONSE_TYPE {
         bigint id PK
-        varchar(100) name_ar UK "Response type (Arabic)"
-        varchar(100) name_en UK "Response type (English)"
+        varchar(100) name_ar UK
+        varchar(100) name_en UK
     }
 
     RESPONSE {
         bigint id PK
-        varchar(255) text_ar "Response text (Arabic)"
-        varchar(255) text_en "Response text (English)"
+        varchar(255) text_ar
+        varchar(255) text_en
     }
 
     RESPONSE_GROUP {
         bigint id PK
-        varchar(255) name "Group name"
+        varchar(255) name
     }
 
     RESPONSE_GROUP_RESPONSES {
         bigint id PK
-        bigint responsegroup_id FK "References RESPONSE_GROUP"
-        bigint response_id FK "References RESPONSE"
+        bigint responsegroup_id FK "RESPONSE_GROUP.id"
+        bigint response_id FK "RESPONSE.id"
+        UK(responsegroup_id, response_id)
     }
 
     QNR_SURVEY_QUESTION {
         bigint id PK
-        text text_ar "Question text (Arabic)"
-        text text_en "Question text (English)"
+        text text_ar
+        text text_en
     }
 
     QNR_SURVEY_QUESTION_RESPONSE_GROUPS {
         bigint id PK
-        bigint surveyquestion_id FK "References QNR_SURVEY_QUESTION"
-        bigint responsegroup_id FK "References RESPONSE_GROUP"
+        bigint surveyquestion_id FK "QNR_SURVEY_QUESTION.id"
+        bigint responsegroup_id FK "RESPONSE_GROUP.id"
+        UK(surveyquestion_id, responsegroup_id)
     }
 
     MATRIX_ITEM {
         bigint id PK
-        varchar(255) text_ar "Item text (Arabic)"
-        varchar(255) text_en "Item text (English)"
+        varchar(255) text_ar
+        varchar(255) text_en
     }
 
     MATRIX_ITEM_GROUP {
         bigint id PK
-        varchar(255) name "Group name"
+        varchar(255) name
     }
 
     MATRIX_ITEM_GROUP_ITEMS {
         bigint id PK
-        bigint matrixitemgroup_id FK "References MATRIX_ITEM_GROUP"
-        bigint matrixitem_id FK "References MATRIX_ITEM"
+        bigint matrixitemgroup_id FK "MATRIX_ITEM_GROUP.id"
+        bigint matrixitem_id FK "MATRIX_ITEM.id"
+        UK(matrixitemgroup_id, matrixitem_id)
     }
 
     SURVEY ||--o{ SURVEY_VERSION : "has versions"
@@ -292,9 +300,12 @@ erDiagram
     INDICATOR_LIST_ITEM ||--o{ CLASSIFICATION_INDICATOR_LIST_ITEM : "classified by"
     CLASSIFICATION ||--o{ CLASSIFICATION_INDICATOR_LIST_ITEM : "classifies items"
     SURVEY_QUESTION ||--o{ QUESTION_CLASSIFICATION_RULE : "has classification rules"
-    RESPONSE_GROUP ||--o{ RESPONSE : "contains responses (via RESPONSE_GROUP_RESPONSES)"
-    QNR_SURVEY_QUESTION ||--o{ RESPONSE_GROUP : "uses groups (via QNR_SURVEY_QUESTION_RESPONSE_GROUPS)"
-    MATRIX_ITEM_GROUP ||--o{ MATRIX_ITEM : "contains items (via MATRIX_ITEM_GROUP_ITEMS)"
+    RESPONSE_GROUP ||--o{ RESPONSE_GROUP_RESPONSES : "contains responses"
+    RESPONSE }o--o{ RESPONSE_GROUP_RESPONSES : "in groups"
+    QNR_SURVEY_QUESTION ||--o{ QNR_SURVEY_QUESTION_RESPONSE_GROUPS : "uses groups"
+    RESPONSE_GROUP ||--o{ QNR_SURVEY_QUESTION_RESPONSE_GROUPS : "attached via M2M"
+    MATRIX_ITEM_GROUP ||--o{ MATRIX_ITEM_GROUP_ITEMS : "contains items"
+    MATRIX_ITEM }o--o{ MATRIX_ITEM_GROUP_ITEMS : "grouped items"
 ```
 
 *Notes:*
@@ -305,7 +316,7 @@ erDiagram
 - **Uploaded files:** `AssessmentFile` records always point back to the owning `AssessmentResult` and, when available, the triggering `AssessmentOption`. Each file references at most one option, while an option can have many uploaded files.
 - **Flow rules:** Hang off a source `AssessmentQuestion` and store option-specific logic inside their `condition` text. Dynamic option types may derive choices from other assessment questions or survey questions at runtime rather than via direct foreign keys.
 - **User relationships:** `AUTH_USER` is referenced by `SURVEY` (owner), `SURVEY_EDITORS` (M2M for editors), `ASSESSMENT_RUN` (created_by, assigned_to), `ASSESSMENT_RESULT` (assessed_by), and `ASSESSMENT_FILE` (uploaded_by).
-- **Auto-generated fields:** `SURVEY_VERSION.version_label` is auto-generated from survey code, interval, and version date. Unique constraints exist on `(survey, version_label)`, `(indicator, name)`, and `(indicator, classification)`.
+- **Auto-generated fields:** `SURVEY_VERSION.version_label` is auto-generated from survey code, interval, and version date. Unique constraints exist on `SURVEY_VERSION (survey_id, version_label)`, `INDICATOR_LIST_ITEM (indicator_id, name)`, `INDICATOR_CLASSIFICATION (indicator_id, classification_id)`, and each M2M join table pair.
 
 ### Critical data points
 
