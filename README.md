@@ -4,7 +4,7 @@ QuestionsBank is a Django application for authoring survey waves, building asses
 
 ### Quickstart
 
-1. **Prerequisites:** Python 3.12+, pip, and virtualenv.
+1. **Prerequisites:** Python 3.10+, pip, and virtualenv.
 2. **Install dependencies:**
    ```bash
    python -m venv .venv && source .venv/bin/activate
@@ -33,7 +33,7 @@ erDiagram
     ASSESSMENT_RUN ||--o{ ASSESSMENT_RESULT : captures
     ASSESSMENT_RESULT }o--|| SURVEY_QUESTION : for
     ASSESSMENT_RESULT ||--o{ ASSESSMENT_FILE : uploads
-    ASSESSMENT_FILE }o--|| ASSESSMENT_OPTION : triggered_by
+    ASSESSMENT_FILE }o--o| ASSESSMENT_OPTION : triggered_by
     ASSESSMENT_QUESTION ||--o{ ASSESSMENT_OPTION : offers
     ASSESSMENT_QUESTION ||--o{ ASSESSMENT_FLOW_RULE : routes
     ASSESSMENT_QUESTION }o--|| ASSESSMENT_QUESTION : depends_on
@@ -45,11 +45,15 @@ erDiagram
     INDICATOR_LIST_ITEM ||--o{ CLASSIFICATION_INDICATOR_LIST_ITEM : classification_items
     SURVEY_QUESTION ||--o{ QUESTION_CLASSIFICATION_RULE : classifies
     SURVEY_VERSION ||--o{ REEVALUATION_QUESTION : reevaluates
-    QNR_RESPONSE_GROUP ||--o{ QNR_SURVEY_QUESTION : links
-    QNR_RESPONSE_GROUP ||--o{ QNR_RESPONSE : options
+    RESPONSE_GROUP ||--o{ QNR_SURVEY_QUESTION : links
+    RESPONSE_GROUP ||--o{ RESPONSE : options
 ```
 
-*Notes:* `SURVEY_QUESTION` refers to `surveys.SurveyQuestion` (per survey version). `QNR_SURVEY_QUESTION` is the lightweight question/response bank in the `QnR` app for pre-defined choices. Assessment questions/options drive routing logic and can draw options from indicators or previous answers.
+*Notes:*
+- `SURVEY_QUESTION` refers to `surveys.SurveyQuestion` (per survey version). Progress is stored against these questions even though navigation is handled by `AssessmentQuestion` nodes, keeping outcomes aligned with the canonical survey content being reviewed.
+- `QNR_SURVEY_QUESTION`, `RESPONSE_GROUP`, and `RESPONSE` map to the `QnR` app models (`QnR.SurveyQuestion`, `QnR.ResponseGroup`, `QnR.Response`) used for reusable option banks.
+- Uploaded `AssessmentFile` records always point back to the owning `AssessmentResult` and, when available, the triggering `AssessmentOption`. Each file references at most one option, while an option can have many uploaded files.
+- Flow rules hang off a source `AssessmentQuestion` and store option-specific logic inside their `condition` text. Dynamic option types may derive choices from other assessment questions or survey questions at runtime rather than via direct foreign keys.
 
 ### Critical data points
 
@@ -58,4 +62,4 @@ erDiagram
 - **Indicators:** `Indicator` groups `IndicatorListItem` entries; `IndicatorTracking` marks tracked/not-tracked status; `IndicatorClassification` and `ClassificationIndicatorListItem` relate indicators/items to reusable `Classification` tags.
 - **Response bank:** `Response` values are grouped in `ResponseGroup` and attached to `QnR` questions, enabling reusable option sets.
 
-Localization defaults to Arabic (`LANGUAGE_CODE="ar"`), with English available; timestamps are timezone-aware (`Asia/Riyadh`). Static assets load from `static/` with `base.html` templates.
+Localization defaults to Arabic (`LANGUAGE_CODE="ar"`), with English available. Timestamps are timezone-aware (`Asia/Riyadh`). Static assets load from `static/` with `base.html` templates.
