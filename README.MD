@@ -1,29 +1,8 @@
 ## QuestionsBank
 
-QuestionsBank is a Django application for authoring survey waves, building assessment flows that review those surveys, and attaching indicator metadata and reusable response banks. It ships with Arabic/English copy and a plain JavaScript frontend.
+QuestionsBank is an application for authoring survey waves, building assessment flows that review those surveys, and attaching indicators and reusable response banks.
 
-### Quickstart
-
-1. **Prerequisites:** Python 3.10+, pip, and virtualenv.
-2. **Install dependencies:**
-   ```bash
-   python -m venv .venv && source .venv/bin/activate
-   pip install -r requirements.txt
-   ```
-3. **Database & migrations:** Uses SQLite by default (`db.sqlite3`). Apply migrations:
-   ```bash
-   python manage.py migrate
-   ```
-4. **Run the app:**
-   ```bash
-   python manage.py runserver
-   ```
-5. **Tests:** After installing dependencies, run:
-   ```bash
-   python manage.py test
-   ```
-
-### Data model (detailed ERD with columns)
+### Data model
 
 ```mermaid
 erDiagram
@@ -281,22 +260,3 @@ erDiagram
 
     MATRIX_ITEM_GROUP }o--o{ MATRIX_ITEM : contains_items
 ```
-
-*Notes:*
-- **Field types & constraints:** The ERD now includes precise field types (e.g., `varchar(255)`, `text`, `bool`, `json`, `file`, `date`, `datetime`) with unique constraints (UK) and foreign keys (FK) explicitly marked.
-- **Many-to-Many relationships:** M2M relationships are shown directly between the models (e.g., `RESPONSE_GROUP }o--o{ RESPONSE`) to reflect the Django model definitions, rather than showing the auto-generated junction tables.
-- **SURVEY_QUESTION** refers to `surveys.SurveyQuestion` (per survey version). Progress is stored against these questions even though navigation is handled by `AssessmentQuestion` nodes, keeping outcomes aligned with the canonical survey content being reviewed.
-- **QBANK_SURVEY_QUESTION**, `RESPONSE_GROUP`, and `RESPONSE` map to the `Qbank` and `Rbank` app models (`Qbank.SurveyQuestion`, `Rbank.ResponseGroup`, `Rbank.Response`) used for reusable option banks. `MATRIX_ITEM` and `MATRIX_ITEM_GROUP` from `Qbank` support matrix-style question construction.
-- **Uploaded files:** `AssessmentFile` records always point back to the owning `AssessmentResult` and, when available, the triggering `AssessmentOption`. Each file references at most one option, while an option can have many uploaded files.
-- **Flow rules:** Hang off a source `AssessmentQuestion` and store option-specific logic inside their `condition` text. Dynamic option types may derive choices from other assessment questions or survey questions at runtime rather than via direct foreign keys.
-- **User relationships:** `AUTH_USER` is referenced by `SURVEY` (owner), `SURVEY` (M2M for editors), `ASSESSMENT_RUN` (created_by, assigned_to), `ASSESSMENT_RESULT` (assessed_by), and `ASSESSMENT_FILE` (uploaded_by).
-- **Auto-generated fields:** `SURVEY_VERSION.version_label` is auto-generated from survey code, interval, and version date. Unique constraints exist on `SURVEY_VERSION (survey_id, version_label)`, `INDICATOR_LIST_ITEM (indicator_id, name)`, `INDICATOR_CLASSIFICATION (indicator_id, classification_id)`, and each M2M join table pair.
-
-### Critical data points
-
-- **Surveys:** `Survey` holds names/codes and ownership; `SurveyVersion` enforces unique labels per survey and autogenerates labels from survey code + version date; `SurveyQuestion` stores bilingual text plus optional codes/section labels.
-- **Assessment flows:** `AssessmentQuestion` + `AssessmentOption` define branching nodes; `AssessmentFlowRule` stores declarative routing; `AssessmentRun`/`AssessmentResult` record progress and status per survey question; `AssessmentFile` captures uploads tied to a specific option/result; `QuestionClassificationRule` classifies completed questions; `ReevaluationQuestion` stores prompts for later waves.
-- **Indicators:** `Indicator` groups `IndicatorListItem` entries; `IndicatorTracking` marks tracked/not-tracked status; `IndicatorClassification` and `ClassificationIndicatorListItem` relate indicators/items to reusable `Classification` tags.
-- **Response bank:** `Response` values are grouped in `ResponseGroup` and attached to `Qbank` questions, enabling reusable option sets.
-
-Localization defaults to Arabic (`LANGUAGE_CODE="ar"`), with English available. Timestamps are timezone-aware (`Asia/Riyadh`). Static assets load from `static/` with `base.html` templates.
