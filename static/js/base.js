@@ -1,8 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
     const themeSwitch = document.getElementById('theme-switch');
-    const languageSwitch = document.getElementById('language-switch');
-    const languageForm = document.getElementById('language-switch-form');
-    const languageInput = languageForm ? languageForm.querySelector('input[name="language"]') : null;
     const body = document.body;
     const root = document.documentElement;
     const themeIcon = themeSwitch ? themeSwitch.querySelector('.theme-icon') : null;
@@ -56,39 +53,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         syncThemeState();
-    }
-
-    if (languageSwitch && languageForm && languageInput) {
-        const syncLanguageState = () => {
-            const currentLang = languageSwitch.dataset.currentLanguage || 'ar';
-            const nextLang = currentLang === 'ar' ? 'en' : 'ar';
-            languageInput.value = nextLang;
-            const label = currentLang === 'ar' ? languageSwitch.dataset.labelAr : languageSwitch.dataset.labelEn;
-            const ariaLabel = currentLang === 'ar' ? languageSwitch.dataset.switchToEn : languageSwitch.dataset.switchToAr;
-            languageSwitch.setAttribute('aria-label', ariaLabel || '');
-            languageSwitch.setAttribute('aria-pressed', currentLang === 'en');
-            const labelSpan = languageSwitch.querySelector('.language-label');
-            if (labelSpan && label) {
-                labelSpan.textContent = label;
-            }
-        };
-
-        languageSwitch.addEventListener('click', (e) => {
-            e.preventDefault();
-            const currentLang = languageSwitch.dataset.currentLanguage || 'ar';
-            const nextLang = currentLang === 'ar' ? 'en' : 'ar';
-            languageInput.value = nextLang;
-            languageForm.submit();
-        });
-
-        languageSwitch.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                languageSwitch.click();
-            }
-        });
-
-        syncLanguageState();
     }
 
     // Add smooth scrolling to anchor links

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SurveyQuestion, ResponseType, Response, ResponseGroup
+from .models import ResponseType, Response, ResponseGroup
 from django.utils.translation import gettext_lazy as _
 
 
@@ -27,7 +27,7 @@ class ResponseInline(admin.TabularInline):
     model = ResponseGroup.responses.through
     verbose_name = _("إجابة")
     verbose_name_plural = _("الإجابات")
-    extra = 0
+    extra = 1
 
 
 @admin.register(ResponseGroup)
@@ -35,22 +35,3 @@ class ResponseGroupAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     inlines = [ResponseInline]
     exclude = ("responses",)
-
-
-class ResponseGroupInline(admin.TabularInline):
-    model = SurveyQuestion.response_groups.through
-    verbose_name = _("مجموعة الإجابات")
-    verbose_name_plural = _("مجموعات الإجابات")
-    extra = 0
-
-
-@admin.register(SurveyQuestion)
-class SurveyQuestionAdmin(admin.ModelAdmin):
-    list_display = ("display_text",)
-    search_fields = ("text_en", "text_ar")
-    inlines = [ResponseGroupInline]
-    exclude = ("response_groups",)
-
-    def display_text(self, obj):
-        return obj.display_text
-    display_text.short_description = _("السؤال")

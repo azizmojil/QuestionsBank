@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% trans "منصة QnR" %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -29,14 +30,8 @@
                 <input type="hidden" name="next" value="{{ request.get_full_path }}">
                 <input type="hidden" name="language" value="{% if LANGUAGE_CODE == 'ar' %}en{% else %}ar{% endif %}">
                 <button class="language-switch" id="language-switch" type="submit"
-                        aria-pressed="false"
-                        data-current-language="{{ LANGUAGE_CODE }}"
-                        data-switch-to-en="{% trans 'التبديل إلى الإنجليزية' %}"
-                        data-switch-to-ar="{% trans 'التبديل إلى العربية' %}"
-                        data-label-ar="{% trans 'العربية' %}"
-                        data-label-en="{% trans 'English' %}">
-                    <span class="language-icon" aria-hidden="true">🌐</span>
-                    <span class="language-label">{% if LANGUAGE_CODE == 'ar' %}{% trans "العربية" %}{% else %}{% trans "English" %}{% endif %}</span>
+                        aria-label="{% if LANGUAGE_CODE == 'ar' %}{% trans 'التبديل إلى الإنجليزية' %}{% else %}{% trans 'التبديل إلى العربية' %}{% endif %}">
+                    <span class="language-label">{% if LANGUAGE_CODE == 'ar' %}En{% else %}Ar{% endif %}</span>
                 </button>
             </form>
             <button class="theme-switch" id="theme-switch" type="button" aria-pressed="false"
@@ -45,8 +40,6 @@
                     data-icon-sun="☀️"
                     data-icon-moon="🌙">
                 <span class="theme-icon" aria-hidden="true">☀️</span>
-                <span class="theme-label">{% trans "السمة" %}</span>
-                <div class="theme-switch-toggle" aria-hidden="true"></div>
             </button>
         </div>
     </header>
@@ -54,9 +47,7 @@
         {% block content %}
         {% endblock %}
     </main>
-    <footer class="site-footer">
-        <p>{% trans "صمم لتقييمات شاملة مع عناية بقابلية الوصول." %}</p>
-    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script src="{% static 'js/base.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
