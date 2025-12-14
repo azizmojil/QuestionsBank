@@ -20,7 +20,6 @@ interface NavigationItem {
   id: string;
   name: string;
   icon: React.ComponentType<{ className?: string }>;
-  href: string;
   badge?: string;
 }
 
@@ -30,13 +29,13 @@ interface SidebarProps {
 
 // Updated navigation items - remove logout from here
 const navigationItems: NavigationItem[] = [
-  { id: "dashboard", name: "Dashboard", icon: Home, href: "/dashboard" },
-  { id: "analytics", name: "Analytics", icon: BarChart3, href: "/analytics" },
-  { id: "documents", name: "Documents", icon: FileText, href: "/documents", badge: "3" },
-  { id: "notifications", name: "Notifications", icon: Bell, href: "/notifications", badge: "12" },
-  { id: "profile", name: "Profile", icon: User, href: "/profile" },
-  { id: "settings", name: "Settings", icon: Settings, href: "/settings" },
-  { id: "help", name: "Help & Support", icon: HelpCircle, href: "/help" },
+  { id: "dashboard", name: "Dashboard", icon: Home },
+  { id: "analytics", name: "Analytics", icon: BarChart3 },
+  { id: "documents", name: "Documents", icon: FileText, badge: "3" },
+  { id: "notifications", name: "Notifications", icon: Bell, badge: "12" },
+  { id: "profile", name: "Profile", icon: User },
+  { id: "settings", name: "Settings", icon: Settings },
+  { id: "help", name: "Help & Support", icon: HelpCircle },
 ];
 
 export function Sidebar({ className = "" }: SidebarProps) {
@@ -44,8 +43,14 @@ export function Sidebar({ className = "" }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeItem, setActiveItem] = useState("dashboard");
 
+  const isMobileViewport = () => typeof window !== "undefined" && window.innerWidth < 768;
+
   // Auto-open sidebar on desktop
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
     const handleResize = () => {
       if (window.innerWidth >= 768) {
         setIsOpen(true);
@@ -64,7 +69,14 @@ export function Sidebar({ className = "" }: SidebarProps) {
 
   const handleItemClick = (itemId: string) => {
     setActiveItem(itemId);
-    if (window.innerWidth < 768) {
+    if (isMobileViewport()) {
+      setIsOpen(false);
+    }
+  };
+
+  const handleLogout = () => {
+    // Hook this up to the actual logout flow in the consuming app.
+    if (isMobileViewport()) {
       setIsOpen(false);
     }
   };
@@ -97,7 +109,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
         className={`
           fixed top-0 left-0 h-full bg-white border-r border-slate-200 z-40 transition-all duration-300 ease-in-out flex flex-col
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
-          ${isCollapsed ? "w-28" : "w-78"}
+          ${isCollapsed ? "w-28" : "w-72"}
           md:translate-x-0 md:static md:z-auto
           ${className}
         `}
@@ -144,6 +156,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
               <input
                 type="text"
                 placeholder="Search..."
+                aria-label="Search navigation"
                 className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-md text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
               />
             </div>
@@ -156,13 +169,17 @@ export function Sidebar({ className = "" }: SidebarProps) {
             {navigationItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeItem === item.id;
+              const badgeValue = item.badge ? parseInt(item.badge, 10) : 0;
+              const hasOverflowBadge = !!item.badge && Number.isFinite(badgeValue) && badgeValue > 9;
+              const collapsedBadge = hasOverflowBadge ? "9+" : item.badge;
 
               return (
                 <li key={item.id}>
                   <button
+                    type="button"
                     onClick={() => handleItemClick(item.id)}
                     className={`
-                      w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-md text-left transition-all duration-200 group
+                      w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-md text-left transition-all duration-200 group relative
                       ${isActive ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}
                       ${isCollapsed ? "justify-center px-2" : ""}
                     `}
@@ -171,7 +188,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
                     <div className="flex items-center justify-center min-w-[24px]">
                       <Icon
                         className={`
-                          h-4.5 w-4.5 flex-shrink-0
+                          h-[18px] w-[18px] flex-shrink-0
                           ${isActive ? "text-blue-600" : "text-slate-500 group-hover:text-slate-700"}
                         `}
                       />
@@ -196,17 +213,17 @@ export function Sidebar({ className = "" }: SidebarProps) {
                     {/* Badge for collapsed state */}
                     {isCollapsed && item.badge && (
                       <div className="absolute top-1 right-1 w-4 h-4 flex items-center justify-center rounded-full bg-blue-100 border border-white">
-                        <span className="text-[10px] font-medium text-blue-700">{parseInt(item.badge) > 9 ? "9+" : item.badge}</span>
+                        <span className="text-[10px] font-medium text-blue-700">{collapsedBadge}</span>
                       </div>
                     )}
 
                     {/* Tooltip for collapsed state */}
                     {isCollapsed && (
-                      <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+                      <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 whitespace-nowrap z-50">
                         {item.name}
                         {item.badge && (
                           <span className="ml-1.5 px-1 py-0.5 bg-slate-700 rounded-full text-[10px]">
-                            {item.badge}
+                            {collapsedBadge}
                           </span>
                         )}
                         <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-800 rotate-45" />
@@ -249,7 +266,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
           {/* Logout Button */}
           <div className="p-3">
             <button
-              onClick={() => handleItemClick("logout")}
+              onClick={handleLogout}
               className={`
                 w-full flex items-center rounded-md text-left transition-all duration-200 group
                 text-red-600 hover:bg-red-50 hover:text-red-700
@@ -258,7 +275,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
               title={isCollapsed ? "Logout" : undefined}
             >
               <div className="flex items-center justify-center min-w-[24px]">
-                <LogOut className="h-4.5 w-4.5 flex-shrink-0 text-red-500 group-hover:text-red-600" />
+                <LogOut className="h-[18px] w-[18px] flex-shrink-0 text-red-500 group-hover:text-red-600" />
               </div>
 
               {!isCollapsed && <span className="text-sm">Logout</span>}
@@ -275,15 +292,6 @@ export function Sidebar({ className = "" }: SidebarProps) {
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div
-        className={`
-          transition-all duration-300 ease-in-out w-full
-          ${isCollapsed ? "md:ml-20" : "md:ml-72"}
-        `}
-      >
-        {/* Your content remains the same */}
-      </div>
     </>
   );
 }

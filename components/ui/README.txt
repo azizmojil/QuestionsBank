@@ -8,7 +8,7 @@ Suggested bootstrap commands
 - npm init -y
 - npm install react react-dom typescript tailwindcss postcss autoprefixer lucide-react
 - npx tailwindcss init -p
-- npx shadcn-ui init --defaults --components components/ui
+- npx shadcn-ui@latest init --defaults --components components/ui
 
 Post-bootstrap configuration
 - In tsconfig.json set "baseUrl": "." and paths alias: { "@/*": ["./*"] } so imports like "@/components/ui/modern-side-bar" resolve.
