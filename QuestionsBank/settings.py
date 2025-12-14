@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'assessment_flow.apps.AssessmentFlowConfig',
     'indicators.apps.IndicatorsConfig',
     'assessment_runs.apps.AssessmentRunsConfig',
-    'QnR.apps.QnrConfig',
+    'Qbank.apps.QbankConfig',
+    'Rbank.apps.RbankConfig',
 ]
 
 MIDDLEWARE = [
