@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.i18n import set_language
-from QnR import views as qnr_views
+from Qbank import views as qnr_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),

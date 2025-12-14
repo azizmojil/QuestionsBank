@@ -52,7 +52,7 @@ class Response(models.Model):
 
 
 class ResponseGroup(models.Model):
-    name = models.CharField(max_length=255, unique=True, verbose_name=_("اسم المجموعة"))
+    name = models.CharField(max_length=255, verbose_name=_("اسم المجموعة"))
     responses = models.ManyToManyField(Response, verbose_name=_("الإجابات"))
 
     def __str__(self):
@@ -61,30 +61,3 @@ class ResponseGroup(models.Model):
     class Meta:
         verbose_name = _("مجموعة إجابات")
         verbose_name_plural = _("مجموعات الإجابات")
-
-
-class SurveyQuestion(models.Model):
-    """
-    A single question in a survey.
-    """
-    text_ar = models.TextField(verbose_name=_("السؤال [عربية]"))
-    text_en = models.TextField(verbose_name=_("السؤال [إنجليزية]"))
-    response_groups = models.ManyToManyField(
-        ResponseGroup,
-        related_name="questions",
-        verbose_name=_("مجموعات الإجابات"),
-    )
-
-    def __str__(self):
-        return self.display_text
-
-    @property
-    def display_text(self):
-        lang = get_language()
-        if lang == 'ar':
-            return self.text_ar
-        return self.text_en
-
-    class Meta:
-        verbose_name = _("سؤال استبيان")
-        verbose_name_plural = _("أسئلة الاستبيان")

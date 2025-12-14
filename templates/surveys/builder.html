@@ -8,41 +8,22 @@
 {% endblock %}
 
 {% block content %}
-<section class="hero builder-hero">
-    <div class="card hero-card">
-        <h1>{% trans "منشئ الاستبيان" %}</h1>
-        <p class="lead">{% trans "أنشئ استبيانات بأقسام وأنواع أسئلة متنوعة (بما فيها المصفوفات)، واجمع الردود التي تحتاجها." %}</p>
-        <div class="flex gap-2 mt-3 flex-wrap">
-            <a href="#builder-workspace" class="btn">{% trans "ابدأ التركيب" %}</a>
-        </div>
-    </div>
-</section>
-
 <section id="builder-workspace" class="builder-grid">
-    <div class="card">
-        <h2>{% trans "صمم هيكل استبيانك" %}</h2>
-        <form id="builder-form">
-            <label class="stacked">
-                {% trans "عنوان الاستبيان" %}
-                <input id="survey-title" name="survey_title" type="text" placeholder="{% trans 'نبض تجربة العملاء' %}" value="{% trans 'نبض تجربة العملاء' %}">
-            </label>
-            <div class="flex gap-2 mt-2 wrap">
-                <div class="info-block">
-                    <p class="eyebrow">{% trans "الأقسام" %}</p>
-                    <p class="muted">{% trans "اجمع الأسئلة ذات الصلة لتحسين التسلسل." %}</p>
-                </div>
-                <div class="info-block">
-                    <p class="eyebrow">{% trans "أسئلة المصفوفة" %}</p>
-                    <p class="muted">{% trans "حدّد الصفوف والأعمدة وخيارات الاستجابة المشتركة." %}</p>
-                </div>
-            </div>
-            <div class="section-actions mt-3">
-                <button type="button" class="btn" id="add-section-btn">{% trans "إضافة قسم" %}</button>
-                <button type="button" class="btn btn-secondary" id="load-sample-btn">{% trans "تحميل نموذج هيكل" %}</button>
-            </div>
-            <div id="sections-container" class="section-container" aria-live="polite"></div>
-        </form>
-    </div>
+    <form id="builder-form">
+        <label class="stacked">
+            {% trans "اختر إصدار استبيان" %}
+            <select id="survey-version-select">
+                <option value="" disabled selected>{% trans "اختر إصدارًا لتحميله" %}</option>
+                {% for version in survey_versions %}
+                    <option value="{{ version.id }}">{{ version.label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <div class="section-actions mt-3">
+            <button type="button" class="btn" id="add-section-btn">{% trans "إضافة قسم" %}</button>
+        </div>
+        <div id="sections-container" class="section-container" aria-live="polite"></div>
+    </form>
 </section>
 
 <template id="section-template">
@@ -56,16 +37,13 @@
                     <textarea class="section-description" rows="2" placeholder="{% trans 'صف بإيجاز ما يتضمنه هذا القسم' %}"></textarea>
                 </label>
             </div>
-            <button type="button" class="btn btn-secondary remove-section">{% trans "حذف القسم" %}</button>
+            <div class="section-controls">
+                <button type="button" class="btn btn-secondary remove-section">{% trans "حذف القسم" %}</button>
+                <button type="button" class="btn add-question">{% trans "إضافة سؤال" %}</button>
+                <button type="button" class="btn add-matrix-question">{% trans "إضافة سؤال مصفوفة" %}</button>
+            </div>
         </div>
         <div class="questions-area">
-            <div class="section-header">
-                <div>
-                    <p class="eyebrow">{% trans "الأسئلة" %}</p>
-                    <p class="muted">{% trans "أضف ما تشاء من الأسئلة. غيّر نوع الإجابة لإظهار الخيارات أو شبكات المصفوفة." %}</p>
-                </div>
-                <button type="button" class="btn add-question">{% trans "إضافة سؤال" %}</button>
-            </div>
             <div class="question-list"></div>
         </div>
     </div>
@@ -73,58 +51,104 @@
 
 <template id="question-template">
     <div class="card question-block">
-        <div class="question-top">
-            <label class="stacked full-width">{% trans "السؤال" %}
-                <select class="question-select" required>
-                    <option value="" disabled selected>{% trans "اختر سؤالاً من قاعدة البيانات" %}</option>
-                    {% for q in available_questions %}
-                        <option value="{{ q.id }}" data-response-type="{{ q.response_type }}">{{ q.label }}</option>
-                    {% empty %}
-                        <option value="" disabled>{% trans "لا توجد أسئلة متاحة بعد" %}</option>
-                    {% endfor %}
-                </select>
+        <div class="question-grid">
+            <label class="stacked">{% trans "السؤال" %}</label>
+            <label class="stacked">{% trans "نوع الاستجابة" %}</label>
+            <button type="button" class="btn btn-secondary remove-question">{% trans "حذف" %}</button>
+
+            <select class="question-select" required>
+                <option value="" disabled selected>{% trans "اختر سؤالاً من قاعدة البيانات" %}</option>
+                {% for q in available_questions %}
+                    <option value="{{ q.id }}">{{ q.label }}</option>
+                {% empty %}
+                    <option value="" disabled>{% trans "لا توجد أسئلة متاحة بعد" %}</option>
+                {% endfor %}
+            </select>
+
+            <select class="response-type">
+                {% for rt in response_types %}
+                    <option value="{{ rt.value }}">{{ rt.label }}</option>
+                {% endfor %}
+            </select>
+
+            <div></div> <!-- Empty cell for alignment -->
+
+            <label class="stacked">{% trans "مجموعة الإجابات" %}</label>
+            <label class="checkbox">
+                <input type="checkbox" class="question-required">
+                <span>{% trans "إلزامي" %}</span>
             </label>
-            <div class="question-controls">
-                <label class="stacked">{% trans "نوع الإجابة" %}
-                    <select class="response-type">
-                        {% for rt in response_types %}
-                            <option value="{{ rt.value }}">{{ rt.label }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-                <label class="checkbox">
-                    <input type="checkbox" class="question-required">
-                    <span>{% trans "إلزامي" %}</span>
-                </label>
-                <button type="button" class="btn btn-secondary remove-question">{% trans "حذف" %}</button>
-            </div>
+            <div></div> <!-- Empty cell for alignment -->
+
+            <select class="response-group">
+                <option value="" disabled selected>{% trans "اختر مجموعة إجابات" %}</option>
+                {% for rg in response_groups %}
+                    <option value="{{ rg.value }}">{{ rg.label }}</option>
+                {% endfor %}
+            </select>
         </div>
-        <div class="option-editor hidden">
-            <div class="option-row">
-                <label class="stacked full-width">{% trans "خيار إجابة" %}
-                    <input type="text" class="option-input" placeholder="{% trans 'اكتب خياراً ثم أضفه' %}">
-                </label>
-                <button type="button" class="btn add-option">{% trans "إضافة خيار" %}</button>
-            </div>
-            <div class="pill-list" aria-live="polite"></div>
+    </div>
+</template>
+
+<template id="matrix-question-template">
+    <div class="card question-block matrix-question-block">
+        <div class="question-grid">
+            <label class="stacked">{% trans "أسئلة المصفوفة" %}</label>
+            <label class="stacked">{% trans "نوع الاستجابة" %}</label>
+            <button type="button" class="btn btn-secondary remove-question">{% trans "حذف" %}</button>
+
+            <select class="matrix-question-select">
+                <option value="" disabled selected>{% trans "أضف سؤالاً إلى المصفوفة" %}</option>
+                {% for q in available_questions %}
+                    <option value="{{ q.id }}">{{ q.label }}</option>
+                {% endfor %}
+            </select>
+
+            <select class="response-type">
+                {% for rt in response_types %}
+                    <option value="{{ rt.value }}">{{ rt.label }}</option>
+                {% endfor %}
+            </select>
+
+            <div></div> <!-- Empty cell for alignment -->
+
+            <label class="stacked">{% trans "مجموعة المصفوفة" %}</label>
+            <label class="checkbox">
+                <input type="checkbox" class="question-required">
+                <span>{% trans "إلزامي" %}</span>
+            </label>
+            <div></div> <!-- Empty cell for alignment -->
+
+            <select class="matrix-group">
+                <option value="" disabled selected>{% trans "اختر مجموعة مصفوفة" %}</option>
+                {% for mg in matrix_item_groups %}
+                    <option value="{{ mg.value }}">{{ mg.label }}</option>
+                {% endfor %}
+            </select>
+
+            <div></div> <!-- Empty cell for alignment -->
+            <div></div> <!-- Empty cell for alignment -->
+
+            <label class="stacked">{% trans "مجموعة الإجابات" %}</label>
+            <div></div> <!-- Empty cell for alignment -->
+            <div></div> <!-- Empty cell for alignment -->
+
+            <select class="response-group">
+                <option value="" disabled selected>{% trans "اختر مجموعة إجابات" %}</option>
+                {% for rg in response_groups %}
+                    <option value="{{ rg.value }}">{{ rg.label }}</option>
+                {% endfor %}
+            </select>
         </div>
-        <div class="matrix-editor hidden">
-            <div class="matrix-grid">
-                <label class="stacked full-width">{% trans "صفوف المصفوفة" %}
-                    <textarea class="matrix-rows" rows="3" placeholder="{% trans 'سطر لكل صف' %}"></textarea>
-                </label>
-                <label class="stacked full-width">{% trans "أعمدة المصفوفة" %}
-                    <textarea class="matrix-columns" rows="3" placeholder="{% trans 'سطر لكل عمود' %}"></textarea>
-                </label>
-            </div>
-            <p class="muted">{% trans "تمثل الصفوف محاور مثل سهولة الاستخدام أو السرعة، وتمثل الأعمدة القنوات مثل الويب أو الجوال." %}</p>
-        </div>
+        <div class="selected-matrix-questions mt-2"></div>
     </div>
 </template>
 
 {{ response_types|json_script:"response-types-data" }}
 {{ available_questions|json_script:"available-questions-data" }}
-{{ sample_sections|json_script:"sample-sections-data" }}
+{{ response_groups|json_script:"response-groups-data" }}
+{{ matrix_item_groups|json_script:"matrix-item-groups-data" }}
+{{ survey_structures|json_script:"survey-structures-data" }}
 <script id="builder-locale" type="application/json">
     {
         "yes": "{% trans 'نعم' %}",
