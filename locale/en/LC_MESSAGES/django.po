@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-13 20:08+0300\n"
+"POT-Creation-Date: 2025-12-14 18:34+0300\n"
 "PO-Revision-Date: 2025-12-12 18:07+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,7 +41,9 @@ msgstr "Response Group"
 msgid "مجموعات الإجابات"
 msgstr "Response Groups"
 
-#: .\QnR\admin.py:56 .\assessment_flow\models.py:80 .\surveys\models.py:269
+#: .\QnR\admin.py:56 .\assessment_flow\models.py:80
+#: .\assessment_flow\models.py:198 .\surveys\models.py:239
+#: .\templates\surveys\builder.html:77
 msgid "السؤال"
 msgstr "Question"
 
@@ -83,11 +85,13 @@ msgstr "Group Name"
 msgid "مجموعة إجابات"
 msgstr "Response Group"
 
-#: .\QnR\models.py:70 .\assessment_flow\models.py:29 .\surveys\models.py:218
+#: .\QnR\models.py:70 .\assessment_flow\models.py:29
+#: .\assessment_flow\models.py:177 .\surveys\models.py:201
 msgid "السؤال [عربية]"
 msgstr "Question [Arabic]"
 
-#: .\QnR\models.py:71 .\assessment_flow\models.py:30 .\surveys\models.py:223
+#: .\QnR\models.py:71 .\assessment_flow\models.py:30
+#: .\assessment_flow\models.py:178 .\surveys\models.py:206
 msgid "السؤال [إنجليزية]"
 msgstr "Question [English]"
 
@@ -95,7 +99,7 @@ msgstr "Question [English]"
 msgid "سؤال استبيان"
 msgstr "Survey question"
 
-#: .\QnR\models.py:90 .\surveys\models.py:188
+#: .\QnR\models.py:90 .\surveys\models.py:182
 msgid "أسئلة الاستبيان"
 msgstr "Survey Questions"
 
@@ -146,7 +150,7 @@ msgstr "Indicator Source"
 msgid "اختر المؤشر الذي ستُؤخذ الخيارات منه."
 msgstr "Select the indicator from which to source the options."
 
-#: .\assessment_flow\apps.py:8
+#: .\assessment_flow\apps.py:8 .\assessment_runs\models.py:62
 msgid "مسار التقييم"
 msgstr "Assessment Flow"
 
@@ -186,11 +190,11 @@ msgstr "Allow multiple choices"
 msgid "سؤال مصدر الخيارات الديناميكي"
 msgstr "Dynamic Option Source Question"
 
-#: .\assessment_flow\models.py:61
+#: .\assessment_flow\models.py:61 .\assessment_flow\models.py:179
 msgid "Created At"
 msgstr ""
 
-#: .\assessment_flow\models.py:62
+#: .\assessment_flow\models.py:62 .\assessment_flow\models.py:180
 msgid "Updated At"
 msgstr ""
 
@@ -220,185 +224,293 @@ msgstr ""
 msgid "إدخال رابط"
 msgstr ""
 
-#: .\assessment_flow\models.py:117
+#: .\assessment_flow\models.py:116
 msgid "Assessment Option"
 msgstr ""
 
-#: .\assessment_flow\models.py:118
+#: .\assessment_flow\models.py:117
 msgid "Assessment Options"
 msgstr ""
 
-#: .\assessment_flow\models.py:145
+#: .\assessment_flow\models.py:144
 msgid "From Question"
 msgstr ""
 
-#: .\assessment_flow\models.py:150
+#: .\assessment_flow\models.py:149 .\assessment_runs\models.py:88
 msgid "الشرط"
-msgstr ""
+msgstr "Condition"
 
-#: .\assessment_flow\models.py:152
+#: .\assessment_flow\models.py:151
 msgid "تعبير يُقيّمه محرك التوجيه، مثل \"option == 'CODE_A' -> 'NEXT_Q_CODE'\""
 msgstr ""
 "Expression evaluated by the routing engine, e.g., \"option == 'CODE_A' -> "
 "'NEXT_Q_CODE'\""
 
-#: .\assessment_flow\models.py:162
+#: .\assessment_flow\models.py:161
 msgid "Assessment Flow Rule"
 msgstr ""
 
-#: .\assessment_flow\models.py:163
+#: .\assessment_flow\models.py:162
 msgid "Assessment Flow Rules"
 msgstr ""
 
-#: .\assessment_runs\models.py:18 .\surveys\models.py:20
+#: .\assessment_flow\models.py:175 .\assessment_runs\models.py:28
+#: .\surveys\admin.py:12 .\surveys\models.py:101 .\surveys\models.py:189
+msgid "إصدار الاستبيان"
+msgstr "Survey version"
+
+#: .\assessment_flow\models.py:184
+#, fuzzy
+#| msgid "سؤال التقييم"
+msgid "سؤال إعادة التقييم"
+msgstr "Assessment Question"
+
+#: .\assessment_flow\models.py:185
+#, fuzzy
+#| msgid "الأسئلة وإجراءات التقييم"
+msgid "اسئلة إعادة التقييم"
+msgstr "Questions and assessment actions"
+
+#: .\assessment_runs\apps.py:8 .\assessment_runs\models.py:19
+msgid "عمليات التقييم"
+msgstr "Assessment Runs"
+
+#: .\assessment_runs\models.py:18
+msgid "عملية تقييم"
+msgstr "Assessment Run"
+
+#: .\assessment_runs\models.py:23 .\surveys\models.py:20
 #: .\surveys\models.py:107
 msgid "مسودة"
 msgstr "Draft"
 
-#: .\assessment_runs\models.py:19 .\assessment_runs\models.py:46
+#: .\assessment_runs\models.py:24 .\assessment_runs\models.py:54
 msgid "قيد التنفيذ"
 msgstr "In progress"
 
-#: .\assessment_runs\models.py:20 .\assessment_runs\models.py:47
+#: .\assessment_runs\models.py:25 .\assessment_runs\models.py:55
 msgid "مكتمل"
 msgstr "Complete"
 
-#: .\assessment_runs\models.py:21
+#: .\assessment_runs\models.py:26
 msgid "ملغي"
 msgstr "Cancelled"
 
-#: .\assessment_runs\models.py:45
-msgid "لم تتم زيارته"
-msgstr "Not visited"
+#: .\assessment_runs\models.py:29
+msgid "تسمية"
+msgstr "Label"
 
-#: .\assessment_runs\models.py:48
-msgid "بانتظار رفع ملف"
-msgstr "Pending file upload"
-
-#: .\assessment_runs\models.py:78
-msgid "منطق JSON يتم تقييمه بواسطة محرك التصنيف."
-msgstr "JSON logic evaluated by the ClassificationEngine."
-
-#: .\indicators\apps.py:10 .\indicators\models.py:16
-msgid "المؤشرات"
-msgstr "Indicators"
-
-#: .\indicators\models.py:15 .\indicators\models.py:55
-#: .\indicators\models.py:78 .\indicators\models.py:104
-msgid "المؤشر"
-msgstr "Indicator"
-
-#: indicators/models.py:58
-msgid "الاسم [عربية]"
-msgstr "Name [Arabic]"
-
-#: indicators/models.py:59
-msgid "الاسم [إنجليزية]"
-msgstr "Name [English]"
-
-#: .\indicators\models.py:31 .\indicators\models.py:116 .\surveys\models.py:38
-#: .\surveys\models.py:212
-msgid "الرمز"
-msgstr "Code"
-
-#: .\indicators\models.py:47
-msgid "وطني"
-msgstr "National"
-
-#: .\indicators\models.py:48
-msgid "إقليمي"
-msgstr "Regional"
-
-#: .\indicators\models.py:49
-msgid "دولي"
-msgstr "International"
-
-#: .\indicators\models.py:60
-msgid "التصنيف"
-msgstr "Classification"
-
-#: .\indicators\models.py:64
-msgid "تصنيف المؤشر"
-msgstr "Indicator Classification"
-
-#: .\indicators\models.py:65
-msgid "تصنيفات المؤشر"
-msgstr "Indicator Classifications"
-
-#: .\indicators\models.py:71
-msgid "متابع"
-msgstr "Tracked"
-
-#: .\indicators\models.py:72
-msgid "غير متابع"
-msgstr "Not Tracked"
-
-#: .\indicators\models.py:83 .\surveys\models.py:46 .\surveys\models.py:148
+#: .\assessment_runs\models.py:30 .\assessment_runs\models.py:60
+#: .\indicators\models.py:102 .\surveys\models.py:46 .\surveys\models.py:148
 #: .\templates\assessment_runs\survey_list.html:20
 #: .\templates\assessment_runs\survey_version_list.html:20
 msgid "الحالة"
 msgstr "Status"
 
-#: .\indicators\models.py:87
-msgid "تتبع المؤشر"
-msgstr "Indicator Tracking"
+#: .\assessment_runs\models.py:31
+msgid "تم إنشاؤها بواسطة"
+msgstr "Created by"
 
-#: .\indicators\models.py:88
-msgid "معلومات تتبع المؤشر"
-msgstr "Indicator Tracking Information"
+#: .\assessment_runs\models.py:32
+msgid "معينة ل"
+msgstr "Assigned to"
 
-#: .\indicators\models.py:106
-msgid "عنصر قائمة المؤشر"
-msgstr "Indicator List Item"
+#: .\assessment_runs\models.py:33
+msgid "بدأت في"
+msgstr "Started at"
 
-#: indicators/models.py:60
-msgid "عناصر قائمة المؤشر"
-msgstr "Indicator List Items"
+#: .\assessment_runs\models.py:34
+msgid "اكتملت في"
+msgstr "Completed at"
 
-#: .\indicators\models.py:109
-msgid "الاسم"
-msgstr "Name"
+#: .\assessment_runs\models.py:35
+msgid "ملاحظات"
+msgstr "Notes"
 
-#: indicators/models.py:72
-msgid "عنصر قائمة مؤشر التصنيف"
-msgstr "Classification Indicator List Item"
+#: .\assessment_runs\models.py:47 .\assessment_runs\models.py:109
+msgid "نتيجة التقييم"
+msgstr "Assessment result"
 
-#: indicators/models.py:73
-msgid "عناصر قائمة مؤشر التصنيف"
-msgstr "Classification Indicator List Items"
+#: .\assessment_runs\models.py:48
+msgid "نتائج التقييم"
+msgstr "Assessment Results"
 
-#: indicators/models.py:131
-msgid "اسم المؤشر"
-msgstr "Indicator name"
+#: .\assessment_runs\models.py:53
+msgid "لم تتم زيارته"
+msgstr "Not visited"
 
-#: indicators/models.py:132
-msgid "أسماء المؤشرات"
-msgstr "Indicator names"
+#: .\assessment_runs\models.py:56
+msgid "بانتظار رفع ملف"
+msgstr "Pending file upload"
 
-#: .\indicators\models.py:110
-msgid "اسم عنصر قائمة المؤشر."
-msgstr "Name of the indicator list item."
+#: .\assessment_runs\models.py:58
+msgid "عملية التقييم"
+msgstr "Assessment run"
 
-#: .\indicators\models.py:117
-msgid "رمز اختياري لعنصر القائمة."
-msgstr "Optional code for the list item."
-
-#: .\indicators\models.py:126 .\surveys\admin.py:12 .\surveys\models.py:101
-#: .\surveys\models.py:206
-msgid "إصدار الاستبيان"
-msgstr "Survey version"
-
-#: .\indicators\models.py:127
-msgid "نسخة الاستبيان التي يُعرَّف عليها هذا العنصر."
-msgstr "Survey version this indicator list item is defined on."
-
-#: .\indicators\models.py:136 .\surveys\models.py:187
+#: .\assessment_runs\models.py:59 .\assessment_runs\models.py:83
+#: .\surveys\models.py:181
 msgid "سؤال الاستبيان"
 msgstr "Survey Question"
 
-#: .\indicators\models.py:137
-msgid "سؤال الاستبيان الذي يعرّف أو يرفد هذا العنصر."
-msgstr "Survey question that defines or feeds this indicator list item."
+#: .\assessment_runs\models.py:61
+msgid "تم تقييمها بواسطة"
+msgstr "Assessed by"
+
+#: .\assessment_runs\models.py:63
+msgid "تعليق موجز"
+msgstr "Summary comment"
+
+#: .\assessment_runs\models.py:64
+msgid "أعلام"
+msgstr "Flags"
+
+#: .\assessment_runs\models.py:65
+msgid "تم تقييمها في"
+msgstr "Assessed at"
+
+#: .\assessment_runs\models.py:75
+msgid "قاعدة تصنيف السؤال"
+msgstr "Question Classification Rule"
+
+#: .\assessment_runs\models.py:76
+msgid "قواعد تصنيف السؤال"
+msgstr "Question Classification Rules"
+
+#: .\assessment_runs\models.py:85 .\indicators\models.py:79
+msgid "التصنيف"
+msgstr "Classification"
+
+#: .\assessment_runs\models.py:89
+msgid "منطق JSON يتم تقييمه بواسطة محرك التصنيف."
+msgstr "JSON logic evaluated by the ClassificationEngine."
+
+#: .\assessment_runs\models.py:91
+msgid "الأولوية"
+msgstr "Priority"
+
+#: .\assessment_runs\models.py:92 .\surveys\models.py:21
+#: .\surveys\models.py:108
+msgid "نشط"
+msgstr "Active"
+
+#: .\assessment_runs\models.py:93 .\assessment_runs\models.py:113
+#: .\surveys\models.py:40
+msgid "الوصف"
+msgstr "Description"
+
+#: .\assessment_runs\models.py:105
+msgid "ملف التقييم"
+msgstr "Assessment File"
+
+#: .\assessment_runs\models.py:106
+msgid "ملفات التقييم"
+msgstr "Assessment Files"
+
+#: .\assessment_runs\models.py:110
+msgid "الخيار المحفز"
+msgstr "Triggering option"
+
+#: .\assessment_runs\models.py:111
+msgid "الملف"
+msgstr "File"
+
+#: .\assessment_runs\models.py:112
+msgid "اسم الملف الأصلي"
+msgstr "Original filename"
+
+#: .\assessment_runs\models.py:114
+msgid "تم الرفع بواسطة"
+msgstr "Uploaded by"
+
+#: .\assessment_runs\models.py:115
+msgid "تم الرفع في"
+msgstr "Uploaded at"
+
+#: .\indicators\apps.py:10 .\indicators\models.py:16
+msgid "المؤشرات"
+msgstr "Indicators"
+
+#: .\indicators\models.py:15 .\indicators\models.py:74
+#: .\indicators\models.py:123
+msgid "المؤشر"
+msgstr "Indicator"
+
+#: .\indicators\models.py:22 .\indicators\models.py:48
+msgid "الاسم [عربية]"
+msgstr "Name [Arabic]"
+
+#: .\indicators\models.py:27 .\indicators\models.py:49
+msgid "الاسم [إنجليزية]"
+msgstr "Name [English]"
+
+#: .\indicators\models.py:33 .\indicators\models.py:135 .\surveys\models.py:38
+#: .\surveys\models.py:195
+msgid "الرمز"
+msgstr "Code"
+
+#: .\indicators\models.py:56
+msgid "تصنيف"
+msgstr "Classification"
+
+#: .\indicators\models.py:57
+msgid "التصنيفات"
+msgstr "Classifications"
+
+#: .\indicators\models.py:62 .\indicators\models.py:114
+msgid "اسم المؤشر"
+msgstr "Indicator name"
+
+#: .\indicators\models.py:65
+msgid "عنصر قائمة مؤشر التصنيف"
+msgstr "Classification Indicator List Item"
+
+#: .\indicators\models.py:66
+msgid "عناصر قائمة مؤشر التصنيف"
+msgstr "Classification Indicator List Items"
+
+#: .\indicators\models.py:83
+msgid "تصنيف المؤشر"
+msgstr "Indicator Classification"
+
+#: .\indicators\models.py:84
+msgid "تصنيفات المؤشر"
+msgstr "Indicator Classifications"
+
+#: .\indicators\models.py:90
+msgid "متابع"
+msgstr "Tracked"
+
+#: .\indicators\models.py:91
+msgid "غير متابع"
+msgstr "Not Tracked"
+
+#: .\indicators\models.py:97
+msgid "عنصر قائمة المؤشر"
+msgstr "Indicator List Item"
+
+#: .\indicators\models.py:106
+msgid "تتبع المؤشر"
+msgstr "Indicator Tracking"
+
+#: .\indicators\models.py:107
+msgid "معلومات تتبع المؤشر"
+msgstr "Indicator Tracking Information"
+
+#: .\indicators\models.py:115
+msgid "أسماء المؤشرات"
+msgstr "Indicator names"
+
+#: .\indicators\models.py:128
+msgid "الاسم"
+msgstr "Name"
+
+#: .\indicators\models.py:129
+msgid "اسم عنصر قائمة المؤشر."
+msgstr "Name of the indicator list item."
+
+#: .\indicators\models.py:136
+msgid "رمز اختياري لعنصر القائمة."
+msgstr "Optional code for the list item."
 
 #: .\surveys\admin.py:13 .\surveys\models.py:102
 msgid "إصدارات الاستبيان"
@@ -424,10 +536,6 @@ msgstr "Surveys"
 msgid "استبيان"
 msgstr "Survey"
 
-#: .\surveys\models.py:21 .\surveys\models.py:108
-msgid "نشط"
-msgstr "Active"
-
 #: .\surveys\models.py:22 .\surveys\models.py:110
 msgid "مؤرشف"
 msgstr "Archived"
@@ -439,10 +547,6 @@ msgstr "Survey name [Arabic]"
 #: .\surveys\models.py:32
 msgid "اسم المسح [انجليزية]"
 msgstr "Survey name [English]"
-
-#: .\surveys\models.py:40
-msgid "الوصف"
-msgstr "Description"
 
 #: .\surveys\models.py:47
 msgid "مسودة: قيد التصميم. نشط: قيد الاستخدام. مؤرشف: لم يعد مستخدماً."
@@ -522,227 +626,176 @@ msgstr ""
 "Draft: editable; Active: in collection; Locked: structure frozen; Archived: "
 "historic."
 
-#: .\surveys\models.py:155
-msgid "بيانات وصفية اختيارية مثل معلومات إطار العينة أو الملاحظات."
-msgstr "Optional metadata, e.g. sampling frame info, notes, etc."
-
-#: .\surveys\models.py:158 .\templates\assessment_runs\survey_list.html:21
+#: .\surveys\models.py:152 .\templates\assessment_runs\survey_list.html:21
 msgid "تاريخ الإنشاء"
 msgstr "Created"
 
-#: .\surveys\models.py:192
-msgid "نعم/لا (ثنائي)"
-msgstr "Yes/No (Binary)"
-
-#: .\surveys\models.py:193
-msgid "اختيار واحد"
-msgstr "Single Choice"
-
-#: .\surveys\models.py:194
-msgid "اختيارات متعددة"
-msgstr "Multiple Choice"
-
-#: .\surveys\models.py:195
-msgid "نص حر"
-msgstr "Free Text"
-
 #: .\surveys\models.py:196
-msgid "رقمي"
-msgstr "Numeric"
-
-#: .\surveys\models.py:197
-msgid "تاريخ"
-msgstr "Date"
-
-#: .\surveys\models.py:198
-msgid "تاريخ ووقت"
-msgstr "Date & Time"
-
-#: .\surveys\models.py:199
-msgid "مقياس (مثلاً 1–5)"
-msgstr "Scale (e.g. 1–5)"
-
-#: .\surveys\models.py:200
-msgid "مصفوفة"
-msgstr "Matrix"
-
-#: .\surveys\models.py:213
 msgid "رمز سؤال اختياري مثل Q1 أو A01."
 msgstr "Optional question code, e.g. Q1, A01, etc."
 
-#: .\surveys\models.py:219
+#: .\surveys\models.py:202
 #, fuzzy
 #| msgid "النص الكامل للسؤال كما يراه المجيب."
 msgid "النص الكامل للسؤال باللغة العربية."
 msgstr "Full text of the question as seen by the respondent."
 
-#: .\surveys\models.py:224
+#: .\surveys\models.py:207
 #, fuzzy
 #| msgid "النص الكامل للسؤال كما يراه المجيب."
 msgid "النص الكامل للسؤال باللغة الإنجليزية."
 msgstr "Full text of the question as seen by the respondent."
 
-#: .\surveys\models.py:229
+#: .\surveys\models.py:212
 msgid "نص مساعدة اختياري أو تعليمات للمُعِد."
 msgstr "Optional help text / enumerator instructions."
 
-#: .\surveys\models.py:235
+#: .\surveys\models.py:218
 msgid "مسمى القسم"
 msgstr "Section label"
 
-#: .\surveys\models.py:236
+#: .\surveys\models.py:219
 msgid "تسمية قسم منطقية للتقارير فقط."
 msgstr "Optional logical section/group name for reporting only."
 
-#: .\surveys\models.py:243
-msgid ""
-"النوع الأساسي المتوقع للإجابة؛ يمكن أن تعيش الترميزات أو التحقق التفصيلي في "
-"مكان آخر."
-msgstr ""
-"Basic expected response type; detailed coding/validation can live elsewhere."
-
-#: .\surveys\models.py:248
+#: .\surveys\models.py:224
 msgid "هل يجب الإجابة على السؤال أثناء جمع البيانات."
 msgstr "Whether the question must be answered in data collection."
 
-#: .\surveys\models.py:254
-msgid "بنية إضافية اختيارية (القيم المسموحة، النطاقات، شروط التخطي، إلخ)."
-msgstr "Optional extra structure (allowed values, ranges, skip tags, etc.)."
-
-#: .\surveys\tests.py:13 .\templates\base.html:22
+#: .\surveys\tests.py:14 .\templates\base.html:22
 #: .\templates\surveys\builder.html:13
 msgid "منشئ الاستبيان"
 msgstr "Survey Builder"
 
-#: .\surveys\views.py:12
+#: .\surveys\views.py:28
 msgid "خيار سريع بنعم/لا مع خيارات محددة مسبقاً."
 msgstr "Quick yes/no with predefined options."
 
-#: .\surveys\views.py:16
+#: .\surveys\views.py:32
 msgid "اختر خياراً واحداً من القائمة."
 msgstr "Pick one option from a list."
 
-#: .\surveys\views.py:20
+#: .\surveys\views.py:36
 msgid "اختر عدة خيارات من القائمة."
 msgstr "Pick many options from a list."
 
-#: .\surveys\views.py:24
+#: .\surveys\views.py:40
 msgid "دع المجيبين يكتبون إجاباتهم بحرية."
 msgstr "Let respondents answer in their own words."
 
-#: .\surveys\views.py:28
+#: .\surveys\views.py:44
 msgid "تسجيل أعداد أو قيم رقمية متصلة."
 msgstr "Capture counts or continuous values."
 
-#: .\surveys\views.py:32
+#: .\surveys\views.py:48
 msgid "اطلب تاريخاً محدداً."
 msgstr "Ask for a calendar date."
 
-#: .\surveys\views.py:36
+#: .\surveys\views.py:52
 msgid "تاريخ ووقت معاً."
 msgstr "Date and time together."
 
-#: .\surveys\views.py:40
+#: .\surveys\views.py:56
 msgid "تقييمات مثل مقياس الموافقة من 1 إلى 5."
 msgstr "Ratings such as 1–5 agreement scales."
 
-#: .\surveys\views.py:45
+#: .\surveys\views.py:61
 msgid "شبكة من الصفوف والأعمدة يتم تقييمها بخيارات مشتركة."
 msgstr "Grid of rows and columns scored with shared options."
 
-#: .\surveys\views.py:60
+#: .\surveys\views.py:76
 msgid "الملف الشخصي"
 msgstr "Profile"
 
-#: .\surveys\views.py:61
+#: .\surveys\views.py:77
 msgid "سمات أساسية لتقسيم المجيبين."
 msgstr "Baseline attributes to segment respondents."
 
-#: .\surveys\views.py:64
+#: .\surveys\views.py:80
 msgid "ما الوصف الأفضل لدورك؟"
 msgstr "What best describes your role?"
 
-#: .\surveys\views.py:66
+#: .\surveys\views.py:82
 msgid "مؤسس"
 msgstr "Founder"
 
-#: .\surveys\views.py:66
+#: .\surveys\views.py:82
 msgid "مدير"
 msgstr "Manager"
 
-#: .\surveys\views.py:66
+#: .\surveys\views.py:82
 msgid "عضو مساهم"
 msgstr "Individual contributor"
 
-#: .\surveys\views.py:70
+#: .\surveys\views.py:86
 msgid "ما الأدوات التي تستخدمها أسبوعياً؟"
 msgstr "Which tools do you use weekly?"
 
-#: .\surveys\views.py:72
+#: .\surveys\views.py:88
 msgid "دفاتر ملاحظات"
 msgstr "Notebooks"
 
-#: .\surveys\views.py:72
+#: .\surveys\views.py:88
 msgid "لوحات معلومات"
 msgstr "Dashboards"
 
-#: .\surveys\views.py:72
+#: .\surveys\views.py:88
 msgid "برمجيات مخصصة"
 msgstr "Custom scripts"
 
-#: .\surveys\views.py:76
+#: .\surveys\views.py:92
 msgid "ما الشيء الذي تود تحسينه اليوم؟"
 msgstr "Share one thing you'd improve today."
 
-#: .\surveys\views.py:84
+#: .\surveys\views.py:100
 msgid "مصفوفة التجربة"
 msgstr "Experience matrix"
 
-#: .\surveys\views.py:85
+#: .\surveys\views.py:101
 msgid "قيّم كل قناة تقديم عبر اللحظات الأساسية."
 msgstr "Rate each delivery channel across key moments."
 
-#: .\surveys\views.py:88
+#: .\surveys\views.py:104
 msgid "كيف يعمل كل مسار؟"
 msgstr "How does each channel perform?"
 
-#: .\surveys\views.py:90
+#: .\surveys\views.py:106
 msgid "ممتاز"
 msgstr "Excellent"
 
-#: .\surveys\views.py:90
+#: .\surveys\views.py:106
 msgid "جيد"
 msgstr "Good"
 
-#: .\surveys\views.py:90
+#: .\surveys\views.py:106
 msgid "مقبول"
 msgstr "Fair"
 
-#: .\surveys\views.py:90
+#: .\surveys\views.py:106
 msgid "ضعيف"
 msgstr "Poor"
 
-#: .\surveys\views.py:92
+#: .\surveys\views.py:108
 msgid "إعداد الحساب"
 msgstr "Account setup"
 
-#: .\surveys\views.py:93
+#: .\surveys\views.py:109
 msgid "العثور على إجابات"
 msgstr "Finding answers"
 
-#: .\surveys\views.py:94
+#: .\surveys\views.py:110
 msgid "الحصول على الدعم"
 msgstr "Getting support"
 
-#: .\surveys\views.py:96
+#: .\surveys\views.py:112
 msgid "ويب"
 msgstr "Web"
 
-#: .\surveys\views.py:96
+#: .\surveys\views.py:112
 msgid "جوال"
 msgstr "Mobile"
 
-#: .\surveys\views.py:96
+#: .\surveys\views.py:112
 msgid "دردشة"
 msgstr "Chat"
 
@@ -820,7 +873,7 @@ msgstr "Please select at least one option."
 msgid "الاستبيانات - منصة QnR"
 msgstr "Surveys - QnR Platform"
 
-#: .\templates\assessment_runs\survey_list.html:9 .\templates\home.html:52
+#: .\templates\assessment_runs\survey_list.html:9 .\templates\home.html:10
 msgid "التقييمات الذاتية"
 msgstr "Self assessments"
 
@@ -867,7 +920,6 @@ msgid "الأسئلة وإجراءات التقييم"
 msgstr "Questions and assessment actions"
 
 #: .\templates\assessment_runs\survey_question_list.html:19
-#: .\templates\surveys\builder.html:77
 msgid "نص السؤال"
 msgstr "Question Text"
 
@@ -959,119 +1011,38 @@ msgstr "Built for inclusive assessments with care for accessibility."
 msgid "الصفحة الرئيسية - منصة QnR"
 msgstr "Home - QnR Platform"
 
-#: .\templates\home.html:9
-msgid "شامل منذ التصميم"
-msgstr "Inclusive by design"
-
 #: .\templates\home.html:10
-msgid "مرحباً بك في منصة QnR"
-msgstr "Welcome to the QnR Platform"
-
-#: .\templates\home.html:11
-msgid ""
-"أنشئ استبيانات مدروسة، ووجّه المتعلمين خلال التقييمات، واجعل كل تفاعل سهلاً "
-"وجميلاً."
-msgstr ""
-"Create thoughtful surveys, guide learners through assessments, and keep "
-"every interaction accessible and beautiful."
-
-#: .\templates\home.html:13
-msgid "ابدأ تقييماً ذاتياً"
-msgstr "Start a self assessment"
-
-#: .\templates\home.html:14
-msgid "استكشف المزايا"
-msgstr "Explore features"
-
-#: .\templates\home.html:18
-msgid "سهل الوصول"
-msgstr "Accessible"
-
-#: .\templates\home.html:19
-msgid "تنقل يعتمد على لوحة المفاتيح أولاً"
-msgstr "Keyboard-first navigation"
-
-#: .\templates\home.html:22
-msgid "فاتح وداكن"
-msgstr "Dark & Light"
-
-#: .\templates\home.html:23
-msgid "تجربة تدعم تبديل السمة"
-msgstr "Theme aware experience"
-
-#: .\templates\home.html:26
-msgid "متجاوب"
-msgstr "Responsive"
-
-#: .\templates\home.html:27
-msgid "محسن لكل الشاشات"
-msgstr "Optimized for every screen"
-
-#: .\templates\home.html:32
-msgid "ما يمكنك القيام به"
-msgstr "What you can do"
-
-#: .\templates\home.html:33
-msgid "صمم استبيانات واضحة وموجهة"
-msgstr "Design clear, guided surveys"
-
-#: .\templates\home.html:35
-msgid "أنشئ بنوك أسئلة ومسارات تقييم تلائم جمهورك."
-msgstr "Craft question banks and assessment flows tailored to your audience."
-
-#: .\templates\home.html:36
-msgid "قدّم أنواع خيارات غنية من الاختيار الفردي إلى القوائم القابلة للبحث."
-msgstr "Offer rich option types, from single choice to searchable dropdowns."
-
-#: .\templates\home.html:37
-msgid "حافظ على تركيز المشاركين ببطاقات خالية من الإلهاء وإجراءات واضحة."
-msgstr ""
-"Keep respondents focused with distraction-free cards and call-to-actions."
-
-#: .\templates\home.html:45
-msgid "أبرز المزايا"
-msgstr "Highlights"
-
-#: .\templates\home.html:46
-msgid "وضوح وتجربة مصقولة مدمجة"
-msgstr "Built-in clarity and polish"
-
-#: .\templates\home.html:48
-msgid "لوحات ألوان متوافقة مع WCAG"
-msgstr "WCAG-friendly palettes"
-
-#: .\templates\home.html:52
 msgid "ميزة التقييمات الذاتية"
 msgstr "Self assessments feature"
 
-#: .\templates\home.html:53
+#: .\templates\home.html:11
 msgid "وجّه المتعلمين عبر أسئلة متعمدة وهيكلية تتكيف مع أي موضوع."
 msgstr ""
 "Guide learners through intentional, structured questions that adapt to any "
 "topic."
 
-#: .\templates\home.html:56
+#: .\templates\home.html:14
 msgid "ميزة تتبع التقدم"
 msgstr "Track progress feature"
 
-#: .\templates\home.html:56
+#: .\templates\home.html:14
 msgid "تتبع التقدم"
 msgstr "Track Progress"
 
-#: .\templates\home.html:57
+#: .\templates\home.html:15
 msgid "تابع تغير الاستجابات بمرور الوقت مع معالم واضحة وإشعارات إكمال."
 msgstr ""
 "See how responses change over time with clear milestones and completion cues."
 
-#: .\templates\home.html:60
+#: .\templates\home.html:18
 msgid "ميزة الأسئلة المخصصة"
 msgstr "Custom questions feature"
 
-#: .\templates\home.html:60
+#: .\templates\home.html:18
 msgid "أسئلة مخصصة"
 msgstr "Custom Questions"
 
-#: .\templates\home.html:61
+#: .\templates\home.html:19
 msgid ""
 "أنشئ بنوك أسئلة قابلة لإعادة الاستخدام بخيارات قابلة للبحث ومرونة التحديد "
 "المتعدد."
@@ -1162,51 +1133,57 @@ msgstr ""
 msgid "إضافة سؤال"
 msgstr "Add question"
 
-#: .\templates\surveys\builder.html:78
-msgid "اطرح سؤالك بوضوح"
-msgstr "Ask your question clearly"
+#: .\templates\surveys\builder.html:79
+#, fuzzy
+#| msgid "اختر السؤال الذي ستُؤخذ الخيارات منه."
+msgid "اختر سؤالاً من قاعدة البيانات"
+msgstr "Select the question from which to source the options."
 
-#: .\templates\surveys\builder.html:81
+#: .\templates\surveys\builder.html:83
+msgid "لا توجد أسئلة متاحة بعد"
+msgstr ""
+
+#: .\templates\surveys\builder.html:88
 msgid "نوع الإجابة"
 msgstr "Response type"
 
-#: .\templates\surveys\builder.html:90
+#: .\templates\surveys\builder.html:97
 msgid "إلزامي"
 msgstr "Required"
 
-#: .\templates\surveys\builder.html:92
+#: .\templates\surveys\builder.html:99
 msgid "حذف"
 msgstr "Remove"
 
-#: .\templates\surveys\builder.html:97
+#: .\templates\surveys\builder.html:104
 msgid "خيار إجابة"
 msgstr "Response option"
 
-#: .\templates\surveys\builder.html:98
+#: .\templates\surveys\builder.html:105
 msgid "اكتب خياراً ثم أضفه"
 msgstr "Type an option then add it"
 
-#: .\templates\surveys\builder.html:100
+#: .\templates\surveys\builder.html:107
 msgid "إضافة خيار"
 msgstr "Add option"
 
-#: .\templates\surveys\builder.html:106
+#: .\templates\surveys\builder.html:113
 msgid "صفوف المصفوفة"
 msgstr "Matrix rows"
 
-#: .\templates\surveys\builder.html:107
+#: .\templates\surveys\builder.html:114
 msgid "سطر لكل صف"
 msgstr "One row per line"
 
-#: .\templates\surveys\builder.html:109
+#: .\templates\surveys\builder.html:116
 msgid "أعمدة المصفوفة"
 msgstr "Matrix columns"
 
-#: .\templates\surveys\builder.html:110
+#: .\templates\surveys\builder.html:117
 msgid "سطر لكل عمود"
 msgstr "One column per line"
 
-#: .\templates\surveys\builder.html:113
+#: .\templates\surveys\builder.html:120
 msgid ""
 "تمثل الصفوف محاور مثل سهولة الاستخدام أو السرعة، وتمثل الأعمدة القنوات مثل "
 "الويب أو الجوال."
@@ -1214,22 +1191,14 @@ msgstr ""
 "Rows often represent themes (e.g., usability, speed), columns represent "
 "channels (e.g., web, mobile)."
 
-#: .\templates\surveys\builder.html:122
+#: .\templates\surveys\builder.html:130
 msgid "نعم"
 msgstr "Yes"
 
-#: .\templates\surveys\builder.html:123
+#: .\templates\surveys\builder.html:131
 msgid "لا"
 msgstr "No"
 
-#: .\templates\surveys\builder.html:124
+#: .\templates\surveys\builder.html:132
 msgid "استبيان بدون عنوان"
 msgstr "Untitled survey"
-
-#: indicators/models.py:58
-msgid "تصنيف"
-msgstr "Classification"
-
-#: indicators/models.py:59
-msgid "التصنيفات"
-msgstr "Classifications"

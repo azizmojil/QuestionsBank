@@ -110,7 +110,6 @@ class AssessmentOption(models.Model):
     )
     requires_file_upload = models.BooleanField(default=False)
     file_upload_explanation = models.TextField(blank=True)
-    metadata = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ["id"]

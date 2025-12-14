@@ -106,6 +106,9 @@ class IndicatorTracking(models.Model):
         verbose_name = _("تتبع المؤشر")
         verbose_name_plural = _("معلومات تتبع المؤشر")
 
+    def __str__(self):
+        return f"{self.indicator_list_item} - {self.get_status_display()}"
+
 
 class IndicatorListItem(models.Model):
     """Individual item within an Indicator, representing a specific survey question or data point."""
@@ -133,8 +136,9 @@ class IndicatorListItem(models.Model):
         max_length=50,
         blank=True,
         verbose_name=_("الرمز"),
-        help_text=_("رمز اختياري لعنصر القائمة."),
+        help_text=_("رمز اختياري لعنصر القائمة.")
     )
+
 
     def __str__(self) -> str:
         return f"{self.indicator} - {self.name}"

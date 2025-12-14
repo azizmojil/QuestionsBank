@@ -28,7 +28,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ request.get_full_path }}">
                 <input type="hidden" name="language" value="{% if LANGUAGE_CODE == 'ar' %}en{% else %}ar{% endif %}">
-                <button class="theme-switch language-switch" id="language-switch" type="submit"
+                <button class="language-switch" id="language-switch" type="submit"
                         aria-pressed="false"
                         data-current-language="{{ LANGUAGE_CODE }}"
                         data-switch-to-en="{% trans 'التبديل إلى الإنجليزية' %}"

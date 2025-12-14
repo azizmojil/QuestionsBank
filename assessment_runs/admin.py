@@ -21,7 +21,7 @@ class AssessmentResultAdmin(admin.ModelAdmin):
 class AssessmentFileAdmin(admin.ModelAdmin):
     list_display = ("original_filename", "assessment_result", "uploaded_by", "uploaded_at")
     search_fields = ("original_filename", "description")
-    readonly_fields = ("assessment_result", "triggering_option", "file", "original_filename", "description", "uploaded_by", "uploaded_at", "metadata")
+    readonly_fields = ("assessment_result", "triggering_option", "file", "original_filename", "description", "uploaded_by", "uploaded_at")
 
     def has_add_permission(self, request):
         return False

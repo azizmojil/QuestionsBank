@@ -27,7 +27,7 @@ class ResponseInline(admin.TabularInline):
     model = ResponseGroup.responses.through
     verbose_name = _("إجابة")
     verbose_name_plural = _("الإجابات")
-    extra = 1
+    extra = 0
 
 
 @admin.register(ResponseGroup)
@@ -41,7 +41,7 @@ class ResponseGroupInline(admin.TabularInline):
     model = SurveyQuestion.response_groups.through
     verbose_name = _("مجموعة الإجابات")
     verbose_name_plural = _("مجموعات الإجابات")
-    extra = 1
+    extra = 0
 
 
 @admin.register(SurveyQuestion)

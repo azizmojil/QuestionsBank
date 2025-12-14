@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 class IndicatorListItemInline(admin.TabularInline):
     model = ClassificationIndicatorListItem
-    extra = 1
+    extra = 0
     autocomplete_fields = ("indicatorlistitem",)
 
 
@@ -43,3 +43,4 @@ class IndicatorListItemAdmin(admin.ModelAdmin):
     list_display = ("name", "indicator", "code")
     search_fields = ("name", "indicator__name_ar", "indicator__name_en", "code")
     autocomplete_fields = ("indicator",)
+    readonly_fields = ("indicator", "name")

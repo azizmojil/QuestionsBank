@@ -149,12 +149,6 @@ class SurveyVersion(models.Model):
         help_text=_("مسودة: قابلة للتحرير؛ نشطة: قيد الجمع؛ مقفلة: هيكل ثابت؛ مؤرشفة: للاطلاع التاريخي."),
     )
 
-    metadata = models.JSONField(
-        blank=True,
-        default=dict,
-        help_text=_("بيانات وصفية اختيارية مثل معلومات إطار العينة أو الملاحظات."),
-    )
-
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاريخ الإنشاء"))
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -187,17 +181,6 @@ class SurveyQuestion(models.Model):
         verbose_name = _("سؤال الاستبيان")
         verbose_name_plural = _("أسئلة الاستبيان")
         ordering = ["id"]
-
-    class ResponseType(models.TextChoices):
-        BINARY = "BINARY", _("نعم/لا (ثنائي)")
-        SINGLE_CHOICE = "SINGLE_CHOICE", _("اختيار واحد")
-        MULTIPLE_CHOICE = "MULTIPLE_CHOICE", _("اختيارات متعددة")
-        FREE_TEXT = "FREE_TEXT", _("نص حر")
-        NUMERIC = "NUMERIC", _("رقمي")
-        DATE = "DATE", _("تاريخ")
-        DATETIME = "DATETIME", _("تاريخ ووقت")
-        SCALE = "SCALE", _("مقياس (مثلاً 1–5)")
-        MATRIX = "MATRIX", _("مصفوفة")
 
     survey_version = models.ForeignKey(
         SurveyVersion,
@@ -236,22 +219,9 @@ class SurveyQuestion(models.Model):
         help_text=_("تسمية قسم منطقية للتقارير فقط."),
     )
 
-    response_type = models.CharField(
-        max_length=30,
-        choices=ResponseType.choices,
-        default=ResponseType.FREE_TEXT,
-        help_text=_("النوع الأساسي المتوقع للإجابة؛ يمكن أن تعيش الترميزات أو التحقق التفصيلي في مكان آخر."),
-    )
-
     is_required = models.BooleanField(
         default=False,
         help_text=_("هل يجب الإجابة على السؤال أثناء جمع البيانات."),
-    )
-
-    metadata = models.JSONField(
-        blank=True,
-        default=dict,
-        help_text=_("بنية إضافية اختيارية (القيم المسموحة، النطاقات، شروط التخطي، إلخ)."),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

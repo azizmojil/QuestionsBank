@@ -351,57 +351,44 @@ body.dark-mode .hero-highlight {
 }
 
 /* Pill Switch */
-.theme-switch {
+.theme-switch, .language-switch {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
     cursor: pointer;
-    background-color: var(--secondary);
-    border: 1px solid var(--border);
+    background-color: #f0f0f0;
+    border: 1px solid #e0e0e0;
     border-radius: 9999px;
-    padding: 0.35rem 1rem 0.35rem 3rem;
+    padding: 0.35rem 1rem;
     position: relative;
     transition: background-color 0.3s, border-color 0.3s, transform 0.1s;
-    min-height: 34px;
-    min-width: 150px;
 }
 
-.theme-switch:focus {
-    outline: 2px solid var(--ring);
+.theme-switch:focus, .language-switch:focus {
+    outline: 2px solid #005a9c;
     outline-offset: 2px;
 }
 
-.theme-switch:hover {
-    background-color: var(--muted);
+.theme-switch:hover, .language-switch:hover {
+    background-color: #e0e0e0;
 }
 
-.dark body .theme-switch,
-body.dark-mode .theme-switch {
-    background-color: var(--secondary);
-    border-color: var(--border);
-}
-
-.dark body .theme-switch:hover,
-body.dark-mode .theme-switch:hover {
-    background-color: var(--muted);
-}
-
-.theme-icon {
+.theme-icon, .language-icon {
     font-size: 14px;
     line-height: 1;
 }
 
-.theme-label {
+.theme-label, .language-label {
     font-size: 0.9rem;
     font-weight: 700;
-    color: var(--foreground);
+    color: #333;
 }
 
 .theme-switch-toggle {
     position: absolute;
     width: 20px;
     height: 20px;
-    background-color: var(--card);
+    background-color: #ffffff;
     border-radius: 50%;
     transition: transform 0.3s;
     left: 10px;
