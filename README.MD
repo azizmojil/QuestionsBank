@@ -38,93 +38,91 @@ erDiagram
 
     SURVEY {
         bigint id PK
-        varchar(255) name_ar UK
-        varchar(255) name_en UK
-        varchar(50) code UK
+        varchar name_ar
+        varchar name_en
+        varchar code
         text description
-        varchar(20) status "DRAFT, ACTIVE, ARCHIVED"
-        bigint owner_id FK "AUTH_USER.id, nullable"
+        varchar status
+        bigint owner_id
         datetime created_at
         datetime updated_at
     }
 
     SURVEY_EDITORS {
         bigint id PK
-        bigint survey_id FK "SURVEY.id"
-        bigint user_id FK "AUTH_USER.id"
-        UK(survey_id, user_id)
+        bigint survey_id
+        bigint user_id
     }
 
     SURVEY_VERSION {
         bigint id PK
-        bigint survey_id FK "SURVEY.id"
-        varchar(50) version_label "Generated from survey code/date/interval"
-        date version_date "Default: today()"
-        varchar(20) interval "M, Q, B, A"
-        varchar(20) status "DRAFT, ACTIVE, LOCKED, ARCHIVED"
+        bigint survey_id
+        varchar version_label
+        date version_date
+        varchar interval
+        varchar status
         datetime created_at
         datetime updated_at
-        UK(survey_id, version_label)
     }
 
     SURVEY_QUESTION {
         bigint id PK
-        bigint survey_version_id FK "SURVEY_VERSION.id"
-        varchar(50) code
+        bigint survey_version_id
+        varchar code
         text text_ar
         text text_en
         text help_text
-        varchar(255) section_label
-        bool is_required "Default: False"
+        varchar section_label
+        bool is_required
         datetime created_at
         datetime updated_at
     }
 
     ASSESSMENT_QUESTION {
         bigint id PK
-        varchar(512) text_ar
-        varchar(512) text_en
+        varchar text_ar
+        varchar text_en
         text explanation_ar
         text explanation_en
-        varchar(50) option_type "STATIC, DYNAMIC_FROM_PREVIOUS_MULTI_SELECT, DYNAMIC_SURVEY_QUESTIONS, INDICATOR_LIST"
-        bool use_searchable_dropdown "Default: False"
-        bool allow_multiple_choices "Default: False"
-        bigint dynamic_option_source_question_id FK "ASSESSMENT_QUESTION.id, nullable"
-        bigint indicator_source_id FK "INDICATOR.id, nullable"
+        varchar option_type
+        bool use_searchable_dropdown
+        bool allow_multiple_choices
+        bigint dynamic_option_source_question_id
+        bigint indicator_source_id
         datetime created_at
         datetime updated_at
     }
 
     ASSESSMENT_OPTION {
         bigint id PK
-        bigint question_id FK "ASSESSMENT_QUESTION.id"
+        bigint question_id
         text text_ar
         text text_en
         text explanation_ar
         text explanation_en
-        varchar(20) response_type "PREDEFINED, FREE_TEXT, NUMERICAL, URL"
-        bool requires_file_upload "Default: False"
+        varchar response_type
+        bool requires_file_upload
         text file_upload_explanation
     }
 
     ASSESSMENT_FLOW_RULE {
         bigint id PK
-        bigint from_question_id FK "ASSESSMENT_QUESTION.id"
+        bigint from_question_id
         text condition
-        int priority "Default: 0"
-        bool is_active "Default: True"
-        varchar(255) description
+        int priority
+        bool is_active
+        varchar description
         datetime created_at
         datetime updated_at
     }
 
     ASSESSMENT_RUN {
         bigint id PK
-        bigint survey_version_id FK "SURVEY_VERSION.id"
-        varchar(100) label
-        varchar(20) status "DRAFT, IN_PROGRESS, COMPLETE, CANCELLED"
-        bigint created_by_id FK "AUTH_USER.id, nullable"
-        bigint assigned_to_id FK "AUTH_USER.id, nullable"
+        bigint survey_version_id
+        varchar label
+        varchar status
+        bigint created_by_id
+        bigint assigned_to_id
         datetime started_at
         datetime completed_at
         text notes
@@ -134,113 +132,109 @@ erDiagram
 
     ASSESSMENT_RESULT {
         bigint id PK
-        bigint assessment_run_id FK "ASSESSMENT_RUN.id"
-        bigint survey_question_id FK "SURVEY_QUESTION.id"
-        varchar(20) status "NOT_VISITED, IN_PROGRESS, COMPLETE, PENDING_UPLOAD"
-        bigint assessed_by_id FK "AUTH_USER.id, nullable"
-        json assessment_path "Default: []"
+        bigint assessment_run_id
+        bigint survey_question_id
+        varchar status
+        bigint assessed_by_id
+        json assessment_path
         text summary_comment
-        json flags "Default: {}"
-        datetime assessed_at "Auto-updated"
-        UK(assessment_run_id, survey_question_id)
+        json flags
+        datetime assessed_at
     }
 
     ASSESSMENT_FILE {
         bigint id PK
-        bigint assessment_result_id FK "ASSESSMENT_RESULT.id"
-        bigint triggering_option_id FK "ASSESSMENT_OPTION.id, nullable"
+        bigint assessment_result_id
+        bigint triggering_option_id
         file file
-        varchar(255) original_filename
+        varchar original_filename
         text description
-        bigint uploaded_by_id FK "AUTH_USER.id, nullable"
+        bigint uploaded_by_id
         datetime uploaded_at
     }
 
     QUESTION_CLASSIFICATION_RULE {
         bigint id PK
-        bigint survey_question_id FK "SURVEY_QUESTION.id"
-        varchar(100) classification
+        bigint survey_question_id
+        varchar classification
         text condition
-        int priority "Default: 0"
-        bool is_active "Default: True"
-        varchar(255) description
+        int priority
+        bool is_active
+        varchar description
         datetime created_at
         datetime updated_at
     }
 
     REEVALUATION_QUESTION {
         bigint id PK
-        bigint survey_version_id FK "SURVEY_VERSION.id"
-        varchar(512) text_ar
-        varchar(512) text_en
+        bigint survey_version_id
+        varchar text_ar
+        varchar text_en
         datetime created_at
         datetime updated_at
     }
 
     INDICATOR {
         bigint id PK
-        varchar(255) name_ar UK
-        varchar(255) name_en UK
-        varchar(50) code
+        varchar name_ar
+        varchar name_en
+        varchar code
         datetime created_at
         datetime updated_at
     }
 
     INDICATOR_LIST_ITEM {
         bigint id PK
-        bigint indicator_id FK "INDICATOR.id"
-        varchar(255) name
-        varchar(50) code
-        UK(indicator_id, name)
+        bigint indicator_id
+        varchar name
+        varchar code
     }
 
     INDICATOR_TRACKING {
         bigint id PK
-        bigint indicator_list_item_id FK "INDICATOR_LIST_ITEM.id"
-        varchar(20) status "TRACKED, NOT_TRACKED"
+        bigint indicator_list_item_id
+        varchar status
     }
 
     CLASSIFICATION {
         bigint id PK
-        varchar(100) name_ar UK
-        varchar(100) name_en UK
+        varchar name_ar
+        varchar name_en
     }
 
     INDICATOR_CLASSIFICATION {
         bigint id PK
-        bigint indicator_id FK "INDICATOR.id"
-        bigint classification_id FK "CLASSIFICATION.id"
-        UK(indicator_id, classification_id)
+        bigint indicator_id
+        bigint classification_id
     }
 
     CLASSIFICATION_INDICATOR_LIST_ITEM {
         bigint id PK
-        bigint classification_id FK "CLASSIFICATION.id"
-        bigint indicatorlistitem_id FK "INDICATOR_LIST_ITEM.id"
+        bigint classification_id
+        bigint indicatorlistitem_id
     }
 
     RESPONSE_TYPE {
         bigint id PK
-        varchar(100) name_ar UK
-        varchar(100) name_en UK
+        varchar name_ar
+        varchar name_en
     }
 
     RESPONSE {
         bigint id PK
-        varchar(255) text_ar
-        varchar(255) text_en
+        varchar text_ar
+        varchar text_en
     }
 
     RESPONSE_GROUP {
         bigint id PK
-        varchar(255) name
+        varchar name
     }
 
     RESPONSE_GROUP_RESPONSES {
         bigint id PK
-        bigint responsegroup_id FK "RESPONSE_GROUP.id"
-        bigint response_id FK "RESPONSE.id"
-        UK(responsegroup_id, response_id)
+        bigint responsegroup_id
+        bigint response_id
     }
 
     QNR_SURVEY_QUESTION {
@@ -251,61 +245,68 @@ erDiagram
 
     QNR_SURVEY_QUESTION_RESPONSE_GROUPS {
         bigint id PK
-        bigint surveyquestion_id FK "QNR_SURVEY_QUESTION.id"
-        bigint responsegroup_id FK "RESPONSE_GROUP.id"
-        UK(surveyquestion_id, responsegroup_id)
+        bigint surveyquestion_id
+        bigint responsegroup_id
     }
 
     MATRIX_ITEM {
         bigint id PK
-        varchar(255) text_ar
-        varchar(255) text_en
+        varchar text_ar
+        varchar text_en
     }
 
     MATRIX_ITEM_GROUP {
         bigint id PK
-        varchar(255) name
+        varchar name
     }
 
     MATRIX_ITEM_GROUP_ITEMS {
         bigint id PK
-        bigint matrixitemgroup_id FK "MATRIX_ITEM_GROUP.id"
-        bigint matrixitem_id FK "MATRIX_ITEM.id"
-        UK(matrixitemgroup_id, matrixitem_id)
+        bigint matrixitemgroup_id
+        bigint matrixitem_id
     }
 
-    SURVEY ||--o{ SURVEY_VERSION : "has versions"
-    SURVEY }o--|| AUTH_USER : "owned by"
-    SURVEY }o--o{ AUTH_USER : "edited by (via SURVEY_EDITORS)"
-    SURVEY_VERSION ||--o{ SURVEY_QUESTION : "contains questions"
-    SURVEY_VERSION ||--o{ ASSESSMENT_RUN : "assessed by"
-    SURVEY_VERSION ||--o{ REEVALUATION_QUESTION : "has reevaluation questions"
-    ASSESSMENT_RUN ||--o{ ASSESSMENT_RESULT : "produces results"
-    ASSESSMENT_RUN }o--|| AUTH_USER : "created by"
-    ASSESSMENT_RUN }o--o| AUTH_USER : "assigned to"
-    ASSESSMENT_RESULT }o--|| SURVEY_QUESTION : "assesses"
-    ASSESSMENT_RESULT }o--|| ASSESSMENT_RUN : "belongs to"
-    ASSESSMENT_RESULT }o--o| AUTH_USER : "assessed by"
-    ASSESSMENT_RESULT ||--o{ ASSESSMENT_FILE : "has uploaded files"
-    ASSESSMENT_FILE }o--o| ASSESSMENT_OPTION : "triggered by option"
-    ASSESSMENT_FILE }o--o| AUTH_USER : "uploaded by"
-    ASSESSMENT_QUESTION ||--o{ ASSESSMENT_OPTION : "has options"
-    ASSESSMENT_QUESTION ||--o{ ASSESSMENT_FLOW_RULE : "has routing rules"
-    ASSESSMENT_QUESTION }o--o| ASSESSMENT_QUESTION : "dynamic source (self-reference)"
-    ASSESSMENT_QUESTION }o--o| INDICATOR : "pulls indicator list"
-    INDICATOR ||--o{ INDICATOR_LIST_ITEM : "contains items"
-    INDICATOR_LIST_ITEM ||--o{ INDICATOR_TRACKING : "has tracking status"
-    INDICATOR ||--o{ INDICATOR_CLASSIFICATION : "tagged with"
-    CLASSIFICATION ||--o{ INDICATOR_CLASSIFICATION : "classifies indicators"
-    INDICATOR_LIST_ITEM ||--o{ CLASSIFICATION_INDICATOR_LIST_ITEM : "classified by"
-    CLASSIFICATION ||--o{ CLASSIFICATION_INDICATOR_LIST_ITEM : "classifies items"
-    SURVEY_QUESTION ||--o{ QUESTION_CLASSIFICATION_RULE : "has classification rules"
-    RESPONSE_GROUP ||--o{ RESPONSE_GROUP_RESPONSES : "contains responses"
-    RESPONSE }o--o{ RESPONSE_GROUP_RESPONSES : "in groups"
-    QNR_SURVEY_QUESTION ||--o{ QNR_SURVEY_QUESTION_RESPONSE_GROUPS : "uses groups"
-    RESPONSE_GROUP ||--o{ QNR_SURVEY_QUESTION_RESPONSE_GROUPS : "attached via M2M"
-    MATRIX_ITEM_GROUP ||--o{ MATRIX_ITEM_GROUP_ITEMS : "contains items"
-    MATRIX_ITEM }o--o{ MATRIX_ITEM_GROUP_ITEMS : "grouped items"
+    SURVEY ||--o{ SURVEY_VERSION : has_versions
+    SURVEY }o--|| AUTH_USER : owned_by
+    SURVEY }o--o{ AUTH_USER : edited_by
+    SURVEY_VERSION ||--o{ SURVEY_QUESTION : contains_questions
+    SURVEY_VERSION ||--o{ ASSESSMENT_RUN : assessed_by
+    SURVEY_VERSION ||--o{ REEVALUATION_QUESTION : has_reevaluation_questions
+
+    ASSESSMENT_RUN ||--o{ ASSESSMENT_RESULT : produces_results
+    ASSESSMENT_RUN }o--|| AUTH_USER : created_by
+    ASSESSMENT_RUN }o--o| AUTH_USER : assigned_to
+
+    ASSESSMENT_RESULT }o--|| SURVEY_QUESTION : assesses
+    ASSESSMENT_RESULT }o--|| ASSESSMENT_RUN : belongs_to
+    ASSESSMENT_RESULT }o--o| AUTH_USER : assessed_by
+    ASSESSMENT_RESULT ||--o{ ASSESSMENT_FILE : has_uploaded_files
+
+    ASSESSMENT_FILE }o--o| ASSESSMENT_OPTION : triggered_by
+    ASSESSMENT_FILE }o--o| AUTH_USER : uploaded_by
+
+    ASSESSMENT_QUESTION ||--o{ ASSESSMENT_OPTION : has_options
+    ASSESSMENT_QUESTION ||--o{ ASSESSMENT_FLOW_RULE : has_routing_rules
+    ASSESSMENT_QUESTION }o--o| ASSESSMENT_QUESTION : dynamic_source
+    ASSESSMENT_QUESTION }o--o| INDICATOR : pulls_indicator_list
+
+    INDICATOR ||--o{ INDICATOR_LIST_ITEM : contains_items
+    INDICATOR_LIST_ITEM ||--o{ INDICATOR_TRACKING : tracking
+    INDICATOR ||--o{ INDICATOR_CLASSIFICATION : tagged_with
+    CLASSIFICATION ||--o{ INDICATOR_CLASSIFICATION : classifies_indicators
+    INDICATOR_LIST_ITEM ||--o{ CLASSIFICATION_INDICATOR_LIST_ITEM : classified_by
+    CLASSIFICATION ||--o{ CLASSIFICATION_INDICATOR_LIST_ITEM : classifies_items
+
+    SURVEY_QUESTION ||--o{ QUESTION_CLASSIFICATION_RULE : has_classification_rules
+
+    RESPONSE_GROUP ||--o{ RESPONSE_GROUP_RESPONSES : contains_responses
+    RESPONSE }o--o{ RESPONSE_GROUP_RESPONSES : in_groups
+
+    QNR_SURVEY_QUESTION ||--o{ QNR_SURVEY_QUESTION_RESPONSE_GROUPS : uses_groups
+    RESPONSE_GROUP ||--o{ QNR_SURVEY_QUESTION_RESPONSE_GROUPS : attached
+
+    MATRIX_ITEM_GROUP ||--o{ MATRIX_ITEM_GROUP_ITEMS : contains_items
+    MATRIX_ITEM }o--o{ MATRIX_ITEM_GROUP_ITEMS : grouped
 ```
 
 *Notes:*
