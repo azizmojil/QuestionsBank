@@ -9,6 +9,7 @@ Suggested bootstrap commands
 - npm install react react-dom typescript tailwindcss postcss autoprefixer lucide-react
 - npx tailwindcss init -p
 - npx shadcn-ui@latest init --defaults --components components/ui
+- If you prefer to keep a single light theme, omit dark mode tokens in Tailwind/shadcn config and define only your light palette.
 
 Post-bootstrap configuration
 - In tsconfig.json set "baseUrl": "." and paths alias: { "@/*": ["./*"] } so imports like "@/components/ui/modern-side-bar" resolve.
@@ -17,5 +18,6 @@ Post-bootstrap configuration
 
 Component usage
 - The sidebar component lives at /components/ui/modern-side-bar.tsx with a demo at /components/ui/demo.tsx.
+- The interactive hover button lives at /components/ui/interactive-hover-button.tsx with a demo at /components/ui/interactive-hover-button-demo.tsx. It uses lucide-react and the shared cn helper from /lib/utils.ts.
 - It expects lucide-react icons and Tailwind utility classes to be available. Provide React context/bundler as usual; no extra providers are required.
 - For assets, swap placeholder initials/logo with your own or safe stock images (e.g., https://images.unsplash.com/... from Unsplash) if you add avatars or brand marks later.
