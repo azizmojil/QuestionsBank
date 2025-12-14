@@ -23,10 +23,209 @@ QuestionsBank is a Django application for authoring survey waves, building asses
    python manage.py test
    ```
 
-### Data model (ERD)
+### Data model (detailed ERD with columns)
 
 ```mermaid
 erDiagram
+    AUTH_USER {
+        bigint id PK
+    }
+
+    SURVEY {
+        bigint id PK
+        varchar name_ar UNIQUE
+        varchar name_en UNIQUE
+        varchar code UNIQUE
+        text description
+        varchar status
+        bigint owner_id FK -> AUTH_USER.id (nullable)
+        datetime created_at
+        datetime updated_at
+    }
+
+    SURVEY_VERSION {
+        bigint id PK
+        bigint survey_id FK -> SURVEY.id
+        varchar version_label UNIQUE(survey_id)
+        date version_date
+        varchar interval
+        varchar status
+        datetime created_at
+        datetime updated_at
+    }
+
+    SURVEY_QUESTION {
+        bigint id PK
+        bigint survey_version_id FK -> SURVEY_VERSION.id
+        varchar code
+        text text_ar
+        text text_en
+        text help_text
+        varchar section_label
+        bool is_required
+        datetime created_at
+        datetime updated_at
+    }
+
+    ASSESSMENT_QUESTION {
+        bigint id PK
+        text text_ar
+        text text_en
+        text explanation_ar
+        text explanation_en
+        varchar option_type
+        bool use_searchable_dropdown
+        bool allow_multiple_choices
+        bigint dynamic_option_source_question_id FK -> ASSESSMENT_QUESTION.id (nullable)
+        bigint indicator_source_id FK -> INDICATOR.id (nullable)
+        datetime created_at
+        datetime updated_at
+    }
+
+    ASSESSMENT_OPTION {
+        bigint id PK
+        bigint question_id FK -> ASSESSMENT_QUESTION.id
+        text text_ar
+        text text_en
+        text explanation_ar
+        text explanation_en
+        varchar response_type
+        bool requires_file_upload
+        text file_upload_explanation
+    }
+
+    ASSESSMENT_FLOW_RULE {
+        bigint id PK
+        bigint from_question_id FK -> ASSESSMENT_QUESTION.id
+        text condition
+        int priority
+        bool is_active
+        varchar description
+        datetime created_at
+        datetime updated_at
+    }
+
+    ASSESSMENT_RUN {
+        bigint id PK
+        bigint survey_version_id FK -> SURVEY_VERSION.id
+        varchar label
+        varchar status
+        bigint created_by_id FK -> AUTH_USER.id (nullable)
+        bigint assigned_to_id FK -> AUTH_USER.id (nullable)
+        datetime started_at (nullable)
+        datetime completed_at (nullable)
+        text notes
+        datetime created_at
+        datetime updated_at
+    }
+
+    ASSESSMENT_RESULT {
+        bigint id PK
+        bigint assessment_run_id FK -> ASSESSMENT_RUN.id
+        bigint survey_question_id FK -> SURVEY_QUESTION.id
+        varchar status
+        bigint assessed_by_id FK -> AUTH_USER.id (nullable)
+        json assessment_path
+        text summary_comment
+        json flags
+        datetime assessed_at
+    }
+
+    ASSESSMENT_FILE {
+        bigint id PK
+        bigint assessment_result_id FK -> ASSESSMENT_RESULT.id
+        bigint triggering_option_id FK -> ASSESSMENT_OPTION.id (nullable)
+        file file
+        varchar original_filename
+        text description
+        bigint uploaded_by_id FK -> AUTH_USER.id (nullable)
+        datetime uploaded_at
+    }
+
+    QUESTION_CLASSIFICATION_RULE {
+        bigint id PK
+        bigint survey_question_id FK -> SURVEY_QUESTION.id
+        varchar classification
+        text condition
+        int priority
+        bool is_active
+        varchar description
+        datetime created_at
+        datetime updated_at
+    }
+
+    REEVALUATION_QUESTION {
+        bigint id PK
+        bigint survey_version_id FK -> SURVEY_VERSION.id
+        varchar text_ar
+        varchar text_en
+        datetime created_at
+        datetime updated_at
+    }
+
+    INDICATOR {
+        bigint id PK
+        varchar name_ar UNIQUE
+        varchar name_en UNIQUE
+        varchar code
+        datetime created_at
+        datetime updated_at
+    }
+
+    INDICATOR_LIST_ITEM {
+        bigint id PK
+        bigint indicator_id FK -> INDICATOR.id
+        varchar name
+        varchar code
+    }
+
+    INDICATOR_TRACKING {
+        bigint id PK
+        bigint indicator_list_item_id FK -> INDICATOR_LIST_ITEM.id
+        varchar status
+    }
+
+    CLASSIFICATION {
+        bigint id PK
+        varchar name_ar UNIQUE
+        varchar name_en UNIQUE
+    }
+
+    INDICATOR_CLASSIFICATION {
+        bigint id PK
+        bigint indicator_id FK -> INDICATOR.id
+        bigint classification_id FK -> CLASSIFICATION.id
+    }
+
+    CLASSIFICATION_INDICATOR_LIST_ITEM {
+        bigint id PK
+        bigint classification_id FK -> CLASSIFICATION.id
+        bigint indicatorlistitem_id FK -> INDICATOR_LIST_ITEM.id
+    }
+
+    RESPONSE_TYPE {
+        bigint id PK
+        varchar name_ar UNIQUE
+        varchar name_en UNIQUE
+    }
+
+    RESPONSE {
+        bigint id PK
+        varchar text_ar
+        varchar text_en
+    }
+
+    RESPONSE_GROUP {
+        bigint id PK
+        varchar name UNIQUE
+    }
+
+    QNR_SURVEY_QUESTION {
+        bigint id PK
+        text text_ar
+        text text_en
+    }
+
     SURVEY ||--o{ SURVEY_VERSION : has
     SURVEY_VERSION ||--o{ SURVEY_QUESTION : includes
     SURVEY_VERSION ||--o{ ASSESSMENT_RUN : assessed_by
@@ -45,8 +244,9 @@ erDiagram
     INDICATOR_LIST_ITEM ||--o{ CLASSIFICATION_INDICATOR_LIST_ITEM : classification_items
     SURVEY_QUESTION ||--o{ QUESTION_CLASSIFICATION_RULE : classifies
     SURVEY_VERSION ||--o{ REEVALUATION_QUESTION : reevaluates
-    RESPONSE_GROUP ||--o{ QNR_SURVEY_QUESTION : links
-    RESPONSE_GROUP ||--o{ RESPONSE : options
+    RESPONSE_GROUP }o--o{ RESPONSE : options
+    QNR_SURVEY_QUESTION }o--o{ RESPONSE_GROUP : uses
+    SURVEY }o--o{ AUTH_USER : editors
 ```
 
 *Notes:*
