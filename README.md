@@ -33,20 +33,20 @@ erDiagram
 
     SURVEY {
         bigint id PK
-        varchar name_ar UNIQUE
-        varchar name_en UNIQUE
-        varchar code UNIQUE
+        varchar name_ar
+        varchar name_en
+        varchar code
         text description
         varchar status
-        bigint owner_id FK -> AUTH_USER.id (nullable)
+        bigint owner_id
         datetime created_at
         datetime updated_at
     }
 
     SURVEY_VERSION {
         bigint id PK
-        bigint survey_id FK -> SURVEY.id
-        varchar version_label UNIQUE(survey_id)
+        bigint survey_id
+        varchar version_label
         date version_date
         varchar interval
         varchar status
@@ -56,7 +56,7 @@ erDiagram
 
     SURVEY_QUESTION {
         bigint id PK
-        bigint survey_version_id FK -> SURVEY_VERSION.id
+        bigint survey_version_id
         varchar code
         text text_ar
         text text_en
@@ -76,15 +76,15 @@ erDiagram
         varchar option_type
         bool use_searchable_dropdown
         bool allow_multiple_choices
-        bigint dynamic_option_source_question_id FK -> ASSESSMENT_QUESTION.id (nullable)
-        bigint indicator_source_id FK -> INDICATOR.id (nullable)
+        bigint dynamic_option_source_question_id
+        bigint indicator_source_id
         datetime created_at
         datetime updated_at
     }
 
     ASSESSMENT_OPTION {
         bigint id PK
-        bigint question_id FK -> ASSESSMENT_QUESTION.id
+        bigint question_id
         text text_ar
         text text_en
         text explanation_ar
@@ -96,7 +96,7 @@ erDiagram
 
     ASSESSMENT_FLOW_RULE {
         bigint id PK
-        bigint from_question_id FK -> ASSESSMENT_QUESTION.id
+        bigint from_question_id
         text condition
         int priority
         bool is_active
@@ -107,13 +107,13 @@ erDiagram
 
     ASSESSMENT_RUN {
         bigint id PK
-        bigint survey_version_id FK -> SURVEY_VERSION.id
+        bigint survey_version_id
         varchar label
         varchar status
-        bigint created_by_id FK -> AUTH_USER.id (nullable)
-        bigint assigned_to_id FK -> AUTH_USER.id (nullable)
-        datetime started_at (nullable)
-        datetime completed_at (nullable)
+        bigint created_by_id
+        bigint assigned_to_id
+        datetime started_at
+        datetime completed_at
         text notes
         datetime created_at
         datetime updated_at
@@ -121,10 +121,10 @@ erDiagram
 
     ASSESSMENT_RESULT {
         bigint id PK
-        bigint assessment_run_id FK -> ASSESSMENT_RUN.id
-        bigint survey_question_id FK -> SURVEY_QUESTION.id
+        bigint assessment_run_id
+        bigint survey_question_id
         varchar status
-        bigint assessed_by_id FK -> AUTH_USER.id (nullable)
+        bigint assessed_by_id
         json assessment_path
         text summary_comment
         json flags
@@ -133,18 +133,18 @@ erDiagram
 
     ASSESSMENT_FILE {
         bigint id PK
-        bigint assessment_result_id FK -> ASSESSMENT_RESULT.id
-        bigint triggering_option_id FK -> ASSESSMENT_OPTION.id (nullable)
+        bigint assessment_result_id
+        bigint triggering_option_id
         file file
         varchar original_filename
         text description
-        bigint uploaded_by_id FK -> AUTH_USER.id (nullable)
+        bigint uploaded_by_id
         datetime uploaded_at
     }
 
     QUESTION_CLASSIFICATION_RULE {
         bigint id PK
-        bigint survey_question_id FK -> SURVEY_QUESTION.id
+        bigint survey_question_id
         varchar classification
         text condition
         int priority
@@ -156,7 +156,7 @@ erDiagram
 
     REEVALUATION_QUESTION {
         bigint id PK
-        bigint survey_version_id FK -> SURVEY_VERSION.id
+        bigint survey_version_id
         varchar text_ar
         varchar text_en
         datetime created_at
@@ -165,8 +165,8 @@ erDiagram
 
     INDICATOR {
         bigint id PK
-        varchar name_ar UNIQUE
-        varchar name_en UNIQUE
+        varchar name_ar
+        varchar name_en
         varchar code
         datetime created_at
         datetime updated_at
@@ -174,39 +174,39 @@ erDiagram
 
     INDICATOR_LIST_ITEM {
         bigint id PK
-        bigint indicator_id FK -> INDICATOR.id
+        bigint indicator_id
         varchar name
         varchar code
     }
 
     INDICATOR_TRACKING {
         bigint id PK
-        bigint indicator_list_item_id FK -> INDICATOR_LIST_ITEM.id
+        bigint indicator_list_item_id
         varchar status
     }
 
     CLASSIFICATION {
         bigint id PK
-        varchar name_ar UNIQUE
-        varchar name_en UNIQUE
+        varchar name_ar
+        varchar name_en
     }
 
     INDICATOR_CLASSIFICATION {
         bigint id PK
-        bigint indicator_id FK -> INDICATOR.id
-        bigint classification_id FK -> CLASSIFICATION.id
+        bigint indicator_id
+        bigint classification_id
     }
 
     CLASSIFICATION_INDICATOR_LIST_ITEM {
         bigint id PK
-        bigint classification_id FK -> CLASSIFICATION.id
-        bigint indicatorlistitem_id FK -> INDICATOR_LIST_ITEM.id
+        bigint classification_id
+        bigint indicatorlistitem_id
     }
 
     RESPONSE_TYPE {
         bigint id PK
-        varchar name_ar UNIQUE
-        varchar name_en UNIQUE
+        varchar name_ar
+        varchar name_en
     }
 
     RESPONSE {
@@ -217,7 +217,7 @@ erDiagram
 
     RESPONSE_GROUP {
         bigint id PK
-        varchar name UNIQUE
+        varchar name
     }
 
     QNR_SURVEY_QUESTION {
@@ -246,7 +246,7 @@ erDiagram
     SURVEY_VERSION ||--o{ REEVALUATION_QUESTION : reevaluates
     RESPONSE_GROUP }o--o{ RESPONSE : options
     QNR_SURVEY_QUESTION }o--o{ RESPONSE_GROUP : uses
-    SURVEY }o--o{ AUTH_USER : editors
+    AUTH_USER ||--o{ SURVEY : owns
 ```
 
 *Notes:*
