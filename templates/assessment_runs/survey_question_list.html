@@ -4,36 +4,37 @@
 {% block title %}{% blocktrans with version_label=version.version_label %}أسئلة الاستبيان - {{ version_label }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
-    <div class="section-header">
-        <div>
-            <p class="eyebrow">{% blocktrans with survey_name=version.survey.display_name %}الاستبيان: {{ survey_name }}{% endblocktrans %}</p>
-            <h2>{% blocktrans with version_label=version.version_label %}الأسئلة في {{ version_label }}{% endblocktrans %}</h2>
-            <p class="lead">{% trans "عاين الأسئلة وابدأ التقييم من أي سؤال." %}</p>
-        </div>
+<div class="section-header">
+    <div>
+        <p class="eyebrow">{% blocktrans with survey_name=version.survey.display_name %}الاستبيان: {{ survey_name }}{% endblocktrans %}</p>
+        <h2>{% blocktrans with version_label=version.version_label %}الأسئلة في {{ version_label }}{% endblocktrans %}</h2>
+        <p class="lead">{% trans "عاين الأسئلة وابدأ التقييم من أي سؤال." %}</p>
     </div>
-    <div class="card table-card">
-        <table class="data-table" aria-describedby="question-list-caption">
-            <caption id="question-list-caption">{% trans "الأسئلة وإجراءات التقييم" %}</caption>
-            <thead>
-                <tr>
-                    <th scope="col">{% trans "نص السؤال" %}</th>
-                    <th scope="col">{% trans "الإجراء" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for question in questions %}
-                    <tr>
-                        <td>{{ question.display_text }}</td>
-                        <td>
-                            {% if first_assessment_question %}
-                                <a href="{% url 'assessment_page' first_assessment_question.id %}?survey_question_id={{ question.id }}" class="btn btn-secondary">{% trans "ابدأ التقييم" %}</a>
-                            {% else %}
-                                {% trans "لا يوجد تقييم مُعد" %}
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+</div>
+<div class="card table-card">
+    <table class="data-table" aria-describedby="question-list-caption">
+        <caption id="question-list-caption">{% trans "الأسئلة وإجراءات التقييم" %}</caption>
+        <thead>
+        <tr>
+            <th scope="col">{% trans "نص السؤال" %}</th>
+            <th scope="col">{% trans "الإجراء" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for question in questions %}
+        <tr>
+            <td>{{ question.display_text }}</td>
+            <td>
+                {% if first_assessment_question %}
+                <a href="{% url 'assessment_page' first_assessment_question.id %}?survey_question_id={{ question.id }}"
+                   class="btn btn-secondary">{% trans "ابدأ التقييم" %}</a>
+                {% else %}
+                {% trans "لا يوجد تقييم مُعد" %}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

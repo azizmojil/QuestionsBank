@@ -14,14 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.i18n import set_language
 from django.contrib import admin
 from django.urls import path, include
-from django.conf.urls.i18n import set_language
+
 from Qbank import views as qnr_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', qnr_views.home, name='home'),
+    path('accounts/', include('django.contrib.auth.urls')),
     path('assessment/', include('assessment_runs.urls')),
     path('surveys/', include('surveys.urls')),
     path('i18n/set-language/', set_language, name='set_language'),

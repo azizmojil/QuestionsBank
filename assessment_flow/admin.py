@@ -42,8 +42,9 @@ class AssessmentQuestionAdmin(admin.ModelAdmin):
     inlines = [StaticOptionsInline, AssessmentFlowRuleInline]
 
     def get_fieldsets(self, request, obj=None):
-        base_fields = ("text_ar", "text_en", "explanation_ar", "explanation_en", "option_type", "allow_multiple_choices", "use_searchable_dropdown")
-        
+        base_fields = ("text_ar", "text_en", "explanation_ar", "explanation_en", "option_type",
+                       "allow_multiple_choices", "use_searchable_dropdown")
+
         fieldsets = [
             (_("تفاصيل السؤال"), {"fields": base_fields}),
         ]
@@ -68,7 +69,7 @@ class AssessmentQuestionAdmin(admin.ModelAdmin):
 
     def get_inline_instances(self, request, obj=None):
         inlines = []
-        
+
         # Always show routing logic
         inlines.append(AssessmentFlowRuleInline(self.model, self.admin_site))
 
@@ -85,6 +86,7 @@ class AssessmentQuestionAdmin(admin.ModelAdmin):
 @admin.register(AssessmentOption)
 class AssessmentOptionAdmin(admin.ModelAdmin):
     search_fields = ("text_ar", "text_en", "question__text_ar", "question__text_en")
+
     def get_model_perms(self, request):
         return {}
 

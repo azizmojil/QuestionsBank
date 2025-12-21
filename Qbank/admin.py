@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import SurveyQuestion, MatrixItem, MatrixItemGroup
 from django.utils.translation import gettext_lazy as _
-from Rbank.models import ResponseGroup
+
+from .models import SurveyQuestion, MatrixItem, MatrixItemGroup
 
 
 class ResponseGroupInline(admin.TabularInline):
@@ -20,6 +20,7 @@ class SurveyQuestionAdmin(admin.ModelAdmin):
 
     def display_text(self, obj):
         return obj.display_text
+
     display_text.short_description = _("السؤال")
 
 
@@ -30,6 +31,7 @@ class MatrixItemAdmin(admin.ModelAdmin):
 
     def display_text(self, obj):
         return obj.display_text
+
     display_text.short_description = _("النص")
 
 

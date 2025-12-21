@@ -1,0 +1,53 @@
+/* Authentication Pages Styles */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+}
+
+.stacked {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-weight: 600;
+}
+
+.stacked input {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 1rem;
+    background: var(--input);
+    color: var(--foreground);
+}
+
+.full-width {
+    width: 100%;
+}
+
+.alert {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.alert.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.dark body .alert.error,
+body.dark-mode .alert.error {
+    background: #450a0a;
+    color: #fecaca;
+    border-color: #7f1d1d;
+}

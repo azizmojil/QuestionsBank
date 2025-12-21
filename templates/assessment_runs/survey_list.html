@@ -4,32 +4,34 @@
 {% block title %}{% trans "الاستبيانات - منصة QnR" %}{% endblock %}
 
 {% block content %}
-    <div class="section-header">
-        <div>
-            <p class="eyebrow">{% trans "التقييمات الذاتية" %}</p>
-            <h2>{% trans "اختر استبياناً" %}</h2>
-            <p class="lead">{% trans "اختر استبياناً لبدء تقييم نفسك أو فريقك." %}</p>
-        </div>
+<div class="section-header">
+    <div>
+        <p class="eyebrow">{% trans "التقييمات الذاتية" %}</p>
+        <h2>{% trans "اختر استبياناً" %}</h2>
+        <p class="lead">{% trans "اختر استبياناً لبدء تقييم نفسك أو فريقك." %}</p>
     </div>
-    <div class="card table-card">
-        <table class="data-table" aria-describedby="survey-list-caption">
-            <caption id="survey-list-caption">{% trans "الاستبيانات المتاحة مع حالتها وتاريخ إنشائها" %}</caption>
-            <thead>
-                <tr>
-                    <th scope="col">{% trans "اسم الاستبيان" %}</th>
-                    <th scope="col">{% trans "الحالة" %}</th>
-                    <th scope="col">{% trans "تاريخ الإنشاء" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for survey in surveys %}
-                    <tr>
-                        <td><a href="{% url 'survey_version_list' survey.id %}">{{ survey.display_name }}</a></td>
-                        <td><span class="status-pill neutral" aria-label="{% blocktrans with status=survey.get_status_display %}الحالة: {{ status }}{% endblocktrans %}">{{ survey.get_status_display }}</span></td>
-                        <td>{{ survey.created_at|date:"Y-m-d" }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+</div>
+<div class="card table-card">
+    <table class="data-table" aria-describedby="survey-list-caption">
+        <caption id="survey-list-caption">{% trans "الاستبيانات المتاحة مع حالتها وتاريخ إنشائها" %}</caption>
+        <thead>
+        <tr>
+            <th scope="col">{% trans "اسم الاستبيان" %}</th>
+            <th scope="col">{% trans "الحالة" %}</th>
+            <th scope="col">{% trans "تاريخ الإنشاء" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for survey in surveys %}
+        <tr>
+            <td><a href="{% url 'survey_version_list' survey.id %}">{{ survey.display_name }}</a></td>
+            <td><span class="status-pill neutral"
+                      aria-label="{% blocktrans with status=survey.get_status_display %}الحالة: {{ status }}{% endblocktrans %}">{{ survey.get_status_display }}</span>
+            </td>
+            <td>{{ survey.created_at|date:"Y-m-d" }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

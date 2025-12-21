@@ -139,6 +139,5 @@ class IndicatorListItem(models.Model):
         help_text=_("رمز اختياري لعنصر القائمة.")
     )
 
-
     def __str__(self) -> str:
         return f"{self.indicator} - {self.name}"

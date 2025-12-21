@@ -43,9 +43,9 @@ class RoutingEngine:
     # ------------------------------------------------------------------
 
     def get_next_question(
-        self,
-        responses: Dict[int, Any],
-        used_rule_ids: Optional[Iterable[int]] = None,
+            self,
+            responses: Dict[int, Any],
+            used_rule_ids: Optional[Iterable[int]] = None,
     ) -> RoutingResult:
         """
         Determine the next AssessmentQuestion to route to.
@@ -71,9 +71,9 @@ class RoutingEngine:
     # ------------------------------------------------------------------
 
     def _find_matching_rule(
-        self,
-        responses: Dict[int, Any],
-        used_rule_ids: Optional[Iterable[int]] = None,
+            self,
+            responses: Dict[int, Any],
+            used_rule_ids: Optional[Iterable[int]] = None,
     ) -> Optional[AssessmentFlowRule]:
         """
         Iterate over all rules, return the first matching rule.
@@ -106,7 +106,7 @@ class RoutingEngine:
                     rule_dict = raw
                 else:
                     continue
-                
+
                 if self._evaluate_rule_dict(rule_dict, responses):
                     return rule
 
@@ -125,9 +125,9 @@ class RoutingEngine:
         return None
 
     def _evaluate_rule_dict(
-        self,
-        rule_dict: Any,
-        responses: Dict[int, Any],
+            self,
+            rule_dict: Any,
+            responses: Dict[int, Any],
     ) -> bool:
         """
         Evaluate a rule JSON dict against responses.
@@ -163,9 +163,9 @@ class RoutingEngine:
             return any(results)
 
     def _evaluate_condition(
-        self,
-        cond: Dict[str, Any],
-        responses: Dict[int, Any],
+            self,
+            cond: Dict[str, Any],
+            responses: Dict[int, Any],
     ) -> bool:
         """
         Evaluate a single condition.
@@ -208,10 +208,10 @@ class RoutingEngine:
         return 1
 
     def _evaluate_value_condition(
-        self,
-        answer: Any,
-        operator: str,
-        expected: Any,
+            self,
+            answer: Any,
+            operator: str,
+            expected: Any,
     ) -> bool:
         if operator in ("==", "!=") and answer is None:
             return operator == "!="
@@ -221,7 +221,7 @@ class RoutingEngine:
             return str(answer) == str(expected)
         if operator == "!=":
             return str(answer) != str(expected)
-        
+
         if operator in (">", "<", ">=", "<="):
             return self._compare_numeric(answer, operator, expected)
 
@@ -257,9 +257,9 @@ class RoutingEngine:
 
     @staticmethod
     def _compare_numeric(
-        actual: Any,
-        operator: str,
-        expected: Any,
+            actual: Any,
+            operator: str,
+            expected: Any,
     ) -> bool:
         try:
             a = float(actual)

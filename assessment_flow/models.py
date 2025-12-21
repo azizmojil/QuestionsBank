@@ -17,6 +17,7 @@ def get_assessment_file_path(instance, filename: str) -> str:
     from assessment_runs.models import get_assessment_file_path as new_get_assessment_file_path
     return new_get_assessment_file_path(instance, filename)
 
+
 class AssessmentQuestion(models.Model):
     """A node in the assessment decision-flow graph."""
 
@@ -77,6 +78,7 @@ class AssessmentQuestion(models.Model):
         if lang == "en" and self.text_en:
             return self.text_en
         return self.text_en or self.text_ar
+
     display_text.fget.short_description = _("السؤال")
 
     @property
@@ -87,6 +89,7 @@ class AssessmentQuestion(models.Model):
         if lang == "en" and self.explanation_en:
             return self.explanation_en
         return self.explanation_en or self.explanation_ar
+
 
 class AssessmentOption(models.Model):
     """An option/branch from an AssessmentQuestion."""
@@ -137,6 +140,7 @@ class AssessmentOption(models.Model):
         if lang == "en" and self.explanation_en:
             return self.explanation_en
         return self.explanation_en or self.explanation_ar
+
 
 class AssessmentFlowRule(models.Model):
     """Declarative routing rule for the assessment flow."""
@@ -195,4 +199,5 @@ class ReevaluationQuestion(models.Model):
         if lang == "en" and self.text_en:
             return self.text_en
         return self.text_en or self.text_ar
+
     display_text.fget.short_description = _("السؤال")

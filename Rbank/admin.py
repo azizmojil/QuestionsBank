@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import ResponseType, Response, ResponseGroup
 from django.utils.translation import gettext_lazy as _
+
+from .models import ResponseType, Response, ResponseGroup
 
 
 @admin.register(ResponseType)
@@ -10,6 +11,7 @@ class ResponseTypeAdmin(admin.ModelAdmin):
 
     def display_name(self, obj):
         return str(obj)
+
     display_name.short_description = _("نوع الاستجابة")
 
 
@@ -20,6 +22,7 @@ class ResponseAdmin(admin.ModelAdmin):
 
     def display_text(self, obj):
         return obj.display_text
+
     display_text.short_description = _("الجواب")
 
 

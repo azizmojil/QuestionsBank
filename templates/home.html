@@ -1,67 +1,47 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load static i18n %}
 
-{% block title %}{% trans "الصفحة الرئيسية - منصة QnR" %}{% endblock %}
+{% block title %}{% trans "تسجيل الدخول - بنك الأسئلة" %}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
 
 {% block content %}
-    <section class="hero">
-        <div class="card hero-card">
-            <span class="hero-highlight">{% trans "دليل النمط" %}</span>
-            <h1>{% trans "تصميم متماسك لكل رحلة تقييم" %}</h1>
-            <p class="lead">
-                {% trans "تعتمد المنصة ألوان ومساحات الدليل في Figma لضمان بطاقات واضحة، أزرار عالية التباين، وتجربة سلسة للوضعين الفاتح والداكن." %}
-            </p>
-            <div class="hero-actions">
-                <a class="btn" href="{% url 'survey_list' %}" aria-label="{% trans 'الانتقال إلى قائمة الاستبيانات لبدء تقييم ذاتي' %}">{% trans "بدء تقييم ذاتي" %}</a>
-                <a class="btn btn-secondary" href="{% url 'survey_builder' %}" aria-label="{% trans 'فتح منشئ الاستبيان لتصميم استبيان جديد' %}">{% trans "تصميم استبيان جديد" %}</a>
-            </div>
-            <div class="stat-grid">
-                <div class="stat" aria-label="{% trans 'أنماط واضحة للأزرار' %}">
-                    <p class="value">3</p>
-                    <p class="label">{% trans "أنماط أزرار جاهزة" %}</p>
-                </div>
-                <div class="stat" aria-label="{% trans 'تباين مستدام' %}">
-                    <p class="value">100%</p>
-                    <p class="label">{% trans "تباين قابل للوضع الداكن" %}</p>
-                </div>
-                <div class="stat" aria-label="{% trans 'عناصر قابلة لإعادة الاستخدام' %}">
-                    <p class="value">24</p>
-                    <p class="label">{% trans "عناصر واجهة قابلة لإعادة الاستخدام" %}</p>
-                </div>
-            </div>
+<div class="login-container">
+    <div class="card login-card">
+        <div class="text-center mb-4">
+            <h1>{% trans "مرحباً بك" %}</h1>
+            <p class="lead">{% trans "سجل الدخول للمتابعة إلى بنك الأسئلة" %}</p>
         </div>
-        <div class="card hero-card">
-            <h3>{% trans "مبادئ دليل الأسلوب" %}</h3>
-            <ul class="checklist">
-                <li><span class="check-icon" aria-hidden="true">✓</span>{% trans "ألوان محايدة مع لمسة بنفسجية للأزرار والحالات النشطة." %}</li>
-                <li><span class="check-icon" aria-hidden="true">✓</span>{% trans "حواف مستديرة واسعة ومساحات هواء واضحة حول المحتوى." %}</li>
-                <li><span class="check-icon" aria-hidden="true">✓</span>{% trans "تدرجات خفيفة للبطاقات والأجزاء البارزة للفت الانتباه دون تشتيت." %}</li>
-                <li><span class="check-icon" aria-hidden="true">✓</span>{% trans "دعم أصيل للوضع الداكن وللاتجاهين العربي/الإنجليزي." %}</li>
-            </ul>
-        </div>
-    </section>
 
-    <section id="features" class="mt-3">
-        <div class="section-header">
-            <div>
-                <p class="eyebrow">{% trans "مطابقة للدليل" %}</p>
-                <h2>{% trans "لبنات جاهزة للتقييم" %}</h2>
-                <p class="lead">{% trans "كل ميزة تستخدم نفس الألوان والحواف والظلال المقترحة في دليل التصميم لضمان تجربة متناسقة." %}</p>
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            {% if form.errors %}
+                <div class="alert error mb-3">
+                    {% trans "اسم المستخدم أو كلمة المرور غير صحيحة." %}
+                </div>
+            {% endif %}
+
+            <div class="stacked mb-3">
+                <label for="id_username">{% trans "اسم المستخدم" %}</label>
+                <input type="text" name="username" id="id_username" required autofocus>
+            </div>
+
+            <div class="stacked mb-4">
+                <label for="id_password">{% trans "كلمة المرور" %}</label>
+                <input type="password" name="password" id="id_password" required>
+            </div>
+
+            <button type="submit" class="btn full-width">{% trans "تسجيل الدخول" %}</button>
+            <input type="hidden" name="next" value="{{ next }}">
+        </form>
+
+        <div class="login-footer mt-4 text-center">
+            <div class="flex gap-2 flex-center">
+                <a href="#" class="btn btn-secondary btn-sm">{% trans "طلب وصول" %}</a>
             </div>
         </div>
-        <div class="feature-grid">
-            <div class="card feature-card">
-                <h3 aria-label="{% trans 'ميزة التقييمات الذاتية' %}">📋 {% trans "التقييمات الذاتية" %}</h3>
-                <p>{% trans "وجّه المتعلمين عبر أسئلة متعمدة وهيكلية تتكيف مع أي موضوع وبمظهر موحّد." %}</p>
-            </div>
-            <div class="card feature-card">
-                <h3 aria-label="{% trans 'ميزة تتبع التقدم' %}">📊 {% trans "تتبع التقدم" %}</h3>
-                <p>{% trans "تابع تغير الاستجابات بمرور الوقت مع ملصقات وألوان حالة متطابقة مع الدليل." %}</p>
-            </div>
-            <div class="card feature-card">
-                <h3 aria-label="{% trans 'ميزة الأسئلة المخصصة' %}">🎯 {% trans "أسئلة مخصصة" %}</h3>
-                <p>{% trans "أنشئ بنوك أسئلة قابلة لإعادة الاستخدام بخيارات قابلة للبحث ومرونة التحديد المتعدد، بنفس الأسلوب المرئي." %}</p>
-            </div>
-        </div>
-    </section>
+    </div>
+</div>
 {% endblock %}

@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Indicator, IndicatorListItem, IndicatorClassification, IndicatorTracking, Classification, ClassificationIndicatorListItem
+from .models import Indicator, IndicatorListItem, IndicatorClassification, IndicatorTracking, Classification, \
+    ClassificationIndicatorListItem
 from django.utils.translation import gettext_lazy as _
 
 

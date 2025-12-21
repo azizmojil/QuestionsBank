@@ -13,14 +13,17 @@ from .models import AssessmentRun, AssessmentResult
 
 log = logging.getLogger(__name__)
 
+
 def survey_list(request):
     surveys = Survey.objects.all()
     return render(request, 'assessment_runs/survey_list.html', {'surveys': surveys})
+
 
 def survey_version_list(request, survey_id):
     survey = get_object_or_404(Survey, pk=survey_id)
     versions = survey.versions.all()
     return render(request, 'assessment_runs/survey_version_list.html', {'survey': survey, 'versions': versions})
+
 
 def survey_question_list(request, version_id):
     version = get_object_or_404(SurveyVersion, pk=version_id)
@@ -34,12 +37,14 @@ def survey_question_list(request, version_id):
         'first_assessment_question': first_assessment_question,
     })
 
+
 def _prepare_context(question):
     context = {'question': question}
     if question.option_type == AssessmentQuestion.OptionType.INDICATOR_LIST:
         if question.indicator_source:
             context['options'] = question.indicator_source.items.all()
     return context
+
 
 def assessment_page(request, question_id):
     question = get_object_or_404(AssessmentQuestion, pk=question_id)
@@ -67,6 +72,7 @@ def assessment_page(request, question_id):
 
     context = _prepare_context(question)
     return render(request, 'assessment_runs/assessment_page.html', context)
+
 
 @require_POST
 def get_next_question_view(request):
@@ -140,6 +146,7 @@ def get_next_question_view(request):
     request.session['assessment_history'] = history
     return response
 
+
 @require_POST
 def rewind_assessment(request):
     data = json.loads(request.body)
@@ -164,6 +171,7 @@ def rewind_assessment(request):
         pass
 
     return JsonResponse({'status': 'ok'})
+
 
 def assessment_complete(request):
     history = request.session.pop('assessment_history', [])

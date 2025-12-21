@@ -41,9 +41,9 @@ class ClassificationEngine:
     # ------------------------------------------------------------------
 
     def classify_question(
-        self,
-        question: SurveyQuestion | int,
-        responses: Dict[int, Any],
+            self,
+            question: SurveyQuestion | int,
+            responses: Dict[int, Any],
     ) -> ClassificationResult:
         """
         Return the classification for a single SurveyQuestion.
@@ -76,9 +76,9 @@ class ClassificationEngine:
             raise ValueError(f"SurveyQuestion with id {question} does not exist") from exc
 
     def _classify_with_normalized_responses(
-        self,
-        question: SurveyQuestion | int,
-        responses: Dict[str, Any],
+            self,
+            question: SurveyQuestion | int,
+            responses: Dict[str, Any],
     ) -> ClassificationResult:
         question_obj = self._resolve_question(question)
         matched_rule = self._find_matching_rule(question_obj.id, responses)
@@ -97,9 +97,9 @@ class ClassificationEngine:
         return {str(k): v for k, v in responses.items()}
 
     def _find_matching_rule(
-        self,
-        question_id: int,
-        responses: Dict[str, Any],
+            self,
+            question_id: int,
+            responses: Dict[str, Any],
     ) -> Optional[QuestionClassificationRule]:
         """
         Iterate over all rules for the question, return the first matching rule.
@@ -143,9 +143,9 @@ class ClassificationEngine:
         return None
 
     def _evaluate_rule_dict(
-        self,
-        rule_dict: Any,
-        responses: Dict[str, Any],
+            self,
+            rule_dict: Any,
+            responses: Dict[str, Any],
     ) -> bool:
         """
         Evaluate a rule JSON dict against responses.
@@ -178,9 +178,9 @@ class ClassificationEngine:
         return any(results)
 
     def _evaluate_condition(
-        self,
-        cond: Dict[str, Any],
-        responses: Dict[str, Any],
+            self,
+            cond: Dict[str, Any],
+            responses: Dict[str, Any],
     ) -> bool:
         cond_type = cond.get("type") or "value"
         question_id = cond.get("question")
@@ -211,10 +211,10 @@ class ClassificationEngine:
         return 1
 
     def _evaluate_value_condition(
-        self,
-        answer: Any,
-        operator: str,
-        expected: Any,
+            self,
+            answer: Any,
+            operator: str,
+            expected: Any,
     ) -> bool:
         if operator in ("==", "!=") and answer is None:
             return operator == "!="
@@ -259,9 +259,9 @@ class ClassificationEngine:
 
     @staticmethod
     def _compare_numeric(
-        actual: Any,
-        operator: str,
-        expected: Any,
+            actual: Any,
+            operator: str,
+            expected: Any,
     ) -> bool:
         try:
             a = float(actual)

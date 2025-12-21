@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% trans "منصة QnR" %}{% endblock %}</title>
+    <title>{% block title %}{% trans "بنك الأسئلة" %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
     {% block extra_css %}{% endblock %}
@@ -14,8 +14,7 @@
 <body>
     <header class="site-header">
         <div class="brand">
-            <a href="{% url 'home' %}" class="logo">{% trans "منصة QnR" %}</a>
-            <p class="tagline">{% trans "تقييمات ذاتية جميلة وسهلة الوصول" %}</p>
+            <a href="{% url 'home' %}" class="logo">{% trans "بنك الأسئلة" %}</a>
         </div>
         <nav aria-label="Primary navigation">
             <ul>
@@ -24,7 +23,6 @@
             </ul>
         </nav>
         <div class="header-actions">
-            <a href="#" class="auth-link">{% trans "تسجيل الدخول" %}</a>
             <form id="language-switch-form" action="{% url 'set_language' %}" method="post" class="language-switch-form">
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ request.get_full_path }}">
@@ -47,6 +45,9 @@
         {% block content %}
         {% endblock %}
     </main>
+    <footer class="site-footer">
+        <p>{% trans "صمم لتقييمات شاملة مع عناية بقابلية الوصول." %}</p>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script src="{% static 'js/base.js' %}"></script>
     {% block extra_js %}{% endblock %}
