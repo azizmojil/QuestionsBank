@@ -1,0 +1,12 @@
+{% extends 'assessment/base.html' %}
+
+{% block content %}
+<div class="w-full max-w-3xl mx-auto">
+    <div id="final-result-card" class="bg-green-800 border border-green-600 text-center p-8 rounded-lg">
+        <h2 class="text-3xl font-bold text-white">اكتمل التقييم!</h2>
+        <div class="mt-8">
+            <a href="{% url 'assessment:version_detail' result.survey_question.survey_version.id %}" class="btn-primary bg-white text-gray-900 hover:bg-gray-200">العودة إلى قائمة الأسئلة</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

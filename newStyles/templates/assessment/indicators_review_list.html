@@ -1,0 +1,125 @@
+{% extends 'assessment/base.html' %}
+
+{% block head_extra %}
+    <style>
+        .expandable-content-row {
+            display: none;
+        }
+        .path-summary-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+            padding: 1rem;
+        }
+        .path-summary-grid .question {
+            white-space: normal;
+            word-break: break-word;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            background-color: rgba(30, 58, 138, 0.3);
+            color: #111827;
+        }
+        .dark .path-summary-grid .question {
+            color: #e5e7eb;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-5xl mx-auto">
+    <header class="mb-8 text-right">
+        <h1 class="text-3xl font-bold">
+            مراجعة المؤشرات: 
+            {% if indicator_type == 'international' %}
+                الدولية
+            {% elif indicator_type == 'regional' %}
+                الإقليمية
+            {% elif indicator_type == 'national' %}
+                الوطنية
+            {% else %}
+                {{ indicator_type }}
+            {% endif %}
+        </h1>
+        <p class="text-lg mt-2">قائمة بالأسئلة المجمعة حسب المؤشر</p>
+    </header>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="indicator_count" value="{{ indicators_data|length }}">
+        <div class="box rounded-lg shadow-md overflow-hidden">
+            <table class="min-w-full">
+                <thead class="table-header">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider w-3/5">المؤشر</th>
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">الحالة</th>
+                    </tr>
+                </thead>
+                <tbody class="table-body">
+                    {% for indicator_name, data in indicators_data %}
+                    <tr class="cursor-pointer" data-target-id="indicator-content-{{ forloop.counter }}">
+                        <td class="px-6 py-4 text-sm font-semibold">{{ indicator_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <input type="hidden" name="indicator_name_{{ forloop.counter }}" value="{{ indicator_name }}">
+                            {% for q in data.questions %}
+                                <input type="hidden" name="question_ids_{{ forloop.parentloop.counter }}" value="{{ q.id }}">
+                            {% endfor %}
+                            <select name="indicator_status_{{ forloop.counter }}" class="form-select" required {% if data.obj and data.obj.status == 'FINALIZED' %}disabled{% endif %}>
+                                <option value="" disabled {% if not data.obj %}selected{% endif %}>اختر الحالة</option>
+                                <option value="TRACKED" {% if data.obj and data.obj.tracking_status == 'TRACKED' %}selected{% endif %}>مؤشر تتم متابعته من قبل الهيئة</option>
+                                <option value="NOT_TRACKED" {% if data.obj and data.obj.tracking_status == 'NOT_TRACKED' %}selected{% endif %}>مؤشر لا تتم متابعته من قبل الهيئة</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr id="indicator-content-{{ forloop.counter }}" class="expandable-content-row">
+                        <td colspan="2" class="p-0">
+                            <div class="path-summary-grid">
+                                {% for question in data.questions %}
+                                    <div class="question">{{ question.question_text }}</div>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" class="text-center py-10">
+                            لا توجد مؤشرات مطابقة في هذا التصنيف.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if not all_finalized %}
+        <div class="mt-8 flex justify-end">
+            <button type="submit" class="btn-primary link">حفظ ومتابعة &rarr;</button>
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('.table-body').addEventListener('click', function(e) {
+        if (e.target.tagName.toLowerCase() === 'select') {
+            e.stopPropagation();
+            return;
+        }
+
+        const row = e.target.closest('tr[data-target-id]');
+        if (!row) return;
+        
+        const targetId = row.dataset.targetId;
+        const contentRow = document.getElementById(targetId);
+        
+        if (contentRow) {
+            const isVisible = contentRow.style.display === 'table-row';
+            contentRow.style.display = isVisible ? 'none' : 'table-row';
+        }
+    });
+});
+</script>
+{% endblock %}

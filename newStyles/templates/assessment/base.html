@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداة تقييم الاستبيان</title>
+    <link rel="icon" href="{% static 'assessment/img/favicon.ico' %}" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="{% static 'assessment/css/assessment_page.css' %}">
+    <link rel="stylesheet" href="{% static 'assessment/css/theme.css' %}">
+    <style>
+        #theme-toggle {
+            width: 60px;
+            height: 30px;
+            background-color: #d1d5db;
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4px;
+        }
+        .dark #theme-toggle {
+            background-color: #4b5563;
+        }
+        #theme-toggle .toggle-circle {
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s;
+            z-index: 10;
+        }
+        .dark #theme-toggle .toggle-circle {
+            transform: translateX(30px);
+        }
+        #theme-toggle .sun-icon, #theme-toggle .moon-icon {
+            width: 20px;
+            height: 20px;
+            z-index: 5;
+        }
+        #theme-toggle .sun-icon {
+            color: #f59e0b;
+        }
+        #theme-toggle .moon-icon {
+            color: #a7f3d0;
+        }
+    </style>
+    {% block head_extra %}{% endblock %}
+</head>
+<body class="p-4 sm:p-6">
+    <div class="w-full max-w-5xl mx-auto">
+        <header class="flex justify-between items-center mb-8 p-4 rounded-lg shadow-md">
+            <nav class="flex items-center gap-8">
+                <a href="{% url 'assessment:home' %}" class="text-lg font-semibold link">الرئيسية</a>
+                <a href="{% url 'assessment:survey_list' %}" class="text-lg font-semibold link">تقييم استمارة المسح</a>
+                {% if user.is_superuser %}
+                <a href="{% url 'assessment:scoring_list' %}" class="text-lg font-semibold link">المراجعة والتحليل</a>
+                {% endif %}
+            </nav>
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle">
+                    <svg class="sun-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.121-3.536a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM10 18a1 1 0 01-1-1v-1a1 1 0 112 0v1a1 1 0 01-1 1zM5.05 14.95l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 01-1.414 1.414zM2.293 7.293a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM15 10a1 1 0 01-1-1V7a1 1 0 112 0v2a1 1 0 01-1 1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                    <div class="toggle-circle"></div>
+                    <svg class="moon-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                </button>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="text-lg font-semibold link">تسجيل خروج</button>
+                </form>
+            </div>
+        </header> 
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+        });
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
