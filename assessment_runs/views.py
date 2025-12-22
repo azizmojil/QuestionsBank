@@ -39,7 +39,7 @@ def dashboard(request):
             "name": survey.display_name,
             "status": survey.get_status_display(),
             "latest_version": latest_version,
-            "question_total": latest_version.questions.count() if latest_version else 0,
+            "question_total": len(latest_version.questions.all()) if latest_version else 0,
         })
 
     context = {
