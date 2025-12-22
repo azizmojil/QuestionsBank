@@ -1,7 +1,7 @@
 import json
 import logging
 from datetime import datetime
-from django.db.models import Count
+from django.db.models import Count, Prefetch
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
@@ -21,30 +21,31 @@ def survey_list(request):
 
 
 def dashboard(request):
-    surveys = (
-        Survey.objects.prefetch_related("versions__questions")
+    versions_with_counts = SurveyVersion.objects.annotate(
+        question_total=Count("questions")
+    ).order_by("-version_date", "-id")
+    surveys_qs = (
+        Survey.objects.prefetch_related(Prefetch("versions", queryset=versions_with_counts))
         .annotate(version_total=Count("versions"))
         .order_by("name_ar", "name_en")
     )
+    survey_count = surveys_qs.count()
 
     survey_rows = []
-    for survey in surveys:
-        latest_version = (
-            survey.versions.all()
-            .order_by("-version_date", "-id")
-            .first()
-        )
+    for survey in surveys_qs:
+        versions = list(survey.versions.all())
+        latest_version = versions[0] if versions else None
         survey_rows.append({
             "id": survey.id,
             "name": survey.display_name,
             "status": survey.get_status_display(),
             "latest_version": latest_version,
-            "question_total": len(latest_version.questions.all()) if latest_version else 0,
+            "question_total": latest_version.question_total if latest_version else 0,
         })
 
     context = {
         "stats": {
-            "survey_count": len(survey_rows),
+            "survey_count": survey_count,
             "version_count": SurveyVersion.objects.count(),
             "question_count": SurveyQuestion.objects.count(),
         },
