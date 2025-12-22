@@ -1,0 +1,36 @@
+.expandable-content {
+    display: none;
+}
+
+.path-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1rem;
+    align-items: start;
+}
+
+.path-summary-grid .question,
+.path-summary-grid .answer {
+    white-space: normal;
+    word-break: break-word;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+}
+
+.path-summary-grid .question {
+    font-weight: 600;
+    background-color: #f9fafb;
+}
+
+.path-summary-grid .answer {
+    background-color: rgba(30, 58, 138, 0.3);
+    color: #111827;
+}
+
+.dark .path-summary-grid .question {
+    background-color: rgba(55, 65, 81, 0.5);
+}
+
+.dark .path-summary-grid .answer {
+    color: #e5e7eb;
+}

@@ -1,13 +1,8 @@
 {% extends 'assessment/base.html' %}
+{% load static %}
 
 {% block head_extra %}
-    <style>
-        .expandable-content {
-            display: none;
-            border-bottom: 4px solid #111827;
-            background-color: #111827;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'assessment/css/indicators_review.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -66,18 +61,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('[data-toggle-indicator]').forEach(header => {
-        header.addEventListener('click', function() {
-            const indicatorId = this.dataset.toggleIndicator;
-            const content = document.getElementById(`indicator-${indicatorId}`);
-            if (content) {
-                const isVisible = content.style.display === 'block';
-                content.style.display = isVisible ? 'none' : 'block';
-            }
-        });
-    });
-});
-</script>
+<script src="{% static 'assessment/js/indicators_review.js' %}"></script>
 {% endblock %}
