@@ -40,18 +40,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function formatOptionWithIcon(option) {
-      if (!option.id) {
-        return option.text;
-      }
-      const $option = $(option.element);
-      const explanation = $option.data('explanation');
-      
-      if (explanation) {
-        const iconHtml = '<span class="info-icon" title="' + explanation + '">ⓘ</span>';
-        return $('<span>' + option.text + ' ' + iconHtml + '</span>');
-      }
-      return option.text;
-    }
+       if (!option.id) {
+         return option.text;
+       }
+       const $option = $(option.element);
+       const explanation = $option.data('explanation');
+       
+       const container = $('<span></span>');
+       container.text(option.text || '');
+       
+       if (explanation) {
+         container.append(document.createTextNode(' '));
+         const icon = $('<span></span>')
+           .addClass('info-icon')
+           .attr('title', explanation)
+           .text('ⓘ');
+         container.append(icon);
+       }
+       return container;
+     }
 
     $('.dropdown-wrapper.s2-scope .searchable-dropdown, .multi-select-container.s2-scope .searchable-dropdown').each(function () {
       const $select = $(this);

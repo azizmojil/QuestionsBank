@@ -59,7 +59,7 @@ async function handleSingleSelect(selectedOptionEl, currentQuestionDiv, assessme
         }
     }
 
-    addPathItem(questionId, questionText, responseValue, confirmationText, !nextQuestionId, assessmentPath, pathContainer, optionId);
+    addPathItem(questionId, questionText, responseValue, !nextQuestionId, assessmentPath, pathContainer, optionId);
 
     if (nextQuestionId) {
         showQuestion(nextQuestionId);

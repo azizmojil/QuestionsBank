@@ -45,7 +45,7 @@ function handleDynamicSelection(e, assessmentPath, pathContainer) {
     for (let i = reAnswerIndex; i < allPathItems.length; i++) allPathItems[i].remove();
   }
 
-  addPathItem(questionId, questionText, responseValue, null, !nextQuestionId, assessmentPath, pathContainer, optionIds);
+  addPathItem(questionId, questionText, responseValue, !nextQuestionId, assessmentPath, pathContainer, optionIds);
 
   $(selectElement).val(null).trigger('change');
 

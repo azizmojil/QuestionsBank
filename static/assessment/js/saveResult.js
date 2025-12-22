@@ -35,8 +35,11 @@ async function saveResult(finalLabel, surveyQuestionId, assessmentPath) {
     }
 
     function setFinalText(labelFromServer) {
-      const label = (labelFromServer ?? finalLabel ?? '').toString().trim();
       if (!finalText) return;
+      const label = (labelFromServer ?? finalLabel ?? '').toString().trim();
+      if (label) {
+        finalText.textContent = label;
+      }
     }
 
     if (data.status === 'redirect' && data.url) {

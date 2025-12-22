@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const root = document.documentElement;
     const body = document.body;
 
-    const isDark = () => root.classList.contains('dark') || body.classList.contains('dark-mode');
+    const isDark = () => root.classList.contains('dark');
 
     const applyTheme = (dark) => {
         root.classList.toggle('dark', dark);
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
     const startDark = savedTheme ? savedTheme === 'dark' : prefersDark;
     applyTheme(startDark);
 
