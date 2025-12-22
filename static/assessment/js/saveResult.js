@@ -31,7 +31,9 @@ async function saveResult(finalLabel, surveyQuestionId, assessmentPath) {
     function finishView() {
       document.querySelectorAll('.question-card').forEach(q => q.classList.add('hidden'));
       if (finalCard) finalCard.classList.remove('hidden');
-      try { finalCard.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(_) {}
+      if (finalCard && typeof finalCard.scrollIntoView === 'function') {
+        finalCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
 
     function setFinalText(labelFromServer) {

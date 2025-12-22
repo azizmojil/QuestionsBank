@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const toggleButton = document.getElementById('theme-toggle');
+    const toggleButton = document.getElementById('theme-toggle') || document.getElementById('theme-switch');
     if (!toggleButton) return;
 
     const root = document.documentElement;
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
         toggleButton.setAttribute('aria-pressed', String(dark));
     };
 
-    const savedTheme = localStorage.getItem('theme');
+    const savedTheme = localStorage.getItem('theme') ?? localStorage.getItem('color-theme');
     const prefersDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
     const startDark = savedTheme ? savedTheme === 'dark' : prefersDark;
     applyTheme(startDark);

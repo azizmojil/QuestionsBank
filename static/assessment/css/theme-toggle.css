@@ -1,5 +1,6 @@
 /* Theme toggle control */
-#theme-toggle {
+#theme-toggle,
+#theme-switch {
     width: 60px;
     height: 30px;
     background-color: #d1d5db;
@@ -14,11 +15,13 @@
     border: none;
 }
 
-.dark #theme-toggle {
+.dark #theme-toggle,
+.dark #theme-switch {
     background-color: #4b5563;
 }
 
-#theme-toggle .toggle-circle {
+#theme-toggle .toggle-circle,
+#theme-switch .toggle-circle {
     width: 24px;
     height: 24px;
     background-color: white;
@@ -30,21 +33,26 @@
     z-index: 10;
 }
 
-.dark #theme-toggle .toggle-circle {
+.dark #theme-toggle .toggle-circle,
+.dark #theme-switch .toggle-circle {
     transform: translateX(30px);
 }
 
 #theme-toggle .sun-icon,
-#theme-toggle .moon-icon {
+#theme-switch .sun-icon,
+#theme-toggle .moon-icon,
+#theme-switch .moon-icon {
     width: 20px;
     height: 20px;
     z-index: 5;
 }
 
-#theme-toggle .sun-icon {
+#theme-toggle .sun-icon,
+#theme-switch .sun-icon {
     color: #f59e0b;
 }
 
-#theme-toggle .moon-icon {
+#theme-toggle .moon-icon,
+#theme-switch .moon-icon {
     color: #a7f3d0;
 }

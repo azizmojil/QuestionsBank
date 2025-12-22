@@ -1,5 +1,5 @@
 function addPathItem(questionId, questionText, answerData, isFinal, assessmentPath, pathContainer, optionId) {
-    const finalQuestionText = questionText || (window.assessmentApp.questionDataMap[questionId]?.text || "Unknown Question");
+    const finalQuestionText = questionText || (window.assessmentApp?.questionDataMap?.[questionId]?.text || "Unknown Question");
 
     const normalizedOptionIds = optionId === undefined || optionId === null
         ? []
