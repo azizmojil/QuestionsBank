@@ -7,7 +7,7 @@ from typing import Any, Dict, Iterable, List, Optional
 
 from django.db.models import QuerySet
 
-from .models import AssessmentQuestion, AssessmentFlowRule
+from .models import AssessmentQuestion, AssessmentFlowRule, AssessmentOption
 
 log = logging.getLogger(__name__)
 
@@ -192,7 +192,7 @@ class RoutingEngine:
             return self._compare_numeric(count, operator, expected)
 
         # default: value condition
-        return self._evaluate_value_condition(answer, operator, expected)
+        return self._evaluate_value_condition(answer, operator, expected, question_id=int(question_id))
 
     # ------------------------------------------------------------------
     # Helpers
@@ -207,20 +207,66 @@ class RoutingEngine:
         # Scalar value counts as 1
         return 1
 
+    def _check_translated_equality(self, question_id: int, answer: Any, expected: Any) -> bool:
+        """
+        Check if answer and expected refer to the same AssessmentOption,
+        matching by ID, Arabic text, or English text.
+        """
+        s_answer = str(answer).strip()
+        s_expected = str(expected).strip()
+
+        # Optimization: If both are identical strings, we already checked that.
+        # But this method is called when direct equality failed.
+
+        # Fetch options for this question
+        options = AssessmentOption.objects.filter(question_id=question_id)
+
+        for opt in options:
+            # Check if this option matches 'expected'
+            matches_expected = (
+                str(opt.id) == s_expected or
+                (opt.text_ar and opt.text_ar.strip() == s_expected) or
+                (opt.text_en and opt.text_en.strip() == s_expected)
+            )
+
+            if matches_expected:
+                # If this is the expected option, check if 'answer' also matches it
+                matches_answer = (
+                    str(opt.id) == s_answer or
+                    (opt.text_ar and opt.text_ar.strip() == s_answer) or
+                    (opt.text_en and opt.text_en.strip() == s_answer)
+                )
+                if matches_answer:
+                    return True
+
+        return False
+
+    def _are_values_equal(self, answer: Any, expected: Any, question_id: Optional[int]) -> bool:
+        # 1. Direct string comparison
+        if str(answer) == str(expected):
+            return True
+        
+        # 2. Translation/ID lookup
+        if question_id is not None:
+            return self._check_translated_equality(question_id, answer, expected)
+            
+        return False
+
     def _evaluate_value_condition(
             self,
             answer: Any,
             operator: str,
             expected: Any,
+            question_id: Optional[int] = None,
     ) -> bool:
         if operator in ("==", "!=") and answer is None:
             return operator == "!="
 
         if operator == "==":
-            # String comparison for safety
-            return str(answer) == str(expected)
+            return self._are_values_equal(answer, expected, question_id)
+            
         if operator == "!=":
-            return str(answer) != str(expected)
+            return not self._are_values_equal(answer, expected, question_id)
 
         if operator in (">", "<", ">=", "<="):
             return self._compare_numeric(answer, operator, expected)
@@ -228,20 +274,34 @@ class RoutingEngine:
         if operator == "in":
             if not isinstance(expected, (list, tuple, set)):
                 return False
-            if isinstance(answer, (list, tuple, set)):
-                return any(str(a) in [str(e) for e in expected] for a in answer)
-            return str(answer) in [str(e) for e in expected]
+            
+            answer_list = answer if isinstance(answer, (list, tuple, set)) else [answer]
+            # Check if ANY item in answer_list matches ANY item in expected
+            for ans in answer_list:
+                for exp in expected:
+                    if self._are_values_equal(ans, exp, question_id):
+                        return True
+            return False
 
         if operator == "not in":
             if not isinstance(expected, (list, tuple, set)):
                 return False
-            if isinstance(answer, (list, tuple, set)):
-                return all(str(a) not in [str(e) for e in expected] for a in answer)
-            return str(answer) not in [str(e) for e in expected]
+            
+            answer_list = answer if isinstance(answer, (list, tuple, set)) else [answer]
+            # Check if ALL items in answer_list do NOT match ANY item in expected
+            for ans in answer_list:
+                for exp in expected:
+                    if self._are_values_equal(ans, exp, question_id):
+                        return False
+            return True
 
         if operator == "contains":
             if isinstance(answer, (list, tuple, set)):
-                return str(expected) in [str(a) for a in answer]
+                # Check if 'expected' is in the answer list (using fuzzy match)
+                for ans in answer:
+                    if self._are_values_equal(ans, expected, question_id):
+                        return True
+                return False
             if isinstance(answer, str):
                 return str(expected) in answer
             return False

@@ -747,10 +747,6 @@ msgstr "Version Label"
 msgid "التقييم"
 msgstr "Assessment"
 
-#: .\templates\assessment_runs\assessment_page.html:13
-msgid "تقييم مباشر"
-msgstr "Live assessment"
-
 #: .\templates\assessment_runs\assessment_page.html:15
 msgid ""
 "تقدم خلال كل سؤال. اختياراتك تبقى متاحة لقارئات الشاشة ولمستخدمي لوحة "
@@ -776,8 +772,8 @@ msgid "اختر استبياناً"
 msgstr "Select a survey"
 
 #: .\templates\assessment_runs\survey_list.html:11
-msgid "اختر استبياناً لبدء تقييم نفسك أو فريقك."
-msgstr "Choose a survey to start assessing yourself or your team."
+msgid "اختر استبياناً لبدء التقييم."
+msgstr "Choose a survey to start assessing."
 
 #: .\templates\assessment_runs\survey_list.html:16
 msgid "الاستبيانات المتاحة مع حالتها وتاريخ إنشائها"
