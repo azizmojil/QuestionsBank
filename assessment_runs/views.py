@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import datetime
+from django.db.models import Count
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
@@ -17,6 +18,39 @@ log = logging.getLogger(__name__)
 def survey_list(request):
     surveys = Survey.objects.all()
     return render(request, 'assessment_runs/survey_list.html', {'surveys': surveys})
+
+
+def dashboard(request):
+    surveys = (
+        Survey.objects.prefetch_related("versions__questions")
+        .annotate(version_total=Count("versions"))
+        .order_by("name_ar", "name_en")
+    )
+
+    survey_rows = []
+    for survey in surveys:
+        latest_version = (
+            survey.versions.all()
+            .order_by("-version_date", "-id")
+            .first()
+        )
+        survey_rows.append({
+            "id": survey.id,
+            "name": survey.display_name,
+            "status": survey.get_status_display(),
+            "latest_version": latest_version,
+            "question_total": latest_version.questions.count() if latest_version else 0,
+        })
+
+    context = {
+        "stats": {
+            "survey_count": len(survey_rows),
+            "version_count": SurveyVersion.objects.count(),
+            "question_count": SurveyQuestion.objects.count(),
+        },
+        "surveys": survey_rows,
+    }
+    return render(request, "assessment_runs/dashboard.html", context)
 
 
 def survey_version_list(request, survey_id):

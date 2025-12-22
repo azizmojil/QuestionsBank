@@ -1,35 +1,36 @@
 :root {
-    --bg-color: #f3f4f6;
-    --text-color: #1f2937;
-    --header-bg: #ffffff;
-    --box-bg: #ffffff;
-    --box-border: #e5e7eb;
-    --table-header-bg: #f9fafb;
-    --table-header-text: #4b5563;
-    --table-body-bg: #ffffff;
-    --table-row-border: #e5e7eb;
-    --link-color: #3b82f6;
-    --link-hover-color: #2563eb;
-    --form-select-bg: #ffffff;
-    --form-select-border: #d1d5db;
-    --form-select-text: #1f2937;
+    --bg-color: var(--background);
+    --text-color: var(--foreground);
+    --header-bg: var(--card);
+    --box-bg: var(--card);
+    --box-border: var(--border);
+    --table-header-bg: var(--muted);
+    --table-header-text: var(--card-foreground);
+    --table-body-bg: var(--card);
+    --table-row-border: var(--border);
+    --link-color: var(--primary);
+    --link-hover-color: var(--ring);
+    --form-select-bg: var(--card);
+    --form-select-border: var(--border);
+    --form-select-text: var(--card-foreground);
 }
 
-.dark {
-    --bg-color: #111827;
-    --text-color: #e5e7eb;
-    --header-bg: #1f2937;
-    --box-bg: #1f2937;
-    --box-border: #374151;
-    --table-header-bg: #374151;
-    --table-header-text: #d1d5db;
-    --table-body-bg: #1f2937;
-    --table-row-border: #374151;
-    --link-color: #60a5fa;
-    --link-hover-color: #3b82f6;
-    --form-select-bg: #374151;
-    --form-select-border: #6b7280;
-    --form-select-text: #e5e7eb;
+.dark,
+body.dark-mode {
+    --bg-color: var(--background);
+    --text-color: var(--foreground);
+    --header-bg: var(--card);
+    --box-bg: var(--card);
+    --box-border: var(--border);
+    --table-header-bg: var(--muted);
+    --table-header-text: var(--card-foreground);
+    --table-body-bg: var(--card);
+    --table-row-border: var(--border);
+    --link-color: var(--primary);
+    --link-hover-color: var(--ring);
+    --form-select-bg: var(--card);
+    --form-select-border: var(--border);
+    --form-select-text: var(--card-foreground);
 }
 
 body {

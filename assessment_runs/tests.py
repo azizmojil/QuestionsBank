@@ -272,3 +272,24 @@ class AssessmentCompletionSaveTestCase(TestCase):
         self.assertEqual(result.assessment_path[0]['answer'], self.option.display_text)
 
         self.assertContains(response, reverse('survey_question_list', args=[self.version.id]))
+
+
+class DashboardViewTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.survey = Survey.objects.create(name_ar="استبيان جديد", name_en="New Survey", code="NEW")
+        self.version = SurveyVersion.objects.create(
+            survey=self.survey,
+            interval=SurveyVersion.SurveyInterval.ANNUALLY,
+        )
+        SurveyQuestion.objects.create(
+            survey_version=self.version,
+            text_en="Question one",
+            text_ar="سؤال واحد",
+        )
+
+    def test_dashboard_lists_surveys_and_versions(self):
+        response = self.client.get(reverse('assessment_dashboard'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.survey.display_name)
+        self.assertContains(response, self.version.version_label)
