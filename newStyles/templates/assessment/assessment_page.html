@@ -1,0 +1,151 @@
+{% extends 'assessment/base.html' %}
+{% load static %}
+
+{% block head_extra %}
+    <link rel="stylesheet" href="{% static 'assessment/css/assessment_page.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-3xl mx-auto">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl sm:text-4xl font-bold text-white mb-2">التقييم الذاتي للسؤال:</h1>
+        <p class="text-lg text-gray-400 mt-2">{{ survey_question.question_text }}</p>
+    </header>
+
+    <div id="assessment-path" class="space-y-2 mb-6"></div>
+
+    <div id="section-title-template" class="hidden">
+        <div class="section-title-box mb-6 p-6 bg-blue-900/40 border-y-2 border-blue-800">
+            <h3 class="text-3xl font-bold text-white text-center"></h3>
+        </div>
+    </div>
+
+    <div id="assessment-container" data-save-url="{% url 'assessment:save_result' %}">
+        {% for question in questions %}
+        <div class="question-card hidden" id="question-{{ question.id }}"
+             data-question-id="{{ question.id }}"
+             data-is-section-starter="{{ question.is_section_starter|yesno:'true,false' }}" data-section-name="{{ question.section_name }}"
+             data-option-type="{{ question.option_type }}"
+             data-dynamic-source-id="{% if question.dynamic_option_source_question %}{{ question.dynamic_option_source_question.id }}{% endif %}">
+            <div class="mb-6 text-right">
+                <h2 class="text-2xl font-semibold text-white">{{ question.text }}</h2>
+                {% if question.explanation %}
+                    <div class="text-sm text-gray-400 mt-2" style="font-style: italic;">{{ question.explanation|linebreaks }}</div>
+                {% endif %}
+            </div>
+            <div class="space-y-3">
+                
+                {% if question.option_type == 'DYNAMIC_SURVEY_QUESTIONS' %}
+                    <div class="option-wrapper dynamic-survey-question-wrapper s2-scope {% if question.allow_multiple_choices %}multi-select-container{% endif %}"
+                         data-next-question="{% if question.next_question %}{{ question.next_question.id }}{% endif %}"
+                         data-next-question-after-multiple="{% if question.next_question_after_multiple %}{{ question.next_question_after_multiple.id }}{% endif %}">
+                        <select class="dynamic-survey-question-dropdown searchable-dropdown {% if question.allow_multiple_choices %}multi-select-dropdown{% endif %}" style="width: 100%;"
+                                {% if question.allow_multiple_choices %}multiple="multiple"{% endif %}>
+                            <option></option>
+                            {% for sq in survey_questions_for_dynamic_options %}
+                                <option value="{{ sq.id }}" data-answer-text="{{ sq.order }} - {{ sq.question_text }}">{{ sq.order }} - {{ sq.question_text }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if question.allow_multiple_choices %}
+                            <div class="selected-options-list mt-4"></div>
+                            <button type="button" class="multi-select-continue-btn btn-primary mt-4">متابعة</button>
+                        {% else %}
+                            <button type="button" class="dynamic-option-action btn-primary mt-4">متابعة</button>
+                        {% endif %}
+                    </div>
+
+                {% elif question.option_type == 'DYNAMIC_FROM_PREVIOUS_MULTI_SELECT' %}
+                    <div class="dynamic-from-previous-wrapper space-y-3"
+                         data-next-question="{% if question.next_question %}{{ question.next_question.id }}{% endif %}">
+                    </div>
+
+                {% elif question.option_type == 'STATIC' %}
+                    {% if question.allow_multiple_choices %}
+                        <div class="option-wrapper multi-select-container s2-scope"
+                             data-next-question="{% if question.next_question_after_multiple %}{{ question.next_question_after_multiple.id }}{% endif %}">
+                            <select class="searchable-dropdown multi-select-dropdown" style="width: 100%;" multiple="multiple">
+                                {% for option in question.options.all %}
+                                    <option value="{{ option.id }}" data-answer-text="{{ option.text|default:'' }}">{{ option.text }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="selected-options-list mt-4"></div>
+                            <button type="button" class="multi-select-continue-btn btn-primary mt-4">متابعة</button>
+                        </div>
+                    {% elif question.use_searchable_dropdown %}
+                        <div class="option-wrapper dropdown-wrapper s2-scope">
+                            <select class="searchable-dropdown single-select-dropdown" style="width: 100%;">
+                                <option></option>
+                                {% for option in question.options.all %}
+                                    <option value="{{ option.id }}"
+                                            data-option-id="{{ option.id }}"
+                                            data-next-question="{% if option.next_question %}{{ option.next_question.id }}{% endif %}"
+                                            data-label="{% if option.label %}{{ option.label }}{% endif %}"
+                                            data-answer-text="{{ option.text|default:'' }}"
+                                            data-explanation="{{ option.explanation|default:'' }}">
+
+                                        {{ option.text }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    {% else %}
+                        {% for option in question.options.all %}
+                        <div class="option-wrapper"
+                             data-option-id="{{ option.id }}"
+                             data-next-question="{% if option.next_question %}{{ option.next_question.id }}{% endif %}"
+                             data-label="{% if option.label %}{{ option.label }}{% endif %}"
+                             data-answer-text="{{ option.text|default:'' }}"
+                             data-explanation="{{ option.explanation|default:'' }}">
+
+                            {% if option.response_type == 'PREDEFINED' %}
+                                <a href="#" class="option-action option-link text-right">
+                                    {{ option.text|default:"Continue" }}
+                                    {% if option.explanation %}<span class="info-icon" title="{{ option.explanation }}">ⓘ</span>{% endif %}
+                                </a>
+                            {% else %}
+                                <form class="space-y-4 text-right">
+                                    <input type="{% if option.response_type == 'NUMERICAL' %}number{% elif option.response_type == 'URL' %}url{% else %}text{% endif %}"
+                                           name="response"
+                                           class="form-input text-right"
+                                           placeholder="{% if option.response_type == 'URL' %}أدخل رابطًا إلكترونيًا...{% else %}أدخل إجابتك هنا...{% endif %}"
+                                           required>
+                                    <button type="submit" class="option-action btn-primary mt-4">متابعة</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="final-result-card" class="hidden">
+        <h2 class="text-2xl font-bold text-white">اكتمل التقييم!</h2>
+        <p class="text-xl mt-2 font-semibold" id="final-result-text"></p>
+        <div class="mt-6" id="result-actions">
+            <a href="{% url 'assessment:version_detail' survey_question.survey_version.id %}" class="btn-primary">العودة إلى قائمة الأسئلة</a>
+        </div>
+    </div>
+</div>
+
+{{ survey_question.id|json_script:"survey_question_id" }}
+{{ saved_path_data|safe|json_script:"saved_path_data" }}
+{{ question_data_map|safe|json_script:"question_data_map" }}
+
+<script src="{% static 'assessment/js/showQuestion.js' %}"></script>
+<script src="{% static 'assessment/js/saveResult.js' %}?v=3"></script>
+<script src="{% static 'assessment/js/addPathItem.js' %}"></script>
+<script src="{% static 'assessment/js/renderInlineEditor.js' %}"></script>
+<script src="{% static 'assessment/js/jumpToQuestion.js' %}"></script>
+<script src="{% static 'assessment/js/handleSelection.js' %}?v=3"></script>
+<script src="{% static 'assessment/js/handleDropdownSelection.js' %}"></script>
+<script src="{% static 'assessment/js/handleDynamicSelection.js' %}"></script>
+<script src="{% static 'assessment/js/handleMultiSelectContinue.js' %}"></script>
+<script src="{% static 'assessment/js/startAssessment.js' %}"></script>
+<script src="{% static 'assessment/js/hydrateFromSavedResponses.js' %}"></script>
+<script src="{% static 'assessment/js/assessment_page.js' %}"></script>
+<script src="{% static 'assessment/js/initializeDropdown.js' %}"></script>
+
+{% endblock %}

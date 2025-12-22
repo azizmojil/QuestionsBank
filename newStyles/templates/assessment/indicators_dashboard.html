@@ -1,0 +1,41 @@
+{% extends 'assessment/base.html' %}
+
+{% block content %}
+<div class="w-full max-w-5xl mx-auto">
+    <div class="mb-4">
+        <a href="{% url 'assessment:scoring_list' %}" class="text-blue-400 hover:text-blue-500">&larr; العودة إلى لوحة تحكم التصنيف</a>
+    </div>
+
+    <header class="mb-8 text-right">
+        <h1 class="text-3xl font-bold text-white">مراجعة المؤشرات</h1>
+        <p class="text-lg text-gray-400 mt-2">الخطوة 1: اختر تصنيف مؤشر لمراجعة الأسئلة المرتبطة به.</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {% if 'international' in classifications %}
+        <a href="{% url 'assessment:indicators_by_type' version.id 'international' %}" class="bg-gray-800 p-6 rounded-lg hover:bg-gray-700 transition-colors duration-200 text-center">
+            <h2 class="text-2xl font-bold text-white">دولي</h2>
+            <p class="text-gray-400 mt-2">مراجعة المؤشرات الدولية</p>
+        </a>
+        {% endif %}
+
+        {% if 'regional' in classifications %}
+        <a href="{% url 'assessment:indicators_by_type' version.id 'regional' %}" class="bg-gray-800 p-6 rounded-lg hover:bg-gray-700 transition-colors duration-200 text-center">
+            <h2 class="text-2xl font-bold text-white">إقليمي</h2>
+            <p class="text-gray-400 mt-2">مراجعة المؤشرات الإقليمية</p>
+        </a>
+        {% endif %}
+
+        {% if 'national' in classifications %}
+        <a href="{% url 'assessment:indicators_by_type' version.id 'national' %}" class="bg-gray-800 p-6 rounded-lg hover:bg-gray-700 transition-colors duration-200 text-center">
+            <h2 class="text-2xl font-bold text-white">محلي</h2>
+            <p class="text-gray-400 mt-2">مراجعة المؤشرات المحلية</p>
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="mt-12 flex justify-end">
+        <a href="{% url 'assessment:scoring_detail' version.id %}" class="btn-primary">تخطي إلى النتائج النهائية &rarr;</a>
+    </div>
+</div>
+{% endblock %}
