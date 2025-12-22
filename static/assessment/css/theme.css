@@ -15,24 +15,6 @@
     --form-select-text: var(--card-foreground);
 }
 
-.dark,
-body.dark-mode {
-    --bg-color: var(--background);
-    --text-color: var(--foreground);
-    --header-bg: var(--card);
-    --box-bg: var(--card);
-    --box-border: var(--border);
-    --table-header-bg: var(--muted);
-    --table-header-text: var(--card-foreground);
-    --table-body-bg: var(--card);
-    --table-row-border: var(--border);
-    --link-color: var(--primary);
-    --link-hover-color: var(--ring);
-    --form-select-bg: var(--card);
-    --form-select-border: var(--border);
-    --form-select-text: var(--card-foreground);
-}
-
 body {
     background-color: var(--bg-color);
     color: var(--text-color);

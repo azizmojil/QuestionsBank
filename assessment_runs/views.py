@@ -21,11 +21,15 @@ def survey_list(request):
 
 
 def dashboard(request):
-    versions_with_counts = SurveyVersion.objects.annotate(
-        question_total=Count("questions")
-    ).order_by("-version_date", "-id")
     surveys_qs = (
-        Survey.objects.prefetch_related(Prefetch("versions", queryset=versions_with_counts))
+        Survey.objects.prefetch_related(
+            Prefetch(
+                "versions",
+                queryset=SurveyVersion.objects.annotate(
+                    question_total=Count("questions")
+                ).order_by("-version_date", "-id"),
+            )
+        )
         .annotate(version_total=Count("versions"))
         .order_by("name_ar", "name_en")
     )
