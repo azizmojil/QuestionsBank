@@ -1,29 +1,8 @@
 {% extends 'assessment/base.html' %}
+{% load static %}
 
 {% block head_extra %}
-    <style>
-        .expandable-content-row {
-            display: none;
-        }
-        .path-summary-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.5rem;
-            padding: 1rem;
-        }
-        .path-summary-grid .question {
-            white-space: normal;
-            word-break: break-word;
-            padding: 0.75rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            background-color: rgba(30, 58, 138, 0.3);
-            color: #111827;
-        }
-        .dark .path-summary-grid .question {
-            color: #e5e7eb;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'assessment/css/indicators_review_list.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -101,25 +80,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelector('.table-body').addEventListener('click', function(e) {
-        if (e.target.tagName.toLowerCase() === 'select') {
-            e.stopPropagation();
-            return;
-        }
-
-        const row = e.target.closest('tr[data-target-id]');
-        if (!row) return;
-        
-        const targetId = row.dataset.targetId;
-        const contentRow = document.getElementById(targetId);
-        
-        if (contentRow) {
-            const isVisible = contentRow.style.display === 'table-row';
-            contentRow.style.display = isVisible ? 'none' : 'table-row';
-        }
-    });
-});
-</script>
+<script src="{% static 'assessment/js/indicators_review_list.js' %}"></script>
 {% endblock %}
