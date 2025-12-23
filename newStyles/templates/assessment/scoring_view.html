@@ -1,0 +1,54 @@
+{% extends 'assessment/base.html' %}
+
+{% block content %}
+<div class="w-full max-w-5xl mx-auto text-right">
+    
+    <div class="mb-4">
+        <a href="{% url 'assessment:survey_list' %}" class="text-blue-400 hover:text-blue-500">&larr; العودة إلى لوحة المعلومات الرئيسية</a>
+    </div>
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white">إعدادات النقاط</h1>
+        <p class="text-lg text-gray-400 mt-2">قم بتعيين النقاط لكل خيار من خيارات التقييم المحددة مسبقًا.</p>
+    </div>
+
+    <form method="POST" action="{% url 'assessment:scoring' %}">
+        {% csrf_token %}
+        <div class="space-y-10">
+            {% for question, options in grouped_options.items %}
+            <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-md overflow-hidden">
+                <div class="p-4 bg-gray-700">
+                    <h2 class="text-lg font-semibold text-white">{{ question.text }}</h2>
+                </div>
+                <table class="min-w-full divide-y divide-gray-700">
+                    <thead class="bg-gray-700/50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">نص الخيار</th>
+                            <th scope="col" class="w-1/4 px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">النقاط</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-gray-800 divide-y divide-gray-700">
+                        {% for option in options %}
+                        <tr>
+                            <td class="px-6 py-4 text-sm text-gray-200">{{ option.text }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <input type="number" name="score-{{ option.id }}" value="{{ option.score }}" class="form-input w-full max-w-xs bg-gray-900 border-gray-700 text-white">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% empty %}
+            <p class="text-center text-gray-500">لا توجد خيارات تقييم محددة مسبقًا لإعداد النقاط.</p>
+            {% endfor %}
+        </div>
+
+        {% if grouped_options %}
+        <div class="mt-8 text-left">
+            <button type="submit" class="btn-primary">حفظ التغييرات</button>
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

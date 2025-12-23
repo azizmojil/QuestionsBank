@@ -1,6 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
     const assessmentContainer = document.getElementById('assessment-container');
     const selectRequiredMessage = assessmentContainer?.dataset?.selectRequired || "Please select at least one option.";
+    const assessmentLocaleEl = document.getElementById('assessment-locale');
+    const assessmentLocale = assessmentLocaleEl ? JSON.parse(assessmentLocaleEl.textContent) : {
+        completedTitle: "Assessment Completed",
+        completedMessage: "You have answered all questions.",
+        submitButton: "Submit"
+    };
     let multiSelectStore = {};
 
     assessmentContainer.addEventListener('click', function (e) {
@@ -24,6 +30,9 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 handleDropdownSelect(e.target);
             }
+        }
+        else if (e.target.classList.contains('submit-assessment-btn')) {
+            submitAssessment();
         }
     });
 
@@ -153,10 +162,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 assessmentContainer.appendChild(newQuestionContainer);
                 newQuestionContainer.scrollIntoView({ behavior: 'smooth' });
             } else {
-                window.location.href = '/assessment/complete/';
+                renderCompletionBox();
             }
         })
         .catch(error => console.error('Error fetching next question:', error));
+    }
+
+    function renderCompletionBox() {
+        const completionBox = document.createElement('div');
+        completionBox.className = 'card question-box';
+        completionBox.innerHTML = `
+            <h3>${assessmentLocale.completedTitle}</h3>
+            <p class="explanation lead">${assessmentLocale.completedMessage}</p>
+            <div class="options">
+                <button class="btn submit-assessment-btn">${assessmentLocale.submitButton}</button>
+            </div>
+        `;
+        assessmentContainer.appendChild(completionBox);
+        completionBox.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function submitAssessment() {
+        window.location.href = '/assessment/complete/';
     }
 
     // --- Event listeners for UI interactions ---

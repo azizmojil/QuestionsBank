@@ -4,13 +4,6 @@
 {% block title %}{% blocktrans with survey_name=survey.display_name %}إصدارات الاستبيان - {{ survey_name }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
-<div class="section-header">
-    <div>
-        <p class="eyebrow">{% blocktrans with survey_name=survey.display_name %}الاستبيان: {{ survey_name }}{% endblocktrans %}</p>
-        <h2>{% trans "اختر إصداراً" %}</h2>
-        <p class="lead">{% trans "اختر الإصدار الذي تريد تشغيله. كل إصدار يحفظ حالة أسئلتك في لحظة زمنية." %}</p>
-    </div>
-</div>
 <div class="card table-card">
     <table class="data-table" aria-describedby="version-list-caption">
         <caption id="version-list-caption">{% blocktrans with survey_name=survey.display_name %}الإصدارات المتاحة لـ {{ survey_name }}{% endblocktrans %}</caption>

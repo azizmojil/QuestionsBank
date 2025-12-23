@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import datetime
+from django.db.models import Count, Prefetch
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
@@ -17,6 +18,44 @@ log = logging.getLogger(__name__)
 def survey_list(request):
     surveys = Survey.objects.all()
     return render(request, 'assessment_runs/survey_list.html', {'surveys': surveys})
+
+
+def dashboard(request):
+    surveys_qs = (
+        Survey.objects.prefetch_related(
+            Prefetch(
+                "versions",
+                queryset=SurveyVersion.objects.annotate(
+                    question_total=Count("questions")
+                ).order_by("-version_date", "-id"),
+            )
+        )
+        .annotate(version_total=Count("versions"))
+        .order_by("name_ar", "name_en")
+    )
+    survey_count = surveys_qs.count()
+
+    survey_rows = []
+    for survey in surveys_qs:
+        versions = list(survey.versions.all())
+        latest_version = versions[0] if versions else None
+        survey_rows.append({
+            "id": survey.id,
+            "name": survey.display_name,
+            "status": survey.get_status_display(),
+            "latest_version": latest_version,
+            "question_total": latest_version.question_total if latest_version else 0,
+        })
+
+    context = {
+        "stats": {
+            "survey_count": survey_count,
+            "version_count": SurveyVersion.objects.count(),
+            "question_count": SurveyQuestion.objects.count(),
+        },
+        "surveys": survey_rows,
+    }
+    return render(request, "assessment_runs/dashboard.html", context)
 
 
 def survey_version_list(request, survey_id):
@@ -224,4 +263,6 @@ def assessment_complete(request):
             },
         )
 
-    return render(request, 'assessment_runs/assessment_complete.html', {'survey_version': survey_version})
+    if survey_version:
+        return redirect('survey_question_list', version_id=survey_version.id)
+    return redirect('survey_list')

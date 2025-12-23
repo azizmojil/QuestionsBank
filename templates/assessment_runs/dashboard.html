@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "لوحة التقييم" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'assessment/css/theme.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="stat-grid">
+    <div class="stat">
+        <p class="label">{% trans "الاستبيانات" %}</p>
+        <p class="value">{{ stats.survey_count }}</p>
+    </div>
+    <div class="stat">
+        <p class="label">{% trans "الإصدارات" %}</p>
+        <p class="value">{{ stats.version_count }}</p>
+    </div>
+    <div class="stat">
+        <p class="label">{% trans "الأسئلة" %}</p>
+        <p class="value">{{ stats.question_count }}</p>
+    </div>
+</div>
+
+<div class="card box mt-3">
+    <div class="table-card">
+        <table class="data-table">
+            <thead class="table-header">
+                <tr>
+                    <th scope="col">{% trans "اسم الاستبيان" %}</th>
+                    <th scope="col">{% trans "حالة الاستبيان" %}</th>
+                    <th scope="col">{% trans "أحدث إصدار" %}</th>
+                    <th scope="col">{% trans "عدد الأسئلة" %}</th>
+                    <th scope="col">{% trans "الإجراء" %}</th>
+                </tr>
+            </thead>
+            <tbody class="table-body">
+                {% for survey in surveys %}
+                <tr class="table-row">
+                    <td>{{ survey.name }}</td>
+                    <td>
+                        <span class="status-pill neutral">{{ survey.status }}</span>
+                    </td>
+                    <td>
+                        {% if survey.latest_version %}
+                            {{ survey.latest_version.version_label|default:survey.latest_version.version_date }}
+                        {% else %}
+                            {% trans "لا يوجد إصدار" %}
+                        {% endif %}
+                    </td>
+                    <td>{{ survey.question_total }}</td>
+                    <td>
+                        {% if survey.latest_version %}
+                            <a href="{% url 'survey_version_list' survey.id %}" class="btn btn-secondary">{% trans "عرض الإصدارات" %}</a>
+                        {% else %}
+                            <span class="status-pill neutral">{% trans "بانتظار إنشاء إصدار" %}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">{% trans "لا توجد استبيانات متاحة حالياً." %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -18,6 +18,7 @@
         </div>
         <nav aria-label="Primary navigation">
             <ul>
+                <li><a href="{% url 'assessment_dashboard' %}">{% trans "لوحة التقييم" %}</a></li>
                 <li><a href="{% url 'survey_list' %}">{% trans "التقييم الذاتي" %}</a></li>
                 <li><a href="{% url 'survey_builder' %}">{% trans "منشئ الاستبيان" %}</a></li>
             </ul>
@@ -46,7 +47,6 @@
         {% endblock %}
     </main>
     <footer class="site-footer">
-        <p>{% trans "صمم لتقييمات شاملة مع عناية بقابلية الوصول." %}</p>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script src="{% static 'js/base.js' %}"></script>
