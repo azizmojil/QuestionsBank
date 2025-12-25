@@ -5,6 +5,7 @@ import os
 import uuid
 
 from surveys.models import SurveyQuestion, SurveyVersion
+from indicators.models import Classification
 from assessment_flow.models import AssessmentOption
 
 User = get_user_model()
@@ -117,3 +118,13 @@ class AssessmentFile(models.Model):
 
     def __str__(self):
         return self.original_filename or os.path.basename(self.file.name)
+
+
+class ClassificationProxy(Classification):
+    """Expose indicator classifications under assessment runs."""
+
+    class Meta:
+        proxy = True
+        app_label = "assessment_runs"
+        verbose_name = _("تصنيف")
+        verbose_name_plural = _("التصنيفات")

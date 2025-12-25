@@ -299,12 +299,11 @@ class AdminBreadcrumbTests(TestCase):
         )
         self.client.force_login(self.user)
 
-    def test_classification_rule_breadcrumb_points_to_indicators(self):
-        url = reverse("admin:assessment_runs_questionclassificationrule_changelist")
+    def test_classification_rule_breadcrumb_points_to_assessment_runs(self):
+        url = reverse("admin:assessment_runs_classificationproxy_changelist")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         content = response.content.decode("utf-8")
-        self.assertRegex(
-            content,
-            r"الرئيسية</a>\s*›\s*<a[^>]*>المؤشرات</a>\s*›\s*التصنيفات",
-        )
+        self.assertIn("/admin/assessment_runs/classificationproxy/", content)
+        self.assertIn("عمليات التقييم", content)
+        self.assertIn("التصنيفات", content)
