@@ -1,0 +1,133 @@
+.assessment-header-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: end;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .assessment-header-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.survey-info, .version-info {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.survey-info .value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--foreground);
+}
+
+.version-info .value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+.header-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+/* Progress Button Styles */
+.progress-btn {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--border);
+    font-weight: 600;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    border-radius: 999px;
+}
+
+.progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transition: width 0.5s ease-in-out;
+    z-index: 1;
+}
+
+/* Light Mode Explicit Styles */
+:root .progress-btn, body:not(.dark-mode) .progress-btn {
+    background-color: #d6d3d1; /* Darker background */
+    color: #000000 !important; /* Strict Black */
+}
+
+:root .progress-fill, body:not(.dark-mode) .progress-fill {
+    background-color: var(--muted); /* Match table header (#e7e5e4) */
+}
+
+/* Dark Mode Overrides */
+.dark .progress-btn, body.dark-mode .progress-btn {
+    background-color: #52525b; /* Lighter background */
+    color: #ffffff !important; /* Strict White */
+}
+
+.dark .progress-fill, body.dark-mode .progress-fill {
+    background-color: var(--secondary); /* Darker fill */
+}
+
+.btn-text {
+    position: relative;
+    z-index: 2;
+}
+
+.progress-btn.complete {
+    cursor: pointer;
+    background-color: var(--secondary);
+    color: var(--foreground);
+    border-color: var(--border);
+}
+
+/* Force text color for complete state too */
+:root .progress-btn.complete, body:not(.dark-mode) .progress-btn.complete {
+    color: #000000 !important;
+}
+.dark .progress-btn.complete, body.dark-mode .progress-btn.complete {
+    color: #ffffff !important;
+}
+
+.progress-btn.complete:hover {
+    background-color: var(--muted);
+    border-color: var(--ring);
+}
+
+/* RTL support for progress bar direction */
+html[dir="rtl"] .progress-fill {
+    left: auto;
+    right: 0;
+}
+
+/* Force Button Text Colors */
+.btn-secondary, a.btn-secondary {
+    color: #000000 !important; /* Strict Black for Light Mode */
+}
+
+.dark .btn-secondary, body.dark-mode .btn-secondary,
+.dark a.btn-secondary, body.dark-mode a.btn-secondary {
+    color: #ffffff !important; /* Strict White for Dark Mode */
+}

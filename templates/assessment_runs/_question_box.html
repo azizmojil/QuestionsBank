@@ -1,9 +1,23 @@
-<div class="question-box" data-question-id="{{ question.id }}" role="group"
+{% load assessment_tags %}
+<div class="card question-box {% if answer %}collapsed{% endif %}"
+     data-question-id="{{ question.id }}"
+     data-selected-answer-ids="{{ answer_ids|default:'[]'|to_json }}"
+     role="group"
      aria-labelledby="question-{{ question.id }}">
     <h3 id="question-{{ question.id }}">{{ question.display_text }}</h3>
-    <p class="explanation" id="explanation-{{ question.id }}">{{ question.display_explanation }}</p>
+    <p class="explanation lead" id="explanation-{{ question.id }}">{{ question.display_explanation }}</p>
 
-    <div class="selected-answer-placeholder" aria-live="polite"></div>
+    <div class="selected-answer-placeholder" aria-live="polite">
+        {% if answer %}
+            {% if answer|length > 0 and answer.0|length > 1 %} {# Check if it's a list #}
+                {% for ans in answer %}
+                    <div class="selected-answer">{{ ans }}</div>
+                {% endfor %}
+            {% else %}
+                <div class="selected-answer">{{ answer.0 }}</div>
+            {% endif %}
+        {% endif %}
+    </div>
 
     <div class="options">
         {# Determine which list of options to use #}

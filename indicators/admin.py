@@ -1,14 +1,18 @@
 from django.contrib import admin
 
-from .models import Indicator, IndicatorListItem, IndicatorClassification, IndicatorTracking, Classification, \
-    ClassificationIndicatorListItem
+from .models import Indicator, IndicatorListItem, IndicatorClassification, IndicatorTracking, Classification, ClassificationRule
 from django.utils.translation import gettext_lazy as _
 
 
-class IndicatorListItemInline(admin.TabularInline):
-    model = ClassificationIndicatorListItem
+class ClassificationRuleInline(admin.TabularInline):
+    model = ClassificationRule
     extra = 0
-    autocomplete_fields = ("indicatorlistitem",)
+    fields = ("rule",)
+
+
+class IndicatorClassificationInline(admin.TabularInline):
+    model = IndicatorClassification
+    extra = 1
 
 
 @admin.register(Indicator)
@@ -22,13 +26,14 @@ class IndicatorAdmin(admin.ModelAdmin):
         }),
     )
 
+    inlines = [IndicatorClassificationInline]
+
 
 @admin.register(Classification)
 class ClassificationAdmin(admin.ModelAdmin):
     list_display = ("name_ar", "name_en")
     search_fields = ("name_ar", "name_en")
-    inlines = [IndicatorListItemInline]
-    exclude = ("items",)
+    inlines = [ClassificationRuleInline]
 
 
 @admin.register(IndicatorTracking)

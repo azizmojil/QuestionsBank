@@ -4,42 +4,58 @@ document.addEventListener('DOMContentLoaded', function () {
     const assessmentLocaleEl = document.getElementById('assessment-locale');
     const assessmentLocale = assessmentLocaleEl ? JSON.parse(assessmentLocaleEl.textContent) : {
         completedTitle: "Assessment Completed",
-        completedMessage: "You have answered all questions.",
         submitButton: "Submit"
     };
     let multiSelectStore = {};
 
     assessmentContainer.addEventListener('click', function (e) {
+        // Handle Question Box Expansion
         const questionBox = e.target.closest('.question-box');
         if (!questionBox) return;
 
-        if (questionBox.classList.contains('collapsed')) {
+        // Only expand if clicking the header/collapsed area, not buttons inside
+        if (questionBox.classList.contains('collapsed') && !e.target.closest('button') && !e.target.closest('.selected-answer')) {
             expandQuestion(questionBox);
             return;
         }
 
-        if (e.target.classList.contains('option-btn')) {
-            handleSingleChoice(e.target);
+        // Handle Option Button Click (Single Choice)
+        const optionBtn = e.target.closest('.option-btn');
+        if (optionBtn) {
+            handleSingleChoice(optionBtn);
+            return;
         }
-        else if (e.target.classList.contains('confirm-btn')) {
-            handleMultiChoiceContinue(e.target);
+
+        // Handle Confirm Button Click (Multi Choice)
+        const confirmBtn = e.target.closest('.confirm-btn');
+        if (confirmBtn) {
+            handleMultiChoiceContinue(confirmBtn);
+            return;
         }
-        else if (e.target.classList.contains('searchable-dropdown-item')) {
+
+        // Handle Submit Assessment Button
+        const submitBtn = e.target.closest('.submit-assessment-btn');
+        if (submitBtn) {
+            submitAssessment();
+            return;
+        }
+
+        // Handle Dropdown Items
+        if (e.target.classList.contains('searchable-dropdown-item')) {
             if (e.target.classList.contains('multi-select-item')) {
                 handleMultiSelectDropdown(e.target);
             } else {
                 handleDropdownSelect(e.target);
             }
         }
-        else if (e.target.classList.contains('submit-assessment-btn')) {
-            submitAssessment();
-        }
     });
 
     function handleSingleChoice(button) {
         const questionBox = button.closest('.question-box');
-        collapseQuestion(questionBox, [button.innerText]);
-        fetchNextQuestion(questionBox.dataset.questionId, [button.dataset.optionId]);
+        resetSubsequentState(questionBox).then(() => {
+            collapseQuestion(questionBox, [button.innerText]);
+            fetchNextQuestion(questionBox.dataset.questionId, [button.dataset.optionId]);
+        });
     }
 
     function handleMultiChoiceContinue(button) {
@@ -59,8 +75,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (optionIds.length > 0) {
-            collapseQuestion(questionBox, selectedTexts);
-            fetchNextQuestion(questionId, optionIds);
+            resetSubsequentState(questionBox).then(() => {
+                collapseQuestion(questionBox, selectedTexts);
+                fetchNextQuestion(questionId, optionIds);
+            });
         } else {
             alert(selectRequiredMessage);
         }
@@ -68,8 +86,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function handleDropdownSelect(item) {
         const questionBox = item.closest('.question-box');
-        collapseQuestion(questionBox, [item.innerText]);
-        fetchNextQuestion(questionBox.dataset.questionId, [item.dataset.optionId]);
+        resetSubsequentState(questionBox).then(() => {
+            collapseQuestion(questionBox, [item.innerText]);
+            fetchNextQuestion(questionBox.dataset.questionId, [item.dataset.optionId]);
+        });
     }
 
     function handleMultiSelectDropdown(item) {
@@ -124,20 +144,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function expandQuestion(questionBox) {
-        const questionId = questionBox.dataset.questionId;
-
-        // Rewind server-side state
-        fetch(`/assessment/rewind/`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
-            body: JSON.stringify({ question_id: questionId }),
-        });
-
-        // Expand UI
+        // Just expand UI, don't rewind yet
         questionBox.classList.remove('collapsed');
         questionBox.querySelector('.selected-answer-placeholder').innerHTML = '';
         questionBox.querySelectorAll('button, input').forEach(el => el.disabled = false);
+    }
 
+    function resetSubsequentState(questionBox) {
+        const questionId = questionBox.dataset.questionId;
+        
         // Remove subsequent questions from DOM
         let nextSibling = questionBox.nextElementSibling;
         while (nextSibling) {
@@ -145,6 +160,13 @@ document.addEventListener('DOMContentLoaded', function () {
             nextSibling = nextSibling.nextElementSibling;
             toRemove.remove();
         }
+
+        // Rewind server-side state
+        return fetch(`/assessment/rewind/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+            body: JSON.stringify({ question_id: questionId }),
+        });
     }
 
     function fetchNextQuestion(questionId, optionIds) {
@@ -172,10 +194,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const completionBox = document.createElement('div');
         completionBox.className = 'card question-box';
         completionBox.innerHTML = `
-            <h3>${assessmentLocale.completedTitle}</h3>
-            <p class="explanation lead">${assessmentLocale.completedMessage}</p>
-            <div class="options">
-                <button class="btn submit-assessment-btn">${assessmentLocale.submitButton}</button>
+            <h3 class="text-center">${assessmentLocale.completedTitle}</h3>
+            <div class="options flex-center">
+                <button class="btn btn-secondary submit-assessment-btn">${assessmentLocale.submitButton}</button>
             </div>
         `;
         assessmentContainer.appendChild(completionBox);

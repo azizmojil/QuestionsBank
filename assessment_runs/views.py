@@ -11,6 +11,7 @@ from assessment_flow.models import AssessmentQuestion, AssessmentOption
 from indicators.models import IndicatorListItem
 from assessment_flow.engine import RoutingEngine
 from .models import AssessmentRun, AssessmentResult
+from .engine import ClassificationEngine
 
 log = logging.getLogger(__name__)
 
@@ -67,14 +68,62 @@ def survey_version_list(request, survey_id):
 def survey_question_list(request, version_id):
     version = get_object_or_404(SurveyVersion, pk=version_id)
     questions = version.questions.all()
+    total_questions = questions.count()
 
     first_assessment_question = AssessmentQuestion.objects.filter(outgoing_rules__isnull=True).first()
+    
+    assessment_run = getattr(version, 'assessment_run', None)
+    completed_question_ids = set()
+    
+    if assessment_run:
+        completed_question_ids = set(
+            AssessmentResult.objects.filter(assessment_run=assessment_run)
+            .values_list('survey_question_id', flat=True)
+        )
+
+    question_list_data = []
+    for question in questions:
+        status = 'DONE' if question.id in completed_question_ids else 'NOT_STARTED'
+        question_list_data.append({
+            'question': question,
+            'status': status,
+        })
+
+    completed_count = len(completed_question_ids)
+    progress_percentage = 0
+    if total_questions > 0:
+        progress_percentage = (completed_count / total_questions) * 100
+    
+    is_complete = completed_count == total_questions and total_questions > 0
 
     return render(request, 'assessment_runs/survey_question_list.html', {
         'version': version,
-        'questions': questions,
+        'question_list_data': question_list_data,
         'first_assessment_question': first_assessment_question,
+        'progress_percentage': progress_percentage,
+        'completed_count': completed_count,
+        'total_questions': total_questions,
+        'is_complete': is_complete,
     })
+
+
+def submit_assessment_run(request, version_id):
+    version = get_object_or_404(SurveyVersion, pk=version_id)
+    assessment_run = getattr(version, 'assessment_run', None)
+    
+    if assessment_run:
+        # Check if all questions are answered (optional double check)
+        # For now, just update status
+        # assessment_run.status = AssessmentRun.Status.COMPLETE # Status field was removed?
+        # If status field was removed, maybe we don't need to do anything other than redirect?
+        # Or maybe we should add a 'submitted_at' field?
+        
+        # Assuming we just want to redirect for now as per previous instructions about status removal.
+        # But usually "Submit" implies a state change.
+        # If I removed status, I can't update it.
+        pass
+        
+    return redirect('survey_list')
 
 
 def _prepare_context(question):
@@ -98,18 +147,105 @@ def assessment_page(request, question_id):
     except (TypeError, ValueError):
         survey_question_id = None
         survey_question = None
+    
+    history = []
     if survey_question:
         assessment_metadata = {
             'survey_question_id': survey_question.id,
             'survey_version_id': survey_question.survey_version_id,
         }
+        
+        # Restore history from DB if available
+        survey_version = survey_question.survey_version
+        assessment_run = getattr(survey_version, 'assessment_run', None)
+        if assessment_run:
+            # Get the result for THIS specific question
+            target_result = AssessmentResult.objects.filter(
+                assessment_run=assessment_run, 
+                survey_question=survey_question
+            ).first()
+            
+            if target_result and target_result.results:
+                history = target_result.results
+                request.session['assessment_history'] = history
+            else:
+                # If no history for this question, start fresh
+                history = [{'question_id': question_id, 'rule_id': None}]
+                request.session['assessment_history'] = history
+        else:
+             history = [{'question_id': question_id, 'rule_id': None}]
+             request.session['assessment_history'] = history
+    else:
+        # Fallback if no survey question context
+        history = [{'question_id': question_id, 'rule_id': None}]
+        request.session['assessment_history'] = history
+
     assessment_metadata['started_at'] = timezone.now().timestamp()
     request.session['assessment_metadata'] = assessment_metadata
 
-    # Start a fresh assessment history
-    request.session['assessment_history'] = [{'question_id': question_id, 'rule_id': None}]
+    # Prepare questions_to_render
+    questions_to_render = []
+    
+    # Fetch all questions in history
+    history_q_ids = [item['question_id'] for item in history]
+    # If current question is not in history (e.g. new start), add it
+    if question_id not in history_q_ids:
+         # This happens if we are starting fresh or jumping to a question not in history?
+         # If we jump to Q1, and history is empty, it's in history (added above).
+         # If we jump to Q1, and history has [Q1, Q2], it's in history.
+         pass
 
-    context = _prepare_context(question)
+    # Bulk fetch questions
+    questions_map = {q.id: q for q in AssessmentQuestion.objects.filter(id__in=history_q_ids)}
+    
+    for item in history:
+        q_id = item['question_id']
+        q_obj = questions_map.get(q_id)
+        if q_obj:
+            # Resolve answer text if needed
+            answer = item.get('answer')
+            # If answer is IDs, we might want to resolve to text for display?
+            # The template _question_box.html expects 'answer' to be displayed.
+            # If 'answer' is [1, 2], we need to show "Option 1", "Option 2".
+            
+            # We need to resolve IDs to text for display in collapsed box.
+            # This logic was previously in get_next_question_view but now we store IDs.
+            
+            display_answer = []
+            if answer:
+                answer_list = answer if isinstance(answer, list) else [answer]
+                for ans in answer_list:
+                    # Check if it's an ID (int) or text
+                    if isinstance(ans, int):
+                        # Try to find option
+                        if q_obj.option_type == AssessmentQuestion.OptionType.INDICATOR_LIST:
+                             opt = IndicatorListItem.objects.filter(id=ans).first()
+                             if opt: display_answer.append(opt.name)
+                        else:
+                             opt = AssessmentOption.objects.filter(id=ans).first()
+                             if opt: display_answer.append(opt.display_text)
+                    else:
+                        display_answer.append(ans)
+            
+            questions_to_render.append({
+                'question': q_obj,
+                'answer': display_answer,
+                'answer_ids': answer # Keep raw IDs for logic if needed
+            })
+
+    context = {
+        'questions_to_render': questions_to_render,
+        'survey_question': survey_question, # Pass the survey question to the template
+    }
+    
+    # We also need options for the active question (last one)
+    if questions_to_render:
+        active_item = questions_to_render[-1]
+        active_q = active_item['question']
+        if active_q.option_type == AssessmentQuestion.OptionType.INDICATOR_LIST:
+             if active_q.indicator_source:
+                 context['options'] = active_q.indicator_source.items.all()
+
     return render(request, 'assessment_runs/assessment_page.html', context)
 
 
@@ -120,6 +256,7 @@ def get_next_question_view(request):
     raw_option_ids = data.get('option_ids', [])
 
     history = request.session.get('assessment_history', [])
+    metadata = request.session.get('assessment_metadata', {})
 
     question = get_object_or_404(AssessmentQuestion, pk=question_id)
 
@@ -134,18 +271,11 @@ def get_next_question_view(request):
         except ValueError:
             freeform_answers.append(raw_str)
 
-    answer_texts = []
-    if question.option_type == AssessmentQuestion.OptionType.INDICATOR_LIST:
-        selected_options = IndicatorListItem.objects.filter(id__in=numeric_option_ids)
-        answer_texts = [opt.name for opt in selected_options]
-    else:
-        selected_options = AssessmentOption.objects.filter(id__in=numeric_option_ids)
-        answer_texts = [opt.display_text for opt in selected_options]
+    # Store IDs for numeric options, text for freeform
+    answers_to_store_list = []
+    answers_to_store_list.extend(numeric_option_ids)
+    answers_to_store_list.extend(freeform_answers)
 
-    answer_texts.extend(freeform_answers)
-
-    # Preserve existing structure: store a scalar for single answers, list for multiple;
-    # keep empty answers as [] because downstream history consumers expect list-like values.
     def _normalize_answer_payload(values):
         if not values:
             return []
@@ -153,16 +283,48 @@ def get_next_question_view(request):
             return values[0]
         return values
 
-    answer_to_store = _normalize_answer_payload(answer_texts)
+    answer_to_store = _normalize_answer_payload(answers_to_store_list)
 
     # Update the current question's entry in history with the answer
-    # We need to find the entry for this question. It should be the last one, but let's be safe.
     for item in reversed(history):
         if item['question_id'] == question_id:
             item['answer'] = answer_to_store
             break
 
-    # NOW reconstruct responses and used rules from the UPDATED history
+    # Save intermediate result to DB
+    survey_version_id = metadata.get('survey_version_id')
+    survey_question_id = metadata.get('survey_question_id')
+    
+    if survey_version_id and survey_question_id:
+        survey_version = SurveyVersion.objects.filter(pk=survey_version_id).first()
+        survey_question = SurveyQuestion.objects.filter(pk=survey_question_id).first()
+        
+        if survey_version and survey_question:
+            assessment_run, _ = AssessmentRun.objects.get_or_create(survey_version=survey_version)
+            
+            # Reconstruct responses for classification
+            responses = {str(item['question_id']): item.get('answer') for item in history if 'answer' in item}
+            
+            # Run classification
+            classification_engine = ClassificationEngine()
+            # Pass the AssessmentQuestion (question) to the engine, not SurveyQuestion
+            classification_result = classification_engine.classify_question(question, responses)
+            
+            classification_str = ""
+            if classification_result.classification:
+                classification_str = str(classification_result.classification)
+
+            AssessmentResult.objects.update_or_create(
+                assessment_run=assessment_run,
+                survey_question=survey_question,
+                defaults={
+                    'assessed_by': request.user if request.user.is_authenticated else None,
+                    'results': history,
+                    'classification': classification_str,
+                },
+            )
+
+    # Routing logic
     responses = {str(item['question_id']): item.get('answer') for item in history if 'answer' in item}
     used_rule_ids = [item['rule_id'] for item in history if item.get('rule_id')]
 
@@ -174,9 +336,7 @@ def get_next_question_view(request):
 
     response = None
     if result and result.next_question:
-        # Add the new step to history
         history.append({'question_id': result.next_question.id, 'rule_id': result.rule.id if result.rule else None})
-
         context = _prepare_context(result.next_question)
         response = render(request, 'assessment_runs/_question_box.html', context)
     else:
@@ -195,16 +355,9 @@ def rewind_assessment(request):
 
     try:
         rewind_index = next(i for i, item in enumerate(history) if item['question_id'] == question_id)
-        # Truncate the history, keeping the rewound question but clearing its answer
         history = history[:rewind_index + 1]
         if 'answer' in history[-1]:
             del history[-1]['answer']
-        # Note: We intentionally DO NOT clear rule_id here.
-        # The rule_id represents the rule that was used to navigate TO this question.
-        # Since we're still at this question, the rule should remain marked as used
-        # to prevent it from firing again. Only rules used AFTER this question
-        # are removed from history (via the truncation above).
-
         request.session['assessment_history'] = history
     except StopIteration:
         pass
@@ -213,56 +366,14 @@ def rewind_assessment(request):
 
 
 def assessment_complete(request):
-    history = request.session.pop('assessment_history', [])
-    metadata = request.session.pop('assessment_metadata', {})
+    # Just redirect, as data is saved incrementally
+    metadata = request.session.get('assessment_metadata', {})
+    survey_version_id = metadata.get('survey_version_id')
+    
+    # Clear session data
+    request.session.pop('assessment_history', None)
+    request.session.pop('assessment_metadata', None)
 
-    survey_question = None
-    survey_version = None
-    if metadata:
-        survey_version_id = metadata.get('survey_version_id')
-        if survey_version_id:
-            survey_version = SurveyVersion.objects.filter(pk=survey_version_id).first()
-
-        survey_question_id = metadata.get('survey_question_id')
-        if survey_question_id:
-            survey_question = (
-                SurveyQuestion.objects.select_related('survey_version')
-                .filter(pk=survey_question_id)
-                .first()
-            )
-            if survey_question and survey_version is None:
-                survey_version = survey_question.survey_version
-
-    assessment_run = None
-    raw_started_at = metadata.get('started_at')
-    started_at = None
-    if raw_started_at is not None:
-        try:
-            started_at = timezone.make_aware(
-                datetime.fromtimestamp(float(raw_started_at)),
-                timezone.get_default_timezone(),
-            )
-        except (TypeError, ValueError):
-            log.warning("Invalid started_at timestamp in assessment session: %s", raw_started_at)
-    if survey_version:
-        assessment_run = AssessmentRun.objects.create(
-            survey_version=survey_version,
-            status=AssessmentRun.Status.COMPLETE,
-            started_at=started_at or timezone.now(),
-            completed_at=timezone.now(),
-            created_by=request.user if request.user.is_authenticated else None,
-        )
-    if assessment_run and survey_question:
-        AssessmentResult.objects.update_or_create(
-            assessment_run=assessment_run,
-            survey_question=survey_question,
-            defaults={
-                'status': AssessmentResult.Status.COMPLETE,
-                'assessed_by': request.user if request.user.is_authenticated else None,
-                'assessment_path': history or [],
-            },
-        )
-
-    if survey_version:
-        return redirect('survey_question_list', version_id=survey_version.id)
+    if survey_version_id:
+        return redirect('survey_question_list', version_id=survey_version_id)
     return redirect('survey_list')

@@ -6,3 +6,6 @@ class AssessmentRunsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'assessment_runs'
     verbose_name = _('عمليات التقييم')
+
+    def ready(self):
+        import assessment_runs.signals

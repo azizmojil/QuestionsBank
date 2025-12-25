@@ -6,9 +6,8 @@ import re
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional
 
-from surveys.models import SurveyQuestion
-
-from .models import QuestionClassificationRule
+from assessment_flow.models import AssessmentQuestion, AssessmentOption
+from indicators.models import Classification, ClassificationRule
 
 log = logging.getLogger(__name__)
 
@@ -16,71 +15,36 @@ log = logging.getLogger(__name__)
 @dataclass
 class ClassificationResult:
     """
-    Holds the result of the classification engine for a single SurveyQuestion.
+    Holds the result of the classification engine for a single AssessmentQuestion.
     """
 
-    question: SurveyQuestion
-    classification: Optional[str]
-    rule: Optional[QuestionClassificationRule] = None
+    question: AssessmentQuestion
+    classification: Optional[Classification]
+    rule: Optional[ClassificationRule] = None
 
 
 class ClassificationEngine:
     """
-    Engine for assigning classifications to SurveyQuestions based on
-    QuestionClassificationRule JSON conditions. Reuses the same JSON logic
-    supported by the assessment flow routing engine.
+    Engine for assigning classifications to AssessmentQuestions based on
+    ClassificationRule JSON conditions from the indicators app.
     """
 
-    def __init__(self, rules: Optional[Iterable[QuestionClassificationRule]] = None):
+    def __init__(self, rules: Optional[Iterable[ClassificationRule]] = None):
         if rules is None:
-            rules = QuestionClassificationRule.objects.select_related("survey_question")
-        self._rules: List[QuestionClassificationRule] = list(rules)
-
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
+            rules = ClassificationRule.objects.select_related("classification")
+        self._rules: List[ClassificationRule] = list(rules)
 
     def classify_question(
             self,
-            question: SurveyQuestion | int,
-            responses: Dict[int, Any],
-    ) -> ClassificationResult:
-        """
-        Return the classification for a single SurveyQuestion.
-        """
-        normalized_responses = self._normalize_responses(responses)
-        return self._classify_with_normalized_responses(question, normalized_responses)
-
-    def classify_all(self, responses: Dict[int, Any]) -> Dict[int, ClassificationResult]:
-        """
-        Classify all questions that have at least one rule.
-        Returns a mapping of question_id -> ClassificationResult.
-        """
-        normalized_responses = self._normalize_responses(responses)
-        question_ids = {rule.survey_question_id for rule in self._rules if rule.is_active}
-        return {
-            qid: self._classify_with_normalized_responses(qid, normalized_responses)
-            for qid in question_ids
-        }
-
-    # ------------------------------------------------------------------
-    # Internal rule evaluation
-    # ------------------------------------------------------------------
-
-    def _resolve_question(self, question: SurveyQuestion | int) -> SurveyQuestion:
-        if isinstance(question, SurveyQuestion):
-            return question
-        try:
-            return SurveyQuestion.objects.get(pk=question)
-        except SurveyQuestion.DoesNotExist as exc:
-            raise ValueError(f"SurveyQuestion with id {question} does not exist") from exc
-
-    def _classify_with_normalized_responses(
-            self,
-            question: SurveyQuestion | int,
+            question: AssessmentQuestion | int,
             responses: Dict[str, Any],
     ) -> ClassificationResult:
+        """
+        Return the classification for a single AssessmentQuestion.
+        """
         question_obj = self._resolve_question(question)
+        
+        # Find a rule that applies to this question and evaluates to True
         matched_rule = self._find_matching_rule(question_obj.id, responses)
 
         if matched_rule is not None:
@@ -92,27 +56,25 @@ class ClassificationEngine:
 
         return ClassificationResult(question=question_obj, classification=None, rule=None)
 
-    @staticmethod
-    def _normalize_responses(responses: Dict[int, Any]) -> Dict[str, Any]:
-        return {str(k): v for k, v in responses.items()}
+    def _resolve_question(self, question: AssessmentQuestion | int) -> AssessmentQuestion:
+        if isinstance(question, AssessmentQuestion):
+            return question
+        try:
+            return AssessmentQuestion.objects.get(pk=question)
+        except AssessmentQuestion.DoesNotExist as exc:
+            raise ValueError(f"AssessmentQuestion with id {question} does not exist") from exc
 
     def _find_matching_rule(
             self,
             question_id: int,
             responses: Dict[str, Any],
-    ) -> Optional[QuestionClassificationRule]:
+    ) -> Optional[ClassificationRule]:
         """
-        Iterate over all rules for the question, return the first matching rule.
+        Iterate over all rules. For each rule, check if it targets the given question_id
+        AND if the condition evaluates to True.
         """
-        available_rules = [
-            r for r in self._rules
-            if r.survey_question_id == question_id and r.is_active
-        ]
-
-        available_rules.sort(key=lambda r: (r.priority, r.id))
-
-        for rule in available_rules:
-            raw = getattr(rule, "condition", None)
+        for rule in self._rules:
+            raw = getattr(rule, "rule", None)
 
             try:
                 if isinstance(raw, str):
@@ -125,6 +87,11 @@ class ClassificationEngine:
                 else:
                     continue
 
+                # Check if this rule is relevant for the current question
+                if not self._is_rule_relevant_for_question(rule_dict, question_id):
+                    continue
+
+                # Evaluate the rule
                 if self._evaluate_rule_dict(rule_dict, responses):
                     return rule
 
@@ -142,14 +109,24 @@ class ClassificationEngine:
 
         return None
 
+    def _is_rule_relevant_for_question(self, rule_dict: Dict, question_id: int) -> bool:
+        """
+        Check if the rule contains a condition targeting the given question_id.
+        """
+        conditions = rule_dict.get("conditions", [])
+        for cond in conditions:
+            if not isinstance(cond, dict):
+                continue
+            q_id = cond.get("question")
+            if q_id and int(q_id) == question_id:
+                return True
+        return False
+
     def _evaluate_rule_dict(
             self,
             rule_dict: Any,
             responses: Dict[str, Any],
     ) -> bool:
-        """
-        Evaluate a rule JSON dict against responses.
-        """
         if not isinstance(rule_dict, dict):
             return False
 
@@ -196,7 +173,7 @@ class ClassificationEngine:
             count = self._coerce_count(answer)
             return self._compare_numeric(count, operator, expected)
 
-        return self._evaluate_value_condition(answer, operator, expected)
+        return self._evaluate_value_condition(answer, operator, expected, question_id=int(question_id))
 
     # ------------------------------------------------------------------
     # Helpers
@@ -215,14 +192,42 @@ class ClassificationEngine:
             answer: Any,
             operator: str,
             expected: Any,
+            question_id: Optional[int] = None,
     ) -> bool:
+        def check_translated_equality(qid: int, ans: Any, exp: Any) -> bool:
+            s_ans = str(ans).strip()
+            s_exp = str(exp).strip()
+            options = AssessmentOption.objects.filter(question_id=qid)
+            for opt in options:
+                matches_exp = (
+                    str(opt.id) == s_exp or
+                    (opt.text_ar and opt.text_ar.strip() == s_exp) or
+                    (opt.text_en and opt.text_en.strip() == s_exp)
+                )
+                if matches_exp:
+                    matches_ans = (
+                        str(opt.id) == s_ans or
+                        (opt.text_ar and opt.text_ar.strip() == s_ans) or
+                        (opt.text_en and opt.text_en.strip() == s_ans)
+                    )
+                    if matches_ans:
+                        return True
+            return False
+
+        def are_values_equal(ans: Any, exp: Any, qid: Optional[int]) -> bool:
+            if str(ans) == str(exp):
+                return True
+            if qid is not None:
+                return check_translated_equality(qid, ans, exp)
+            return False
+
         if operator in ("==", "!=") and answer is None:
             return operator == "!="
 
         if operator == "==":
-            return str(answer) == str(expected)
+            return are_values_equal(answer, expected, question_id)
         if operator == "!=":
-            return str(answer) != str(expected)
+            return not are_values_equal(answer, expected, question_id)
 
         if operator in (">", "<", ">=", "<="):
             return self._compare_numeric(answer, operator, expected)
@@ -230,20 +235,29 @@ class ClassificationEngine:
         if operator == "in":
             if not isinstance(expected, (list, tuple, set)):
                 return False
-            if isinstance(answer, (list, tuple, set)):
-                return any(str(a) in [str(e) for e in expected] for a in answer)
-            return str(answer) in [str(e) for e in expected]
+            answer_list = answer if isinstance(answer, (list, tuple, set)) else [answer]
+            for ans in answer_list:
+                for exp in expected:
+                    if are_values_equal(ans, exp, question_id):
+                        return True
+            return False
 
         if operator == "not in":
             if not isinstance(expected, (list, tuple, set)):
                 return False
-            if isinstance(answer, (list, tuple, set)):
-                return all(str(a) not in [str(e) for e in expected] for a in answer)
-            return str(answer) not in [str(e) for e in expected]
+            answer_list = answer if isinstance(answer, (list, tuple, set)) else [answer]
+            for ans in answer_list:
+                for exp in expected:
+                    if are_values_equal(ans, exp, question_id):
+                        return False
+            return True
 
         if operator == "contains":
             if isinstance(answer, (list, tuple, set)):
-                return str(expected) in [str(a) for a in answer]
+                for ans in answer:
+                    if are_values_equal(ans, expected, question_id):
+                        return True
+                return False
             if isinstance(answer, str):
                 return str(expected) in answer
             return False

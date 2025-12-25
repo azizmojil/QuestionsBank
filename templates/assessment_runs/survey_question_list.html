@@ -1,35 +1,68 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}{% blocktrans with version_label=version.version_label %}أسئلة الاستبيان - {{ version_label }}{% endblocktrans %}{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'assessment_runs/css/progress_bar.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="section-header">
-    <div>
-        <p class="eyebrow">{% blocktrans with survey_name=version.survey.display_name %}الاستبيان: {{ survey_name }}{% endblocktrans %}</p>
-        <h2>{% blocktrans with version_label=version.version_label %}الأسئلة في {{ version_label }}{% endblocktrans %}</h2>
-        <p class="lead">{% trans "عاين الأسئلة وابدأ التقييم من أي سؤال." %}</p>
+<div class="assessment-header-grid">
+    <div class="header-left">
+        <div class="survey-info">
+            <span class="value">{{ version.survey.display_name }}</span>
+        </div>
+        <div class="version-info">
+            <span class="value">{{ version.version_label }}</span>
+        </div>
+    </div>
+    <div class="header-right">
+        {% if is_complete %}
+            <a href="{% url 'submit_assessment_run' version.id %}" class="btn progress-btn complete">
+                <span class="btn-text">{% trans "إرسال التقييم" %}</span>
+                <div class="progress-fill" style="width: 100%;"></div>
+            </a>
+        {% else %}
+            <button class="btn progress-btn" disabled>
+                <span class="btn-text">{% blocktrans with completed=completed_count total=total_questions %}{{ completed }} من {{ total }} أسئلة مكتملة{% endblocktrans %}</span>
+                <div class="progress-fill" data-percentage="{{ progress_percentage|floatformat:0 }}" style="width: 0%;"></div>
+            </button>
+        {% endif %}
     </div>
 </div>
+
 <div class="card table-card">
     <table class="data-table" aria-describedby="question-list-caption">
-        <caption id="question-list-caption">{% trans "الأسئلة وإجراءات التقييم" %}</caption>
         <thead>
         <tr>
-            <th scope="col">{% trans "نص السؤال" %}</th>
+            <th scope="col">{% trans "السؤال" %}</th>
+            <th scope="col">{% trans "الحالة" %}</th>
             <th scope="col">{% trans "الإجراء" %}</th>
         </tr>
         </thead>
         <tbody>
-        {% for question in questions %}
+        {% for item in question_list_data %}
         <tr>
-            <td>{{ question.display_text }}</td>
+            <td>{{ item.question.display_text }}</td>
+            <td>
+                {% if item.status == 'DONE' %}
+                    <span class="status-pill success">{% trans "مكتمل" %}</span>
+                {% else %}
+                    <span class="status-pill neutral">{% trans "لم يبدأ" %}</span>
+                {% endif %}
+            </td>
             <td>
                 {% if first_assessment_question %}
-                <a href="{% url 'assessment_page' first_assessment_question.id %}?survey_question_id={{ question.id }}"
-                   class="btn btn-secondary">{% trans "ابدأ التقييم" %}</a>
+                    {% if item.status == 'DONE' %}
+                        <a href="{% url 'assessment_page' first_assessment_question.id %}?survey_question_id={{ item.question.id }}"
+                           class="btn btn-secondary">{% trans "إعادة التقييم" %}</a>
+                    {% else %}
+                        <a href="{% url 'assessment_page' first_assessment_question.id %}?survey_question_id={{ item.question.id }}"
+                           class="btn btn-secondary">{% trans "بدء التقييم" %}</a>
+                    {% endif %}
                 {% else %}
-                {% trans "لا يوجد تقييم مُعد" %}
+                    {% trans "لا يوجد تقييم مُعد" %}
                 {% endif %}
             </td>
         </tr>
@@ -37,4 +70,8 @@
         </tbody>
     </table>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'assessment_runs/js/progress_bar.js' %}"></script>
 {% endblock %}

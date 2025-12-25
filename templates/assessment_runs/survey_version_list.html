@@ -1,12 +1,18 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}{% blocktrans with survey_name=survey.display_name %}إصدارات الاستبيان - {{ survey_name }}{% endblocktrans %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'assessment_runs/css/progress_bar.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="card table-card">
     <table class="data-table" aria-describedby="version-list-caption">
-        <caption id="version-list-caption">{% blocktrans with survey_name=survey.display_name %}الإصدارات المتاحة لـ {{ survey_name }}{% endblocktrans %}</caption>
+        <caption id="version-list-caption">
+            <span class="value" style="font-size: 1.25rem;">{% blocktrans with survey_name=survey.display_name %}الإصدارات المتاحة لـ {{ survey_name }}{% endblocktrans %}</span>
+        </caption>
         <thead>
         <tr>
             <th scope="col">{% trans "اسم الإصدار" %}</th>

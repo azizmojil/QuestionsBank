@@ -1,0 +1,56 @@
+:root {
+    --bg-color: var(--background);
+    --text-color: var(--foreground);
+    --header-bg: var(--card);
+    --box-bg: var(--card);
+    --box-border: var(--border);
+    --table-header-bg: var(--muted);
+    --table-header-text: var(--card-foreground);
+    --table-body-bg: var(--card);
+    --table-row-border: var(--border);
+    --link-color: var(--primary);
+    --link-hover-color: var(--ring);
+    --form-select-bg: var(--card);
+    --form-select-border: var(--border);
+    --form-select-text: var(--card-foreground);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.box {
+    background-color: var(--box-bg);
+    border: 1px solid var(--box-border);
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.table-header {
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
+}
+
+.table-body {
+    background-color: var(--table-body-bg);
+    border-top: 1px solid var(--table-row-border);
+}
+
+.table-row {
+    border-top: 1px solid var(--table-row-border);
+}
+
+.link {
+    color: var(--link-color);
+}
+
+.link:hover {
+    color: var(--link-hover-color);
+}
+
+.form-select {
+    background-color: var(--form-select-bg);
+    border: 1px solid var(--form-select-border);
+    color: var(--form-select-text);
+}

@@ -1,0 +1,128 @@
+/* --- Response Buttons Styles --- */
+
+/* Single Choice Buttons */
+.option-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--muted); /* Match selected-answer background */
+    cursor: pointer;
+    text-align: start; /* Fix RTL/LTR alignment */
+    font-size: 1rem;
+    font-weight: 500; /* Match selected-answer font weight */
+    font-family: inherit; /* Ensure font matches body */
+    line-height: inherit; /* Ensure line-height matches body */
+    transition: background-color 0.2s, border-color 0.2s, transform 0.1s, color 0.2s, font-weight 0.2s;
+    color: var(--foreground);
+    display: block;
+}
+
+.option-btn:hover {
+    border-color: var(--ring); /* Change edge color */
+    font-weight: 600; /* Make text bold */
+    color: var(--foreground); /* Explicitly keep text color */
+}
+
+.option-btn:focus {
+    outline: 2px solid #005a9c;
+    outline-offset: 2px;
+}
+
+.option-btn:active {
+    transform: scale(0.98);
+}
+
+.option-btn.selected {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
+}
+
+/* Multiple Choice Checkboxes */
+.multi-choice-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.multi-choice-option {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--muted); /* Match selected-answer background */
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s, font-weight 0.2s;
+    text-align: start;
+    color: var(--foreground);
+    font-weight: 500; /* Match selected-answer font weight */
+    font-family: inherit; /* Ensure font matches body */
+    line-height: inherit; /* Ensure line-height matches body */
+}
+
+.multi-choice-option:hover {
+    border-color: var(--ring); /* Change edge color */
+    font-weight: 600; /* Make text bold */
+    color: var(--foreground); /* Explicitly keep text color */
+}
+
+.multi-choice-option:focus-within {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+}
+
+.multi-choice-option.selected {
+    background-color: var(--accent);
+    border-color: var(--primary);
+}
+
+.multi-choice-option input[type="checkbox"] {
+    margin-inline-end: 10px; /* RTL support */
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+/* Confirm Button */
+.confirm-btn {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 1rem;
+    align-self: flex-start;
+    transition: background-color 0.2s, transform 0.1s;
+    font-weight: 500;
+    font-family: inherit;
+}
+
+.confirm-btn:hover {
+    background-color: var(--ring);
+}
+
+.confirm-btn:active {
+    transform: scale(0.98);
+}
+
+.confirm-btn:focus {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+}
+
+.confirm-btn:disabled {
+    background-color: var(--border);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Dark Mode Hover Overrides */
+.dark .option-btn:hover, body.dark-mode .option-btn:hover,
+.dark .multi-choice-option:hover, body.dark-mode .multi-choice-option:hover {
+    color: #000000;
+}

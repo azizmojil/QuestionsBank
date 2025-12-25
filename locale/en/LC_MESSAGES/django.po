@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-14 23:47+0300\n"
+"POT-Creation-Date: 2025-12-24 01:30+0300\n"
 "PO-Revision-Date: 2025-12-12 18:07+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,35 +26,35 @@ msgstr "Response Group"
 msgid "مجموعات الإجابات"
 msgstr "Response Groups"
 
-#: .\Qbank\admin.py:23 .\assessment_flow\models.py:80
-#: .\assessment_flow\models.py:198 .\surveys\models.py:239
-#: .\templates\surveys\builder.html:55
+#: .\Qbank\admin.py:24 .\assessment_flow\models.py:82
+#: .\assessment_flow\models.py:203 .\assessment_runs\models.py:40
+#: .\surveys\models.py:239 .\templates\surveys\builder.html:55
 msgid "السؤال"
 msgstr "Question"
 
-#: .\Qbank\admin.py:33
+#: .\Qbank\admin.py:35
 msgid "النص"
 msgstr "Text"
 
-#: .\Qbank\admin.py:38 .\Qbank\models.py:51
+#: .\Qbank\admin.py:40 .\Qbank\models.py:51
 msgid "عنصر مصفوفة"
 msgstr "Matrix Item"
 
-#: .\Qbank\admin.py:39 .\Qbank\models.py:52
+#: .\Qbank\admin.py:41 .\Qbank\models.py:52
 msgid "عناصر المصفوفة"
 msgstr "Matrix Items"
 
-#: .\Qbank\apps.py:8
+#: .\Qbank\apps.py:8 .\templates\base.html:9 .\templates\base.html:17
 msgid "بنك الأسئلة"
 msgstr "Questions Bank"
 
-#: .\Qbank\models.py:12 .\assessment_flow\models.py:29
-#: .\assessment_flow\models.py:177 .\surveys\models.py:201
+#: .\Qbank\models.py:12 .\assessment_flow\models.py:30
+#: .\assessment_flow\models.py:181 .\surveys\models.py:201
 msgid "السؤال [عربية]"
 msgstr "Question [Arabic]"
 
-#: .\Qbank\models.py:13 .\assessment_flow\models.py:30
-#: .\assessment_flow\models.py:178 .\surveys\models.py:206
+#: .\Qbank\models.py:13 .\assessment_flow\models.py:31
+#: .\assessment_flow\models.py:182 .\surveys\models.py:206
 msgid "السؤال [إنجليزية]"
 msgstr "Question [English]"
 
@@ -62,7 +62,7 @@ msgstr "Question [English]"
 msgid "سؤال"
 msgstr "Question"
 
-#: .\Qbank\models.py:32
+#: .\Qbank\models.py:32 .\templates\assessment_runs\dashboard.html:21
 msgid "الأسئلة"
 msgstr "Questions"
 
@@ -90,28 +90,28 @@ msgstr "Matrix Item Group"
 msgid "مجموعات عناصر المصفوفة"
 msgstr "Matrix Item Groups"
 
-#: .\QuestionsBank\settings.py:118
+#: .\QuestionsBank\settings.py:114
 msgid "Arabic"
 msgstr "Arabic"
 
-#: .\QuestionsBank\settings.py:119
+#: .\QuestionsBank\settings.py:115
 msgid "English"
 msgstr "English"
 
-#: .\Rbank\admin.py:13 .\Rbank\models.py:28 .\assessment_flow\models.py:109
+#: .\Rbank\admin.py:15 .\Rbank\models.py:28 .\assessment_flow\models.py:112
 #: .\templates\surveys\builder.html:56 .\templates\surveys\builder.html:97
 msgid "نوع الاستجابة"
 msgstr "Response type"
 
-#: .\Rbank\admin.py:23
+#: .\Rbank\admin.py:26
 msgid "الجواب"
 msgstr "Answer"
 
-#: .\Rbank\admin.py:28 .\Rbank\models.py:50
+#: .\Rbank\admin.py:31 .\Rbank\models.py:50
 msgid "إجابة"
 msgstr "Response"
 
-#: .\Rbank\admin.py:29 .\Rbank\models.py:56
+#: .\Rbank\admin.py:32 .\Rbank\models.py:56
 msgid "الإجابات"
 msgstr "Responses"
 
@@ -131,11 +131,11 @@ msgstr "Response type [English]"
 msgid "أنواع الاستجابة"
 msgstr "Response types"
 
-#: .\Rbank\models.py:36 .\assessment_flow\models.py:101
+#: .\Rbank\models.py:36 .\assessment_flow\models.py:104
 msgid "الجواب [عربية]"
 msgstr "Answer [Arabic]"
 
-#: .\Rbank\models.py:37 .\assessment_flow\models.py:102
+#: .\Rbank\models.py:37 .\assessment_flow\models.py:105
 msgid "الجواب [إنجليزية]"
 msgstr "Answer [English]"
 
@@ -151,7 +151,7 @@ msgstr "Response Group"
 msgid "خيار ثابت"
 msgstr "Static Options"
 
-#: .\assessment_flow\admin.py:20 .\assessment_flow\models.py:24
+#: .\assessment_flow\admin.py:20 .\assessment_flow\models.py:25
 msgid "خيارات ثابتة"
 msgstr "Static Options"
 
@@ -163,140 +163,144 @@ msgstr "Routing Rule"
 msgid "منطق التوجيه"
 msgstr "Routing Logic"
 
-#: .\assessment_flow\admin.py:48
+#: .\assessment_flow\admin.py:49
 msgid "تفاصيل السؤال"
 msgstr "Question Details"
 
-#: .\assessment_flow\admin.py:54
+#: .\assessment_flow\admin.py:55
 msgid "مصدر ديناميكي"
 msgstr "Dynamic Source"
 
-#: .\assessment_flow\admin.py:56
+#: .\assessment_flow\admin.py:57
 msgid "اختر السؤال الذي ستُؤخذ الخيارات منه."
 msgstr "Select the question from which to source the options."
 
-#: .\assessment_flow\admin.py:61 .\assessment_flow\models.py:55
+#: .\assessment_flow\admin.py:62 .\assessment_flow\models.py:56
 msgid "مصدر المؤشر"
 msgstr "Indicator Source"
 
-#: .\assessment_flow\admin.py:63
+#: .\assessment_flow\admin.py:64
 msgid "اختر المؤشر الذي ستُؤخذ الخيارات منه."
 msgstr "Select the indicator from which to source the options."
 
-#: .\assessment_flow\apps.py:8 .\assessment_runs\models.py:62
+#: .\assessment_flow\apps.py:8
 msgid "مسار التقييم"
 msgstr "Assessment Flow"
 
-#: .\assessment_flow\models.py:25
+#: .\assessment_flow\models.py:26
 msgid "ديناميكي (من اختيار متعدد سابق)"
 msgstr "Dynamic (from previous multi-select)"
 
-#: .\assessment_flow\models.py:26
+#: .\assessment_flow\models.py:27
 msgid "ديناميكي (أسئلة الاستبيان)"
 msgstr "Dynamic (survey questions)"
 
-#: .\assessment_flow\models.py:27
+#: .\assessment_flow\models.py:28
 msgid "قائمة المؤشرات"
 msgstr "Indicator list"
 
-#: .\assessment_flow\models.py:31 .\assessment_flow\models.py:103
+#: .\assessment_flow\models.py:32 .\assessment_flow\models.py:106
 msgid "التوضيح [عربية]"
 msgstr "Explanation [Arabic]"
 
-#: .\assessment_flow\models.py:32 .\assessment_flow\models.py:104
+#: .\assessment_flow\models.py:33 .\assessment_flow\models.py:107
 msgid "التوضيح [إنجليزية]"
 msgstr "Explanation [English]"
 
-#: .\assessment_flow\models.py:37
+#: .\assessment_flow\models.py:38
 msgid "نوع الخيار"
 msgstr "Option type"
 
-#: .\assessment_flow\models.py:40
+#: .\assessment_flow\models.py:41
 msgid "استخدام قائمة منسدلة قابلة للبحث"
 msgstr "Use searchable dropdown"
 
-#: .\assessment_flow\models.py:43
+#: .\assessment_flow\models.py:44
 msgid "السماح باختيارات متعددة"
 msgstr "Allow multiple choices"
 
-#: .\assessment_flow\models.py:47
+#: .\assessment_flow\models.py:48
 msgid "سؤال مصدر الخيارات الديناميكي"
 msgstr "Dynamic Option Source Question"
 
-#: .\assessment_flow\models.py:61 .\assessment_flow\models.py:179
+#: .\assessment_flow\models.py:62 .\assessment_flow\models.py:183
 msgid "Created At"
 msgstr ""
 
-#: .\assessment_flow\models.py:62 .\assessment_flow\models.py:180
+#: .\assessment_flow\models.py:63 .\assessment_flow\models.py:184
 msgid "Updated At"
 msgstr ""
 
-#: .\assessment_flow\models.py:66
+#: .\assessment_flow\models.py:67
 msgid "سؤال التقييم"
 msgstr "Assessment Question"
 
-#: .\assessment_flow\models.py:67
+#: .\assessment_flow\models.py:68
 msgid "أسئلة التقييم"
 msgstr "Assessment Questions"
 
-#: .\assessment_flow\models.py:95
+#: .\assessment_flow\models.py:98
 msgid "خيار محدد مسبقاً"
 msgstr "Response option"
 
-#: .\assessment_flow\models.py:96
+#: .\assessment_flow\models.py:99
 msgid "إدخال نصي حر"
 msgstr ""
 
-#: .\assessment_flow\models.py:97
+#: .\assessment_flow\models.py:100
 msgid "إدخال رقمي"
 msgstr ""
 
-#: .\assessment_flow\models.py:98
+#: .\assessment_flow\models.py:101
 msgid "إدخال رابط"
 msgstr ""
 
-#: .\assessment_flow\models.py:116
+#: .\assessment_flow\models.py:119
 msgid "Assessment Option"
 msgstr ""
 
-#: .\assessment_flow\models.py:117
+#: .\assessment_flow\models.py:120
 msgid "Assessment Options"
 msgstr ""
 
-#: .\assessment_flow\models.py:144
+#: .\assessment_flow\models.py:148
 msgid "From Question"
 msgstr ""
 
-#: .\assessment_flow\models.py:149 .\assessment_runs\models.py:88
+#: .\assessment_flow\models.py:153 .\assessment_runs\models.py:64
 msgid "الشرط"
 msgstr "Condition"
 
-#: .\assessment_flow\models.py:151
+#: .\assessment_flow\models.py:155
 msgid "تعبير يُقيّمه محرك التوجيه، مثل \"option == 'CODE_A' -> 'NEXT_Q_CODE'\""
 msgstr ""
 "Expression evaluated by the routing engine, e.g., \"option == 'CODE_A' -> "
 "'NEXT_Q_CODE'\""
 
-#: .\assessment_flow\models.py:161
+#: .\assessment_flow\models.py:165
 msgid "Assessment Flow Rule"
 msgstr ""
 
-#: .\assessment_flow\models.py:162
+#: .\assessment_flow\models.py:166
 msgid "Assessment Flow Rules"
 msgstr ""
 
-#: .\assessment_flow\models.py:175 .\assessment_runs\models.py:28
+#: .\assessment_flow\models.py:179 .\assessment_runs\models.py:22
 #: .\surveys\admin.py:12 .\surveys\models.py:101 .\surveys\models.py:189
 msgid "إصدار الاستبيان"
 msgstr "Survey version"
 
-#: .\assessment_flow\models.py:184
+#: .\assessment_flow\models.py:188
 msgid "سؤال إعادة التقييم"
 msgstr "Assessment Question"
 
-#: .\assessment_flow\models.py:185
+#: .\assessment_flow\models.py:189
 msgid "اسئلة إعادة التقييم"
 msgstr "Questions and assessment actions"
+
+#: .\assessment_runs\admin.py:22
+msgid "الملفات المرفقة"
+msgstr "Uploaded Files"
 
 #: .\assessment_runs\apps.py:8 .\assessment_runs\models.py:19
 msgid "عمليات التقييم"
@@ -306,150 +310,90 @@ msgstr "Assessment Runs"
 msgid "عملية تقييم"
 msgstr "Assessment Run"
 
-#: .\assessment_runs\models.py:23 .\surveys\models.py:20
-#: .\surveys\models.py:107
-msgid "مسودة"
-msgstr "Draft"
-
-#: .\assessment_runs\models.py:24 .\assessment_runs\models.py:54
-msgid "قيد التنفيذ"
-msgstr "In progress"
-
-#: .\assessment_runs\models.py:25 .\assessment_runs\models.py:55
-msgid "مكتمل"
-msgstr "Complete"
-
-#: .\assessment_runs\models.py:26
-msgid "ملغي"
-msgstr "Cancelled"
-
-#: .\assessment_runs\models.py:29
-msgid "تسمية"
-msgstr "Label"
-
-#: .\assessment_runs\models.py:30 .\assessment_runs\models.py:60
-#: .\indicators\models.py:102 .\surveys\models.py:46 .\surveys\models.py:148
-#: .\templates\assessment_runs\survey_list.html:20
-#: .\templates\assessment_runs\survey_version_list.html:20
-msgid "الحالة"
-msgstr "Status"
-
-#: .\assessment_runs\models.py:31
-msgid "تم إنشاؤها بواسطة"
-msgstr "Created by"
-
-#: .\assessment_runs\models.py:32
-msgid "معينة ل"
-msgstr "Assigned to"
-
-#: .\assessment_runs\models.py:33
-msgid "بدأت في"
-msgstr "Started at"
-
-#: .\assessment_runs\models.py:34
-msgid "اكتملت في"
-msgstr "Completed at"
-
-#: .\assessment_runs\models.py:35
-msgid "ملاحظات"
-msgstr "Notes"
-
-#: .\assessment_runs\models.py:47 .\assessment_runs\models.py:109
+#: .\assessment_runs\models.py:34 .\assessment_runs\models.py:85
 msgid "نتيجة التقييم"
 msgstr "Assessment result"
 
-#: .\assessment_runs\models.py:48
+#: .\assessment_runs\models.py:35
 msgid "نتائج التقييم"
 msgstr "Assessment Results"
 
-#: .\assessment_runs\models.py:53
-msgid "لم تتم زيارته"
-msgstr "Not visited"
-
-#: .\assessment_runs\models.py:56
-msgid "بانتظار رفع ملف"
-msgstr "Pending file upload"
-
-#: .\assessment_runs\models.py:58
+#: .\assessment_runs\models.py:39
 msgid "عملية التقييم"
 msgstr "Assessment run"
 
-#: .\assessment_runs\models.py:59 .\assessment_runs\models.py:83
-#: .\surveys\models.py:181
-msgid "سؤال الاستبيان"
-msgstr "Survey Question"
+#: .\assessment_runs\models.py:41
+msgid "النتائج"
+msgstr "Results"
 
-#: .\assessment_runs\models.py:61
-msgid "تم تقييمها بواسطة"
-msgstr "Assessed by"
+#: .\assessment_runs\models.py:42
+msgid "بواسطة"
+msgstr "By"
 
-#: .\assessment_runs\models.py:63
-msgid "تعليق موجز"
-msgstr "Summary comment"
+#: .\assessment_runs\models.py:43
+msgid "في"
+msgstr "At"
 
-#: .\assessment_runs\models.py:64
-msgid "أعلام"
-msgstr "Flags"
-
-#: .\assessment_runs\models.py:65
-msgid "تم تقييمها في"
-msgstr "Assessed at"
-
-#: .\assessment_runs\models.py:75
-msgid "قاعدة تصنيف السؤال"
-msgstr "Question Classification Rule"
-
-#: .\assessment_runs\models.py:76
-msgid "قواعد تصنيف السؤال"
-msgstr "Question Classification Rules"
-
-#: .\assessment_runs\models.py:85 .\indicators\models.py:79
+#: .\assessment_runs\models.py:44 .\assessment_runs\models.py:61
+#: .\indicators\models.py:79
 msgid "التصنيف"
 msgstr "Classification"
 
-#: .\assessment_runs\models.py:89
+#: .\assessment_runs\models.py:51
+msgid "قاعدة تصنيف السؤال"
+msgstr "Question Classification Rule"
+
+#: .\assessment_runs\models.py:52
+msgid "قواعد تصنيف السؤال"
+msgstr "Question Classification Rules"
+
+#: .\assessment_runs\models.py:59 .\surveys\models.py:181
+msgid "سؤال الاستبيان"
+msgstr "Survey Question"
+
+#: .\assessment_runs\models.py:65
 msgid "منطق JSON يتم تقييمه بواسطة محرك التصنيف."
 msgstr "JSON logic evaluated by the ClassificationEngine."
 
-#: .\assessment_runs\models.py:91
+#: .\assessment_runs\models.py:67
 msgid "الأولوية"
 msgstr "Priority"
 
-#: .\assessment_runs\models.py:92 .\surveys\models.py:21
+#: .\assessment_runs\models.py:68 .\surveys\models.py:21
 #: .\surveys\models.py:108
 msgid "نشط"
 msgstr "Active"
 
-#: .\assessment_runs\models.py:93 .\assessment_runs\models.py:113
+#: .\assessment_runs\models.py:69 .\assessment_runs\models.py:89
 #: .\surveys\models.py:40
 msgid "الوصف"
 msgstr "Description"
 
-#: .\assessment_runs\models.py:105
+#: .\assessment_runs\models.py:81
 msgid "ملف التقييم"
 msgstr "Assessment File"
 
-#: .\assessment_runs\models.py:106
+#: .\assessment_runs\models.py:82
 msgid "ملفات التقييم"
 msgstr "Assessment Files"
 
-#: .\assessment_runs\models.py:110
+#: .\assessment_runs\models.py:86
 msgid "الخيار المحفز"
 msgstr "Triggering option"
 
-#: .\assessment_runs\models.py:111
+#: .\assessment_runs\models.py:87
 msgid "الملف"
 msgstr "File"
 
-#: .\assessment_runs\models.py:112
+#: .\assessment_runs\models.py:88
 msgid "اسم الملف الأصلي"
 msgstr "Original filename"
 
-#: .\assessment_runs\models.py:114
+#: .\assessment_runs\models.py:90
 msgid "تم الرفع بواسطة"
 msgstr "Uploaded by"
 
-#: .\assessment_runs\models.py:115
+#: .\assessment_runs\models.py:91
 msgid "تم الرفع في"
 msgstr "Uploaded at"
 
@@ -515,6 +459,12 @@ msgstr "Not Tracked"
 msgid "عنصر قائمة المؤشر"
 msgstr "Indicator List Item"
 
+#: .\indicators\models.py:102 .\surveys\models.py:46 .\surveys\models.py:148
+#: .\templates\assessment_runs\survey_list.html:12
+#: .\templates\assessment_runs\survey_version_list.html:13
+msgid "الحالة"
+msgstr "Status"
+
 #: .\indicators\models.py:106
 msgid "تتبع المؤشر"
 msgstr "Indicator Tracking"
@@ -556,12 +506,17 @@ msgid "تاريخ إنشاء آخر إصدار"
 msgstr "Last version creation date"
 
 #: .\surveys\apps.py:7 .\surveys\models.py:16
+#: .\templates\assessment_runs\dashboard.html:13
 msgid "الاستبيانات"
 msgstr "Surveys"
 
 #: .\surveys\models.py:15
 msgid "استبيان"
 msgstr "Survey"
+
+#: .\surveys\models.py:20 .\surveys\models.py:107
+msgid "مسودة"
+msgstr "Draft"
 
 #: .\surveys\models.py:22 .\surveys\models.py:110
 msgid "مؤرشف"
@@ -595,7 +550,8 @@ msgstr "Editors"
 msgid "المستخدمون المسموح لهم بتعديل هيكل الاستبيان."
 msgstr "Users allowed to edit survey structure."
 
-#: .\surveys\models.py:83 .\templates\assessment_runs\survey_list.html:19
+#: .\surveys\models.py:83 .\templates\assessment_runs\dashboard.html:31
+#: .\templates\assessment_runs\survey_list.html:11
 msgid "اسم الاستبيان"
 msgstr "Survey Name"
 
@@ -651,7 +607,7 @@ msgstr ""
 "Draft: editable; Active: in collection; Locked: structure frozen; Archived: "
 "historic."
 
-#: .\surveys\models.py:152 .\templates\assessment_runs\survey_list.html:21
+#: .\surveys\models.py:152 .\templates\assessment_runs\survey_list.html:13
 msgid "تاريخ الإنشاء"
 msgstr "Created"
 
@@ -699,20 +655,20 @@ msgstr "Section label"
 msgid "ابحث للإضافة..."
 msgstr "Search to add..."
 
-#: .\templates\assessment_runs\_options_renderer.html:5
+#: .\templates\assessment_runs\_options_renderer.html:6
 msgid "ابحث عن خيارات لإضافتها"
 msgstr "Search options to add"
 
-#: .\templates\assessment_runs\_options_renderer.html:19
-#: .\templates\assessment_runs\_options_renderer.html:34
+#: .\templates\assessment_runs\_options_renderer.html:20
+#: .\templates\assessment_runs\_options_renderer.html:35
 msgid "متابعة"
 msgstr "Continue"
 
-#: .\templates\assessment_runs\_options_renderer.html:39
+#: .\templates\assessment_runs\_options_renderer.html:40
 msgid "ابحث..."
 msgstr "Search..."
 
-#: .\templates\assessment_runs\_options_renderer.html:39
+#: .\templates\assessment_runs\_options_renderer.html:41
 msgid "ابحث عن الخيارات"
 msgstr "Search options"
 
@@ -725,6 +681,7 @@ msgid "عمل رائع"
 msgstr "Well done"
 
 #: .\templates\assessment_runs\assessment_complete.html:9
+#: .\templates\assessment_runs\assessment_page.html:17
 msgid "اكتمل التقييم"
 msgstr "Assessment Complete"
 
@@ -738,49 +695,82 @@ msgstr ""
 msgid "العودة إلى قائمة الاستبيانات"
 msgstr "Return to survey list"
 
-#: .\templates\assessment_runs\assessment_complete.html:14
-msgid "عرض أسئلة هذا الإصدار"
-msgstr "Version Label"
-
 #: .\templates\assessment_runs\assessment_page.html:4
-#: .\templates\assessment_runs\assessment_page.html:14
 msgid "التقييم"
 msgstr "Assessment"
 
-#: .\templates\assessment_runs\assessment_page.html:15
-msgid ""
-"تقدم خلال كل سؤال. اختياراتك تبقى متاحة لقارئات الشاشة ولمستخدمي لوحة "
-"المفاتيح."
-msgstr ""
-"Progress through each question. Your choices remain accessible for screen "
-"readers and keyboard users."
-
-#: .\templates\assessment_runs\assessment_page.html:18
+#: .\templates\assessment_runs\assessment_page.html:11
 msgid "يرجى اختيار خيار واحد على الأقل."
 msgstr "Please select at least one option."
+
+#: .\templates\assessment_runs\assessment_page.html:18
+msgid "إرسال"
+msgstr ""
+
+#: .\templates\assessment_runs\dashboard.html:4 .\templates\base.html:21
+#, fuzzy
+#| msgid "نتيجة التقييم"
+msgid "لوحة التقييم"
+msgstr "Assessment result"
+
+#: .\templates\assessment_runs\dashboard.html:17
+#, fuzzy
+#| msgid "رمز الإصدار"
+msgid "الإصدارات"
+msgstr "Version Label"
+
+#: .\templates\assessment_runs\dashboard.html:32
+#, fuzzy
+#| msgid "أسئلة الاستبيان"
+msgid "حالة الاستبيان"
+msgstr "Survey Questions"
+
+#: .\templates\assessment_runs\dashboard.html:33
+#, fuzzy
+#| msgid "اختر إصداراً"
+msgid "أحدث إصدار"
+msgstr "Select a version"
+
+#: .\templates\assessment_runs\dashboard.html:34
+#, fuzzy
+#| msgid "الأسئلة"
+msgid "عدد الأسئلة"
+msgstr "Questions"
+
+#: .\templates\assessment_runs\dashboard.html:35
+#: .\templates\assessment_runs\survey_question_list.html:20
+msgid "الإجراء"
+msgstr "Action"
+
+#: .\templates\assessment_runs\dashboard.html:49
+#, fuzzy
+#| msgid "تاريخ الإصدار"
+msgid "لا يوجد إصدار"
+msgstr "Version date"
+
+#: .\templates\assessment_runs\dashboard.html:55
+#, fuzzy
+#| msgid "رمز الإصدار"
+msgid "عرض الإصدارات"
+msgstr "Version Label"
+
+#: .\templates\assessment_runs\dashboard.html:57
+#, fuzzy
+#| msgid "تاريخ إنشاء آخر إصدار"
+msgid "بانتظار إنشاء إصدار"
+msgstr "Last version creation date"
+
+#: .\templates\assessment_runs\dashboard.html:63
+#, fuzzy
+#| msgid "اختر استبياناً لبدء التقييم."
+msgid "لا توجد استبيانات متاحة حالياً."
+msgstr "Choose a survey to start assessing."
 
 #: .\templates\assessment_runs\survey_list.html:4
 msgid "الاستبيانات - منصة QnR"
 msgstr "Surveys - Qbank Platform"
 
-#: .\templates\assessment_runs\survey_list.html:9 .\templates\home.html:10
-msgid "التقييمات الذاتية"
-msgstr "Self assessments"
-
-#: .\templates\assessment_runs\survey_list.html:10
-msgid "اختر استبياناً"
-msgstr "Select a survey"
-
-#: .\templates\assessment_runs\survey_list.html:11
-msgid "اختر استبياناً لبدء التقييم."
-msgstr "Choose a survey to start assessing."
-
-#: .\templates\assessment_runs\survey_list.html:16
-msgid "الاستبيانات المتاحة مع حالتها وتاريخ إنشائها"
-msgstr "Available surveys with their status and creation date"
-
-#: .\templates\assessment_runs\survey_list.html:28
-#: .\templates\assessment_runs\survey_version_list.html:28
+#: .\templates\assessment_runs\survey_list.html:21
 #, python-format
 msgid "الحالة: %(status)s"
 msgstr "Status: %(status)s"
@@ -791,7 +781,6 @@ msgid "أسئلة الاستبيان - %(version_label)s"
 msgstr "Survey Questions - %(version_label)s"
 
 #: .\templates\assessment_runs\survey_question_list.html:9
-#: .\templates\assessment_runs\survey_version_list.html:9
 #, python-format
 msgid "الاستبيان: %(survey_name)s"
 msgstr "Survey: %(survey_name)s"
@@ -813,15 +802,11 @@ msgstr "Questions and assessment actions"
 msgid "نص السؤال"
 msgstr "Question Text"
 
-#: .\templates\assessment_runs\survey_question_list.html:20
-msgid "الإجراء"
-msgstr "Action"
-
-#: .\templates\assessment_runs\survey_question_list.html:29
+#: .\templates\assessment_runs\survey_question_list.html:30
 msgid "ابدأ التقييم"
 msgstr "Start assessment"
 
-#: .\templates\assessment_runs\survey_question_list.html:31
+#: .\templates\assessment_runs\survey_question_list.html:32
 msgid "لا يوجد تقييم مُعد"
 msgstr "No assessment configured"
 
@@ -830,103 +815,82 @@ msgstr "No assessment configured"
 msgid "إصدارات الاستبيان - %(survey_name)s"
 msgstr "Survey Versions - %(survey_name)s"
 
-#: .\templates\assessment_runs\survey_version_list.html:10
-msgid "اختر إصداراً"
-msgstr "Select a version"
-
-#: .\templates\assessment_runs\survey_version_list.html:11
-msgid "اختر الإصدار الذي تريد تشغيله. كل إصدار يحفظ حالة أسئلتك في لحظة زمنية."
-msgstr ""
-"Pick the version you want to run. Each version captures the state of your "
-"questions at a point in time."
-
-#: .\templates\assessment_runs\survey_version_list.html:16
+#: .\templates\assessment_runs\survey_version_list.html:9
 #, python-format
 msgid "الإصدارات المتاحة لـ %(survey_name)s"
 msgstr "Available versions for %(survey_name)s"
 
-#: .\templates\assessment_runs\survey_version_list.html:19
+#: .\templates\assessment_runs\survey_version_list.html:12
 msgid "اسم الإصدار"
 msgstr "Version Label"
 
-#: .\templates\assessment_runs\survey_version_list.html:21
+#: .\templates\assessment_runs\survey_version_list.html:14
 msgid "التاريخ"
 msgstr "Date"
 
-#: .\templates\base.html:9 .\templates\base.html:17
-msgid "منصة QnR"
-msgstr "Qbank Platform"
-
-#: .\templates\base.html:18
-msgid "تقييمات ذاتية جميلة وسهلة الوصول"
-msgstr "Accessible, beautiful self assessments"
+#: .\templates\assessment_runs\survey_version_list.html:22
+#, fuzzy
+#| msgid "الحالة"
+msgid "الحالة:"
+msgstr "Status"
 
 #: .\templates\base.html:22
 msgid "التقييم الذاتي"
 msgstr "Self Assessment"
 
-#: .\templates\base.html:27
-msgid "تسجيل الدخول"
-msgstr "Login"
-
-#: .\templates\base.html:33
+#: .\templates\base.html:32
 msgid "التبديل إلى الإنجليزية"
 msgstr "Switch to English"
 
-#: .\templates\base.html:33
+#: .\templates\base.html:32
 msgid "التبديل إلى العربية"
 msgstr "Switch to Arabic"
 
-#: .\templates\base.html:38
+#: .\templates\base.html:37
 msgid "التبديل إلى الوضع الداكن"
 msgstr "Switch to dark mode"
 
-#: .\templates\base.html:39
+#: .\templates\base.html:38
 msgid "التبديل إلى الوضع الفاتح"
 msgstr "Switch to light mode"
 
 #: .\templates\home.html:4
-msgid "الصفحة الرئيسية - منصة QnR"
-msgstr "Home - Qbank Platform"
+#, fuzzy
+#| msgid "تسجيل الدخول"
+msgid "تسجيل الدخول - بنك الأسئلة"
+msgstr "Login"
 
-#: .\templates\home.html:10
-msgid "ميزة التقييمات الذاتية"
-msgstr "Self assessments feature"
-
-#: .\templates\home.html:11
-msgid "وجّه المتعلمين عبر أسئلة متعمدة وهيكلية تتكيف مع أي موضوع."
+#: .\templates\home.html:14
+msgid "مرحباً بك"
 msgstr ""
-"Guide learners through intentional, structured questions that adapt to any "
-"topic."
-
-#: .\templates\home.html:14
-msgid "ميزة تتبع التقدم"
-msgstr "Track progress feature"
-
-#: .\templates\home.html:14
-msgid "تتبع التقدم"
-msgstr "Track Progress"
 
 #: .\templates\home.html:15
-msgid "تابع تغير الاستجابات بمرور الوقت مع معالم واضحة وإشعارات إكمال."
+msgid "سجل الدخول للمتابعة إلى بنك الأسئلة"
 msgstr ""
-"See how responses change over time with clear milestones and completion cues."
 
-#: .\templates\home.html:18
-msgid "ميزة الأسئلة المخصصة"
-msgstr "Custom questions feature"
-
-#: .\templates\home.html:18
-msgid "أسئلة مخصصة"
-msgstr "Custom Questions"
-
-#: .\templates\home.html:19
-msgid ""
-"أنشئ بنوك أسئلة قابلة لإعادة الاستخدام بخيارات قابلة للبحث ومرونة التحديد "
-"المتعدد."
+#: .\templates\home.html:22
+msgid "اسم المستخدم أو كلمة المرور غير صحيحة."
 msgstr ""
-"Create reusable question banks with searchable options and multi-select "
-"flexibility."
+
+#: .\templates\home.html:27
+#, fuzzy
+#| msgid "اسم المؤشر"
+msgid "اسم المستخدم"
+msgstr "Indicator name"
+
+#: .\templates\home.html:32
+#, fuzzy
+#| msgid "مجموعة المصفوفة"
+msgid "كلمة المرور"
+msgstr "Matrix Item Group"
+
+#: .\templates\home.html:36
+msgid "تسجيل الدخول"
+msgstr "Login"
+
+#: .\templates\home.html:42
+msgid "طلب وصول"
+msgstr ""
 
 #: .\templates\surveys\builder.html:4
 msgid "منشئ الاستبيان - منصة QnR"
@@ -944,17 +908,13 @@ msgstr "Select a version"
 msgid "إضافة قسم"
 msgstr "Add section"
 
-#: .\templates\surveys\builder.html:33 .\templates\surveys\builder.html:34
+#: .\templates\surveys\builder.html:33
 msgid "عنوان القسم"
 msgstr "Section title"
 
 #: .\templates\surveys\builder.html:36
 msgid "وصف القسم"
 msgstr "Section description"
-
-#: .\templates\surveys\builder.html:37
-msgid "صف بإيجاز ما يتضمنه هذا القسم"
-msgstr "Briefly describe what this section covers"
 
 #: .\templates\surveys\builder.html:41
 msgid "حذف القسم"
@@ -1004,6 +964,128 @@ msgstr "Matrix Item Group"
 msgid "اختر مجموعة مصفوفة"
 msgstr "Matrix Item Group"
 
+#: .\templates\surveys\builder.html:154
+msgid "نعم"
+msgstr ""
+
+#: .\templates\surveys\builder.html:155
+msgid "لا"
+msgstr ""
+
 #: .\templates\surveys\builder.html:156
 msgid "استبيان بدون عنوان"
 msgstr "Untitled survey"
+
+#~ msgid "قيد التنفيذ"
+#~ msgstr "In progress"
+
+#~ msgid "مكتمل"
+#~ msgstr "Complete"
+
+#~ msgid "ملغي"
+#~ msgstr "Cancelled"
+
+#~ msgid "تسمية"
+#~ msgstr "Label"
+
+#~ msgid "تم إنشاؤها بواسطة"
+#~ msgstr "Created by"
+
+#~ msgid "معينة ل"
+#~ msgstr "Assigned to"
+
+#~ msgid "بدأت في"
+#~ msgstr "Started at"
+
+#~ msgid "اكتملت في"
+#~ msgstr "Completed at"
+
+#~ msgid "ملاحظات"
+#~ msgstr "Notes"
+
+#~ msgid "لم تتم زيارته"
+#~ msgstr "Not visited"
+
+#~ msgid "بانتظار رفع ملف"
+#~ msgstr "Pending file upload"
+
+#~ msgid "تم تقييمها بواسطة"
+#~ msgstr "Assessed by"
+
+#~ msgid "تعليق موجز"
+#~ msgstr "Summary comment"
+
+#~ msgid "أعلام"
+#~ msgstr "Flags"
+
+#~ msgid "تم تقييمها في"
+#~ msgstr "Assessed at"
+
+#~ msgid "عرض أسئلة هذا الإصدار"
+#~ msgstr "Version Label"
+
+#~ msgid ""
+#~ "تقدم خلال كل سؤال. اختياراتك تبقى متاحة لقارئات الشاشة ولمستخدمي لوحة "
+#~ "المفاتيح."
+#~ msgstr ""
+#~ "Progress through each question. Your choices remain accessible for screen "
+#~ "readers and keyboard users."
+
+#~ msgid "التقييمات الذاتية"
+#~ msgstr "Self assessments"
+
+#~ msgid "اختر استبياناً"
+#~ msgstr "Select a survey"
+
+#~ msgid "الاستبيانات المتاحة مع حالتها وتاريخ إنشائها"
+#~ msgstr "Available surveys with their status and creation date"
+
+#~ msgid ""
+#~ "اختر الإصدار الذي تريد تشغيله. كل إصدار يحفظ حالة أسئلتك في لحظة زمنية."
+#~ msgstr ""
+#~ "Pick the version you want to run. Each version captures the state of your "
+#~ "questions at a point in time."
+
+#~ msgid "منصة QnR"
+#~ msgstr "Qbank Platform"
+
+#~ msgid "تقييمات ذاتية جميلة وسهلة الوصول"
+#~ msgstr "Accessible, beautiful self assessments"
+
+#~ msgid "الصفحة الرئيسية - منصة QnR"
+#~ msgstr "Home - Qbank Platform"
+
+#~ msgid "ميزة التقييمات الذاتية"
+#~ msgstr "Self assessments feature"
+
+#~ msgid "وجّه المتعلمين عبر أسئلة متعمدة وهيكلية تتكيف مع أي موضوع."
+#~ msgstr ""
+#~ "Guide learners through intentional, structured questions that adapt to "
+#~ "any topic."
+
+#~ msgid "ميزة تتبع التقدم"
+#~ msgstr "Track progress feature"
+
+#~ msgid "تتبع التقدم"
+#~ msgstr "Track Progress"
+
+#~ msgid "تابع تغير الاستجابات بمرور الوقت مع معالم واضحة وإشعارات إكمال."
+#~ msgstr ""
+#~ "See how responses change over time with clear milestones and completion "
+#~ "cues."
+
+#~ msgid "ميزة الأسئلة المخصصة"
+#~ msgstr "Custom questions feature"
+
+#~ msgid "أسئلة مخصصة"
+#~ msgstr "Custom Questions"
+
+#~ msgid ""
+#~ "أنشئ بنوك أسئلة قابلة لإعادة الاستخدام بخيارات قابلة للبحث ومرونة التحديد "
+#~ "المتعدد."
+#~ msgstr ""
+#~ "Create reusable question banks with searchable options and multi-select "
+#~ "flexibility."
+
+#~ msgid "صف بإيجاز ما يتضمنه هذا القسم"
+#~ msgstr "Briefly describe what this section covers"

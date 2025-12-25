@@ -1,12 +1,22 @@
-{% load i18n %}
+{% load i18n assessment_tags %}
 {% if question.allow_multiple_choices and question.use_searchable_dropdown %}
 <div class="multi-select-dropdown-container">
-    <div class="selected-items-container"></div>
+    <div class="selected-items-container">
+        {% for option in option_list %}
+            {% if option.id|stringformat:"s" in answer_ids %}
+                <span class="selected-item-tag">
+                    {% if question.option_type == 'INDICATOR_LIST' %}{{ option.name }}{% else %}{{ option.display_text }}{% endif %}
+                    <span class="remove-tag" onclick="this.parentElement.remove()">x</span>
+                </span>
+            {% endif %}
+        {% endfor %}
+    </div>
     <input type="text" class="searchable-dropdown-input" placeholder="{% trans 'ابحث للإضافة...' %}"
-           aria-label="{% trans 'ابحث عن خيارات لإضافتها' %}">
-    <div class="searchable-dropdown-list">
+           aria-label="{% trans 'ابحث عن خيارات لإضافتها' %}" style="width: 100%; padding: 0.6rem 0.75rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--input); color: var(--foreground); text-align: start;">
+    <div class="searchable-dropdown-list" style="border: 1px solid var(--border); border-radius: var(--radius); margin-top: 0.5rem; max-height: 200px; overflow-y: auto; background: var(--popover); color: var(--popover-foreground); text-align: start;">
         {% for option in option_list %}
         <div class="searchable-dropdown-item multi-select-item"
+             style="padding: 0.5rem 1rem; cursor: pointer; border-bottom: 1px solid var(--border);"
              data-option-id="{{ option.id }}"
              data-option-text="{% if question.option_type == 'INDICATOR_LIST' %}{{ option.name }}{% else %}{{ option.display_text }}{% endif %}">
             {% if question.option_type == 'INDICATOR_LIST' %}
@@ -17,14 +27,14 @@
         </div>
         {% endfor %}
     </div>
-    <button class="confirm-btn">{% trans "متابعة" %}</button>
+    <button class="btn mt-3 confirm-btn">{% trans "متابعة" %}</button>
 </div>
 
 {% elif question.allow_multiple_choices %}
 <div class="multi-choice-container">
     {% for option in option_list %}
-    <label class="multi-choice-option">
-        <input type="checkbox" name="option_{{ question.id }}" value="{{ option.id }}">
+    <label class="multi-choice-option {% if option.id|stringformat:'s' in answer_ids %}selected{% endif %}" style="display: flex; align-items: center; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: var(--radius); background-color: var(--card); cursor: pointer; transition: background-color 0.2s, border-color 0.2s; text-align: start;">
+        <input type="checkbox" name="option_{{ question.id }}" value="{{ option.id }}" style="margin-inline-end: 10px; width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary);" {% if option.id|stringformat:'s' in answer_ids %}checked{% endif %}>
         {% if question.option_type == 'INDICATOR_LIST' %}
         {{ option.name }}
         {% else %}
@@ -32,16 +42,17 @@
         {% endif %}
     </label>
     {% endfor %}
-    <button class="confirm-btn">{% trans "متابعة" %}</button>
+    <button class="btn mt-3 confirm-btn">{% trans "متابعة" %}</button>
 </div>
 
 {% elif question.use_searchable_dropdown %}
 <div class="searchable-dropdown-container">
     <input type="text" class="searchable-dropdown-input" placeholder="{% trans 'ابحث...' %}"
-           aria-label="{% trans 'ابحث عن الخيارات' %}">
-    <div class="searchable-dropdown-list">
+           aria-label="{% trans 'ابحث عن الخيارات' %}" style="width: 100%; padding: 0.6rem 0.75rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--input); color: var(--foreground); text-align: start;"
+           value="{% for option in option_list %}{% if option.id|stringformat:'s' in answer_ids %}{% if question.option_type == 'INDICATOR_LIST' %}{{ option.name }}{% else %}{{ option.display_text }}{% endif %}{% endif %}{% endfor %}">
+    <div class="searchable-dropdown-list" style="border: 1px solid var(--border); border-radius: var(--radius); margin-top: 0.5rem; max-height: 200px; overflow-y: auto; background: var(--popover); color: var(--popover-foreground); text-align: start;">
         {% for option in option_list %}
-        <div class="searchable-dropdown-item" data-option-id="{{ option.id }}">
+        <div class="searchable-dropdown-item {% if option.id|stringformat:'s' in answer_ids %}selected{% endif %}" data-option-id="{{ option.id }}" style="padding: 0.5rem 1rem; cursor: pointer; border-bottom: 1px solid var(--border);">
             {% if question.option_type == 'INDICATOR_LIST' %}
             {{ option.name }}
             {% else %}
@@ -53,8 +64,9 @@
 </div>
 
 {% else %}
+<div class="flex flex-wrap gap-2">
 {% for option in option_list %}
-<button class="option-btn" data-option-id="{{ option.id }}">
+<button class="btn btn-secondary option-btn {% if option.id|stringformat:'s' in answer_ids %}selected{% endif %}" data-option-id="{{ option.id }}">
     {% if question.option_type == 'INDICATOR_LIST' %}
     {{ option.name }}
     {% else %}
@@ -62,4 +74,5 @@
     {% endif %}
 </button>
 {% endfor %}
+</div>
 {% endif %}

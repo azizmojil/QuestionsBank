@@ -57,13 +57,13 @@ class Classification(models.Model):
         verbose_name_plural = _("التصنيفات")
 
 
-class ClassificationIndicatorListItem(models.Model):
-    classification = models.ForeignKey(Classification, on_delete=models.CASCADE)
-    indicatorlistitem = models.ForeignKey("IndicatorListItem", on_delete=models.CASCADE, verbose_name=_("اسم المؤشر"))
+class ClassificationRule(models.Model):
+    classification = models.ForeignKey(Classification, on_delete=models.CASCADE, related_name="rules")
+    rule = models.TextField(verbose_name=_("قاعدة التصنيف"))
 
     class Meta:
-        verbose_name = _("عنصر قائمة مؤشر التصنيف")
-        verbose_name_plural = _("عناصر قائمة مؤشر التصنيف")
+        verbose_name = _("قاعدة التصنيف")
+        verbose_name_plural = _("قواعد التصنيف")
 
 
 class IndicatorClassification(models.Model):
