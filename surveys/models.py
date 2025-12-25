@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import get_language
 import datetime
@@ -122,6 +123,7 @@ class SurveyVersion(models.Model):
         verbose_name=_("الاستبيان")
     )
 
+    # Auto-generated to avoid collisions; kept non-editable.
     version_label = models.CharField(
         max_length=50,
         blank=True,
@@ -169,12 +171,12 @@ class SurveyVersion(models.Model):
     def save(self, *args, **kwargs):
         generated_label = self._generate_version_label()
         if generated_label:
-            self.version_label = generated_label
             if SurveyVersion.objects.filter(
                 survey=self.survey,
-                version_label=self.version_label,
+                version_label=generated_label,
             ).exclude(pk=self.pk).exists():
-                raise ValueError("Duplicate version label for this survey.")
+                raise ValidationError({"version_label": _("Duplicate version label for this survey.")})
+            self.version_label = generated_label
         super().save(*args, **kwargs)
 
 

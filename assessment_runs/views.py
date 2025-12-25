@@ -70,6 +70,7 @@ def survey_question_list(request, version_id):
     questions = version.questions.all()
     total_questions = questions.count()
 
+    # Entry points have no incoming routing rules.
     first_assessment_question = AssessmentQuestion.objects.filter(incoming_rules__isnull=True).first()
     
     assessment_run = getattr(version, 'assessment_run', None)
@@ -305,11 +306,21 @@ def get_next_question_view(request):
             responses = {}
             # Use survey question id to align with classification rules
             if survey_question_id:
-                latest_answer = next((item.get('answer') for item in reversed(history) if 'answer' in item), None)
+                latest_answer = next(
+                    (
+                        item.get('answer')
+                        for item in reversed(history)
+                        if item.get('question_id') == question_id and 'answer' in item
+                    ),
+                    None,
+                )
                 responses[str(survey_question_id)] = latest_answer
 
             classification_engine = ClassificationEngine()
             classification_result = classification_engine.classify_question(survey_question, responses)
+
+            if not classification_result.classification:
+                log.debug("No classification resolved for survey question %s", survey_question_id)
 
             classification_str = classification_result.classification or ""
 

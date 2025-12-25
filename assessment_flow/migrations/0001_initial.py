@@ -64,7 +64,7 @@ class Migration(migrations.Migration):
                 ('description', models.CharField(blank=True, max_length=255)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('to_question', models.ForeignKey(db_column='from_question_id', on_delete=django.db.models.deletion.CASCADE, related_name='incoming_rules', to='assessment_flow.assessmentquestion', verbose_name='To Question')),
+                ('to_question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='incoming_rules', to='assessment_flow.assessmentquestion', verbose_name='To Question')),
             ],
             options={
                 'verbose_name': 'Assessment Flow Rule',

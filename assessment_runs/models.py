@@ -18,6 +18,8 @@ def get_assessment_file_path(instance, filename: str) -> str:
     base = "assessment_files"
     ext = os.path.splitext(filename)[1]
     result = getattr(instance, "assessment_result", None)
+    if result is None:
+        return os.path.join(base, "unassigned", f"{uuid.uuid4().hex}{ext}")
     run_id = getattr(result, "assessment_run_id", "run")
     result_id = getattr(result, "id", "result")
     return os.path.join(base, str(run_id), str(result_id), f"{uuid.uuid4().hex}{ext}")
@@ -57,7 +59,8 @@ class AssessmentResult(models.Model):
 
     @property
     def assessment_path(self):
-        return self.results
+        """Alias for the stored results history."""
+        return getattr(self, "results", [])
 
     @property
     def status(self):

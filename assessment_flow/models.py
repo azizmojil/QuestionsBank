@@ -149,7 +149,6 @@ class AssessmentFlowRule(models.Model):
         verbose_name=_("To Question"),
         on_delete=models.CASCADE,
         related_name="incoming_rules",
-        db_column="from_question_id",
     )
     condition = models.TextField(
         _("الشرط"),
