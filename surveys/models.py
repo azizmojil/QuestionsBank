@@ -125,6 +125,7 @@ class SurveyVersion(models.Model):
     version_label = models.CharField(
         max_length=50,
         blank=True,
+        editable=False,
         help_text=_("تسمية ودية مثل '2025-03' أو 'الجولة 1-2025'."),
     )
 
@@ -166,7 +167,14 @@ class SurveyVersion(models.Model):
         return f"{year}{self.survey.code}{self.interval}{month}"
 
     def save(self, *args, **kwargs):
-        self.version_label = self._generate_version_label()
+        generated_label = self._generate_version_label()
+        if generated_label:
+            self.version_label = generated_label
+            if SurveyVersion.objects.filter(
+                survey=self.survey,
+                version_label=self.version_label,
+            ).exclude(pk=self.pk).exists():
+                raise ValueError("Duplicate version label for this survey.")
         super().save(*args, **kwargs)
 
 
@@ -181,6 +189,12 @@ class SurveyQuestion(models.Model):
         verbose_name = _("سؤال الاستبيان")
         verbose_name_plural = _("أسئلة الاستبيان")
         ordering = ["id"]
+
+    class ResponseType(models.TextChoices):
+        SINGLE_CHOICE = "SINGLE_CHOICE", _("اختيار مفرد")
+        MULTI_CHOICE = "MULTI_CHOICE", _("اختيار متعدد")
+        MATRIX = "MATRIX", _("مصفوفة")
+        TEXT = "TEXT", _("نصي")
 
     survey_version = models.ForeignKey(
         SurveyVersion,
@@ -222,6 +236,13 @@ class SurveyQuestion(models.Model):
     is_required = models.BooleanField(
         default=False,
         help_text=_("هل يجب الإجابة على السؤال أثناء جمع البيانات."),
+    )
+
+    response_type = models.CharField(
+        max_length=30,
+        choices=ResponseType.choices,
+        default=ResponseType.SINGLE_CHOICE,
+        verbose_name=_("نوع الاستجابة"),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

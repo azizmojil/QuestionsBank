@@ -1,15 +1,26 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import get_language
 import os
 import uuid
 
 from surveys.models import SurveyQuestion, SurveyVersion
-from assessment_flow.models import AssessmentOption, get_assessment_file_path
+from assessment_flow.models import AssessmentOption
 
 User = get_user_model()
+
+
+def get_assessment_file_path(instance, filename: str) -> str:
+    """
+    Build a structured upload path for assessment files.
+    Files are grouped by assessment run and result to avoid collisions.
+    """
+    base = "assessment_files"
+    ext = os.path.splitext(filename)[1]
+    result = getattr(instance, "assessment_result", None)
+    run_id = getattr(result, "assessment_run_id", "run")
+    result_id = getattr(result, "id", "result")
+    return os.path.join(base, str(run_id), str(result_id), f"{uuid.uuid4().hex}{ext}")
 
 
 class AssessmentRun(models.Model):
@@ -44,19 +55,15 @@ class AssessmentResult(models.Model):
     assessed_at = models.DateTimeField(auto_now=True, verbose_name=_("في"))
     classification = models.CharField(max_length=100, blank=True, verbose_name=_("التصنيف"))
 
+    @property
+    def assessment_path(self):
+        return self.results
 
-class QuestionClassification(models.Model):
-    """Defines a classification category (e.g., High Risk, Low Risk)."""
-    name_ar = models.CharField(max_length=255, verbose_name=_("التصنيف [عربية]"))
-    name_en = models.CharField(max_length=255, verbose_name=_("التصنيف [إنجليزية]"))
-
-    class Meta:
-        verbose_name = _("تصنيف السؤال")
-        verbose_name_plural = _("تصنيفات الأسئلة")
-
-    def __str__(self):
-        lang = get_language()
-        return self.name_ar if lang == 'ar' else self.name_en
+    @property
+    def status(self):
+        if self.results:
+            return "COMPLETE"
+        return "NOT_VISITED"
 
 
 class QuestionClassificationRule(models.Model):
@@ -67,12 +74,7 @@ class QuestionClassificationRule(models.Model):
         verbose_name_plural = _("قواعد التصنيف")
         ordering = ["priority", "id"]
 
-    classification = models.ForeignKey(
-        QuestionClassification,
-        on_delete=models.CASCADE,
-        related_name="rules",
-        verbose_name=_("التصنيف"),
-    )
+    classification = models.CharField(max_length=100, verbose_name=_("التصنيف"))
     survey_question = models.ForeignKey(
         SurveyQuestion,
         on_delete=models.CASCADE,

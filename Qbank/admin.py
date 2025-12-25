@@ -1,17 +1,17 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from .models import SurveyQuestion, MatrixItem, MatrixItemGroup
+from .models import Questions, MatrixItem, MatrixItemGroup
 
 
 class ResponseGroupInline(admin.TabularInline):
-    model = SurveyQuestion.response_groups.through
+    model = Questions.response_groups.through
     verbose_name = _("مجموعة الإجابات")
     verbose_name_plural = _("مجموعات الإجابات")
     extra = 0
 
 
-@admin.register(SurveyQuestion)
+@admin.register(Questions)
 class SurveyQuestionAdmin(admin.ModelAdmin):
     list_display = ("display_text",)
     search_fields = ("text_en", "text_ar")

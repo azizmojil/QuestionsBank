@@ -34,8 +34,8 @@ class RoutingEngine:
         """
         if rules is None:
             # We load all rules because the engine evaluates them globally.
-            # 'from_question' is the DESTINATION question.
-            rules = AssessmentFlowRule.objects.select_related("from_question").all()
+            # 'to_question' is the DESTINATION question.
+            rules = AssessmentFlowRule.objects.select_related("to_question").all()
         self._rules: List[AssessmentFlowRule] = list(rules)
 
     # ------------------------------------------------------------------
@@ -59,7 +59,7 @@ class RoutingEngine:
         if matched_rule is not None:
             # The rule is attached to the question we want to show next.
             return RoutingResult(
-                next_question=matched_rule.from_question,
+                next_question=matched_rule.to_question,
                 rule=matched_rule
             )
 
