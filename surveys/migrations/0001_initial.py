@@ -64,6 +64,7 @@ class Migration(migrations.Migration):
                 ('help_text', models.TextField(blank=True, help_text='نص مساعدة اختياري أو تعليمات للمُعِد.')),
                 ('section_label', models.CharField(blank=True, help_text='تسمية قسم منطقية للتقارير فقط.', max_length=255, verbose_name='مسمى القسم')),
                 ('is_required', models.BooleanField(default=False, help_text='هل يجب الإجابة على السؤال أثناء جمع البيانات.')),
+                ('response_type', models.CharField(choices=[('SINGLE_CHOICE', 'اختيار مفرد'), ('MULTI_CHOICE', 'اختيار متعدد'), ('MATRIX', 'مصفوفة'), ('TEXT', 'نصي')], default='SINGLE_CHOICE', max_length=30, verbose_name='نوع الاستجابة')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('survey_version', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='questions', to='surveys.surveyversion', verbose_name='إصدار الاستبيان')),

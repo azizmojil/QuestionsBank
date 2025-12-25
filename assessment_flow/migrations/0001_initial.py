@@ -61,16 +61,15 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('condition', models.TextField(blank=True, help_text='تعبير يُقيّمه محرك التوجيه، مثل "option == \'CODE_A\' -> \'NEXT_Q_CODE\'"', verbose_name='الشرط')),
                 ('priority', models.IntegerField(default=0)),
-                ('is_active', models.BooleanField(default=True)),
                 ('description', models.CharField(blank=True, max_length=255)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('from_question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='outgoing_rules', to='assessment_flow.assessmentquestion', verbose_name='From Question')),
+                ('to_question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='incoming_rules', to='assessment_flow.assessmentquestion', verbose_name='To Question')),
             ],
             options={
                 'verbose_name': 'Assessment Flow Rule',
                 'verbose_name_plural': 'Assessment Flow Rules',
-                'ordering': ['from_question_id', 'priority'],
+                'ordering': ['to_question_id', 'priority'],
             },
         ),
         migrations.CreateModel(

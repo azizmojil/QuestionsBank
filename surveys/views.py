@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 
 from .models import SurveyQuestion, SurveyVersion
-from Rbank.models import ResponseType, ResponseGroup
+from Rbank.models import ResponseGroup
 from Qbank.models import MatrixItemGroup
 
 
@@ -24,8 +24,8 @@ def survey_builder(request):
     ]
 
     response_types = [
-        {"value": rt.id, "label": str(rt)}
-        for rt in ResponseType.objects.all()
+        {"value": choice.value, "label": choice.label}
+        for choice in SurveyQuestion.ResponseType
     ]
 
     response_groups = [

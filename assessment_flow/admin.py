@@ -26,7 +26,7 @@ class StaticOptionsInline(admin.TabularInline):
 class AssessmentFlowRuleInline(admin.TabularInline):
     model = AssessmentFlowRule
     extra = 0
-    fk_name = "from_question"
+    fk_name = "to_question"
     fields = ("condition",)
     verbose_name = _("قاعدة توجيه")
     verbose_name_plural = _("منطق التوجيه")

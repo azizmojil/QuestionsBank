@@ -144,10 +144,11 @@ class AssessmentOption(models.Model):
 
 class AssessmentFlowRule(models.Model):
     """Declarative routing rule for the assessment flow."""
-    from_question = models.ForeignKey(
-        AssessmentQuestion, verbose_name=_("From Question"),
+    to_question = models.ForeignKey(
+        AssessmentQuestion,
+        verbose_name=_("To Question"),
         on_delete=models.CASCADE,
-        related_name="outgoing_rules",
+        related_name="incoming_rules",
     )
     condition = models.TextField(
         _("الشرط"),
@@ -155,18 +156,17 @@ class AssessmentFlowRule(models.Model):
         help_text=_("تعبير يُقيّمه محرك التوجيه، مثل \"option == 'CODE_A' -> 'NEXT_Q_CODE'\""),
     )
     priority = models.IntegerField(default=0)
-    is_active = models.BooleanField(default=True)
     description = models.CharField(max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["from_question_id", "priority"]
+        ordering = ["to_question_id", "priority"]
         verbose_name = _("Assessment Flow Rule")
         verbose_name_plural = _("Assessment Flow Rules")
 
     def __str__(self):
-        return self.description or f"Rule for Q{self.from_question_id}"
+        return self.description or f"Rule to Q{self.to_question_id}"
 
 
 class ReevaluationQuestion(models.Model):

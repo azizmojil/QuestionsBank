@@ -20,28 +20,25 @@ class RoutingEngineTestCase(TestCase):
         # Create rules
         # Rule A: If Q1 answer is "Yes", show Q2
         self.rule_a = AssessmentFlowRule.objects.create(
-            from_question=self.q2,
+            to_question=self.q2,
             condition=f'{{"conditions": [{{"question": {self.q1.id}, "operator": "==", "value": "Yes"}}]}}',
             priority=1,
-            is_active=True,
             description="Rule A: Show Q2 if Q1=Yes"
         )
 
         # Rule B: If Q2 answer is "Option1", show Q3
         self.rule_b = AssessmentFlowRule.objects.create(
-            from_question=self.q3,
+            to_question=self.q3,
             condition=f'{{"conditions": [{{"question": {self.q2.id}, "operator": "==", "value": "Option1"}}]}}',
             priority=1,
-            is_active=True,
             description="Rule B: Show Q3 if Q2=Option1"
         )
 
         # Rule C: If Q3 answer is "Continue", show Q4
         self.rule_c = AssessmentFlowRule.objects.create(
-            from_question=self.q4,
+            to_question=self.q4,
             condition=f'{{"conditions": [{{"question": {self.q3.id}, "operator": "==", "value": "Continue"}}]}}',
             priority=1,
-            is_active=True,
             description="Rule C: Show Q4 if Q3=Continue"
         )
 

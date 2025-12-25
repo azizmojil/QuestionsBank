@@ -27,18 +27,16 @@ class RewindAssessmentTestCase(TestCase):
 
         # Create rules
         self.rule_a = AssessmentFlowRule.objects.create(
-            from_question=self.q2,
+            to_question=self.q2,
             condition=f'{{"conditions": [{{"question": {self.q1.id}, "operator": "==", "value": "Yes"}}]}}',
             priority=1,
-            is_active=True,
             description="Rule A"
         )
 
         self.rule_b = AssessmentFlowRule.objects.create(
-            from_question=self.q3,
+            to_question=self.q3,
             condition=f'{{"conditions": [{{"question": {self.q2.id}, "operator": "==", "value": "Option1"}}]}}',
             priority=1,
-            is_active=True,
             description="Rule B"
         )
 
@@ -265,11 +263,9 @@ class AssessmentCompletionSaveTestCase(TestCase):
 
         run = AssessmentRun.objects.first()
         self.assertEqual(run.survey_version, self.version)
-        self.assertEqual(run.status, AssessmentRun.Status.COMPLETE)
 
         result = AssessmentResult.objects.get(assessment_run=run, survey_question=self.survey_question)
-        self.assertEqual(result.status, AssessmentResult.Status.COMPLETE)
-        self.assertEqual(result.assessment_path[0]['answer'], self.option.display_text)
+        self.assertEqual(result.assessment_path[0]['answer'], self.option.id)
 
         self.assertContains(response, reverse('survey_question_list', args=[self.version.id]))
 

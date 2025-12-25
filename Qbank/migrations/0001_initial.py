@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='SurveyQuestion',
+            name='Questions',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('text_ar', models.TextField(verbose_name='السؤال [عربية]')),

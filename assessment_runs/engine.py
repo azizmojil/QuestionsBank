@@ -6,8 +6,9 @@ import re
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional
 
-from assessment_flow.models import AssessmentQuestion, AssessmentOption
-from indicators.models import Classification, ClassificationRule
+from assessment_flow.models import AssessmentOption
+from assessment_runs.models import QuestionClassificationRule
+from surveys.models import SurveyQuestion
 
 log = logging.getLogger(__name__)
 
@@ -18,9 +19,9 @@ class ClassificationResult:
     Holds the result of the classification engine for a single AssessmentQuestion.
     """
 
-    question: AssessmentQuestion
-    classification: Optional[Classification]
-    rule: Optional[ClassificationRule] = None
+    question: SurveyQuestion
+    classification: Optional[str]
+    rule: Optional[QuestionClassificationRule] = None
 
 
 class ClassificationEngine:
@@ -29,21 +30,21 @@ class ClassificationEngine:
     ClassificationRule JSON conditions from the indicators app.
     """
 
-    def __init__(self, rules: Optional[Iterable[ClassificationRule]] = None):
+    def __init__(self, rules: Optional[Iterable[QuestionClassificationRule]] = None):
         if rules is None:
-            rules = ClassificationRule.objects.select_related("classification")
-        self._rules: List[ClassificationRule] = list(rules)
+            rules = QuestionClassificationRule.objects.all()
+        self._rules: List[QuestionClassificationRule] = list(rules)
 
     def classify_question(
             self,
-            question: AssessmentQuestion | int,
+            question: SurveyQuestion | int,
             responses: Dict[str, Any],
     ) -> ClassificationResult:
         """
         Return the classification for a single AssessmentQuestion.
         """
         question_obj = self._resolve_question(question)
-        
+
         # Find a rule that applies to this question and evaluates to True
         matched_rule = self._find_matching_rule(question_obj.id, responses)
 
@@ -56,25 +57,27 @@ class ClassificationEngine:
 
         return ClassificationResult(question=question_obj, classification=None, rule=None)
 
-    def _resolve_question(self, question: AssessmentQuestion | int) -> AssessmentQuestion:
-        if isinstance(question, AssessmentQuestion):
+    def _resolve_question(self, question: SurveyQuestion | int) -> SurveyQuestion:
+        if isinstance(question, SurveyQuestion):
             return question
         try:
-            return AssessmentQuestion.objects.get(pk=question)
-        except AssessmentQuestion.DoesNotExist as exc:
-            raise ValueError(f"AssessmentQuestion with id {question} does not exist") from exc
+            return SurveyQuestion.objects.get(pk=question)
+        except SurveyQuestion.DoesNotExist as exc:
+            raise ValueError(f"SurveyQuestion with id {question} does not exist") from exc
 
     def _find_matching_rule(
             self,
             question_id: int,
             responses: Dict[str, Any],
-    ) -> Optional[ClassificationRule]:
+    ) -> Optional[QuestionClassificationRule]:
         """
         Iterate over all rules. For each rule, check if it targets the given question_id
         AND if the condition evaluates to True.
         """
         for rule in self._rules:
-            raw = getattr(rule, "rule", None)
+            if getattr(rule, "survey_question_id", None) != question_id:
+                continue
+            raw = getattr(rule, "condition", None)
 
             try:
                 if isinstance(raw, str):
@@ -85,10 +88,6 @@ class ClassificationEngine:
                 elif isinstance(raw, dict):
                     rule_dict = raw
                 else:
-                    continue
-
-                # Check if this rule is relevant for the current question
-                if not self._is_rule_relevant_for_question(rule_dict, question_id):
                     continue
 
                 # Evaluate the rule
@@ -108,19 +107,6 @@ class ClassificationEngine:
                 continue
 
         return None
-
-    def _is_rule_relevant_for_question(self, rule_dict: Dict, question_id: int) -> bool:
-        """
-        Check if the rule contains a condition targeting the given question_id.
-        """
-        conditions = rule_dict.get("conditions", [])
-        for cond in conditions:
-            if not isinstance(cond, dict):
-                continue
-            q_id = cond.get("question")
-            if q_id and int(q_id) == question_id:
-                return True
-        return False
 
     def _evaluate_rule_dict(
             self,

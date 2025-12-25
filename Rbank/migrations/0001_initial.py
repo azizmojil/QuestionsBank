@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
             name='ResponseGroup',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='اسم المجموعة')),
+                ('name', models.CharField(max_length=255, unique=True, verbose_name='اسم المجموعة')),
                 ('responses', models.ManyToManyField(to='Rbank.response', verbose_name='الإجابات')),
             ],
             options={

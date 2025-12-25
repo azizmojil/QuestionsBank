@@ -70,7 +70,8 @@ def survey_question_list(request, version_id):
     questions = version.questions.all()
     total_questions = questions.count()
 
-    first_assessment_question = AssessmentQuestion.objects.filter(outgoing_rules__isnull=True).first()
+    # Entry points have no incoming routing rules.
+    first_assessment_question = AssessmentQuestion.objects.filter(incoming_rules__isnull=True).first()
     
     assessment_run = getattr(version, 'assessment_run', None)
     completed_question_ids = set()
@@ -301,18 +302,27 @@ def get_next_question_view(request):
         
         if survey_version and survey_question:
             assessment_run, _ = AssessmentRun.objects.get_or_create(survey_version=survey_version)
-            
-            # Reconstruct responses for classification
-            responses = {str(item['question_id']): item.get('answer') for item in history if 'answer' in item}
-            
-            # Run classification
+
+            responses = {}
+            # Use survey question id to align with classification rules
+            if survey_question_id:
+                latest_answer = next(
+                    (
+                        item.get('answer')
+                        for item in reversed(history)
+                        if item.get('question_id') == question_id and 'answer' in item
+                    ),
+                    None,
+                )
+                responses[str(survey_question_id)] = latest_answer
+
             classification_engine = ClassificationEngine()
-            # Pass the AssessmentQuestion (question) to the engine, not SurveyQuestion
-            classification_result = classification_engine.classify_question(question, responses)
-            
-            classification_str = ""
-            if classification_result.classification:
-                classification_str = str(classification_result.classification)
+            classification_result = classification_engine.classify_question(survey_question, responses)
+
+            if not classification_result.classification:
+                log.debug("No classification resolved for survey question %s", survey_question_id)
+
+            classification_str = classification_result.classification or ""
 
             AssessmentResult.objects.update_or_create(
                 assessment_run=assessment_run,
@@ -366,7 +376,6 @@ def rewind_assessment(request):
 
 
 def assessment_complete(request):
-    # Just redirect, as data is saved incrementally
     metadata = request.session.get('assessment_metadata', {})
     survey_version_id = metadata.get('survey_version_id')
     
@@ -374,6 +383,12 @@ def assessment_complete(request):
     request.session.pop('assessment_history', None)
     request.session.pop('assessment_metadata', None)
 
+    survey_version = None
     if survey_version_id:
-        return redirect('survey_question_list', version_id=survey_version_id)
-    return redirect('survey_list')
+        survey_version = SurveyVersion.objects.filter(pk=survey_version_id).first()
+
+    return render(
+        request,
+        "assessment_runs/assessment_complete.html",
+        {"survey_version": survey_version},
+    )

@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from Rbank.models import ResponseGroup
 
 
-class SurveyQuestion(models.Model):
+class Questions(models.Model):
     """
     A single question in a survey.
     """
