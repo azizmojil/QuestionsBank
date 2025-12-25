@@ -289,3 +289,22 @@ class DashboardViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.survey.display_name)
         self.assertContains(response, self.version.version_label)
+
+
+class AdminBreadcrumbTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_superuser(
+            username="admin", email="admin@example.com", password="password"
+        )
+        self.client.force_login(self.user)
+
+    def test_classification_rule_breadcrumb_points_to_indicators(self):
+        url = reverse("admin:assessment_runs_questionclassificationrule_changelist")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode("utf-8")
+        self.assertRegex(
+            content,
+            r"الرئيسية</a>\s*›\s*<a[^>]*>المؤشرات</a>\s*›\s*التصنيفات",
+        )

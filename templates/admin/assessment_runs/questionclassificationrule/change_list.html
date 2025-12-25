@@ -1,0 +1,10 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% translate "الرئيسية" %}</a>
+  › <a href="{% url 'admin:app_list' app_label='indicators' %}">{% translate "المؤشرات" %}</a>
+  › {% translate "التصنيفات" %}
+</div>
+{% endblock %}
