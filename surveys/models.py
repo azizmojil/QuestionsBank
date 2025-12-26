@@ -17,11 +17,6 @@ class Survey(models.Model):
         verbose_name_plural = _("الاستبيانات")
         ordering = ["name_ar", "name_en"]
 
-    class Status(models.TextChoices):
-        DRAFT = "DRAFT", _("مسودة")
-        ACTIVE = "ACTIVE", _("نشط")
-        ARCHIVED = "ARCHIVED", _("مؤرشف")
-
     name_ar = models.CharField(
         max_length=255,
         unique=True,
@@ -39,32 +34,6 @@ class Survey(models.Model):
         verbose_name=_("الرمز"),
     )
     description = models.TextField(blank=True, verbose_name=_("الوصف"))
-
-    status = models.CharField(
-        max_length=20,
-        choices=Status.choices,
-        default=Status.DRAFT,
-        verbose_name=_("الحالة"),
-        help_text=_("مسودة: قيد التصميم. نشط: قيد الاستخدام. مؤرشف: لم يعد مستخدماً."),
-    )
-
-    owner = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="owned_surveys",
-        verbose_name=_("المالك"),
-        help_text=_("المسؤول الأساسي عن هذا الاستبيان."),
-    )
-
-    editors = models.ManyToManyField(
-        User,
-        blank=True,
-        related_name="editable_surveys",
-        verbose_name=_("المحررون"),
-        help_text=_("المستخدمون المسموح لهم بتعديل هيكل الاستبيان."),
-    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -128,7 +97,6 @@ class SurveyVersion(models.Model):
         max_length=50,
         blank=True,
         editable=False,
-        help_text=_("تسمية ودية مثل '2025-03' أو 'الجولة 1-2025'."),
     )
 
     version_date = models.DateField(
@@ -192,12 +160,6 @@ class SurveyQuestion(models.Model):
         verbose_name_plural = _("أسئلة الاستبيان")
         ordering = ["id"]
 
-    class ResponseType(models.TextChoices):
-        SINGLE_CHOICE = "SINGLE_CHOICE", _("اختيار مفرد")
-        MULTI_CHOICE = "MULTI_CHOICE", _("اختيار متعدد")
-        MATRIX = "MATRIX", _("مصفوفة")
-        TEXT = "TEXT", _("نصي")
-
     survey_version = models.ForeignKey(
         SurveyVersion,
         on_delete=models.CASCADE,
@@ -228,23 +190,9 @@ class SurveyQuestion(models.Model):
         help_text=_("نص مساعدة اختياري أو تعليمات للمُعِد."),
     )
 
-    section_label = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("مسمى القسم"),
-        help_text=_("تسمية قسم منطقية للتقارير فقط."),
-    )
-
     is_required = models.BooleanField(
         default=False,
         help_text=_("هل يجب الإجابة على السؤال أثناء جمع البيانات."),
-    )
-
-    response_type = models.CharField(
-        max_length=30,
-        choices=ResponseType.choices,
-        default=ResponseType.SINGLE_CHOICE,
-        verbose_name=_("نوع الاستجابة"),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

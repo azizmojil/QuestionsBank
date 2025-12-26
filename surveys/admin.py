@@ -27,13 +27,12 @@ class SurveyVersionInline(admin.TabularInline):
 
 @admin.register(Survey)
 class SurveyAdmin(admin.ModelAdmin):
-    list_display = ("display_name", "status", "last_version_created_at")
-    list_filter = ("status",)
+    list_display = ("display_name", "last_version_created_at")
     search_fields = ("name_ar", "name_en", "code", "description")
 
     fieldsets = (
         (None, {
-            "fields": ("name_ar", "name_en", "code", "description", "status"),
+            "fields": ("name_ar", "name_en", "code", "description"),
         }),
     )
 
@@ -53,7 +52,6 @@ class SurveyQuestionInline(admin.TabularInline):
     fields = (
         "text_ar",
         "text_en",
-        "section_label",
         "code",
     )
     # Make 'text' a textarea

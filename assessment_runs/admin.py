@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from .models import AssessmentRun, AssessmentResult, AssessmentFile, QuestionClassificationRule
+from .models import AssessmentRun, AssessmentResult, AssessmentFile, QuestionClassification, QuestionClassificationRule
 
 class AssessmentFileInline(admin.TabularInline):
     model = AssessmentFile
@@ -27,8 +27,13 @@ class AssessmentRunAdmin(admin.ModelAdmin):
     search_fields = ("survey_version__version_label", "survey_version__survey__name_ar", "survey_version__survey__name_en")
     inlines = [AssessmentResultInline]
 
-@admin.register(QuestionClassificationRule)
-class QuestionClassificationRuleAdmin(admin.ModelAdmin):
-    list_display = ("survey_question", "classification", "priority", "is_active")
-    list_filter = ("is_active", "classification")
-    search_fields = ("survey_question__text_ar", "survey_question__text_en", "classification")
+class QuestionClassificationRuleInline(admin.TabularInline):
+    model = QuestionClassificationRule
+    extra = 1
+    fields = ("condition", "priority", "is_active", "description")
+
+@admin.register(QuestionClassification)
+class QuestionClassificationAdmin(admin.ModelAdmin):
+    list_display = ("name_ar", "name_en")
+    search_fields = ("name_ar", "name_en")
+    inlines = [QuestionClassificationRuleInline]

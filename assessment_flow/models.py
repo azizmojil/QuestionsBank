@@ -153,7 +153,6 @@ class AssessmentFlowRule(models.Model):
     condition = models.TextField(
         _("الشرط"),
         blank=True,
-        help_text=_("تعبير يُقيّمه محرك التوجيه، مثل \"option == 'CODE_A' -> 'NEXT_Q_CODE'\""),
     )
     priority = models.IntegerField(default=0)
     description = models.CharField(max_length=255, blank=True)

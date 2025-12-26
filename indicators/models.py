@@ -44,47 +44,6 @@ class Indicator(models.Model):
         return name
 
 
-class Classification(models.Model):
-    name_ar = models.CharField(max_length=100, unique=True, verbose_name=_("الاسم [عربية]"))
-    name_en = models.CharField(max_length=100, unique=True, verbose_name=_("الاسم [إنجليزية]"))
-
-    def __str__(self):
-        lang = get_language()
-        return self.name_en if lang == 'en' else self.name_ar
-
-    class Meta:
-        verbose_name = _("تصنيف")
-        verbose_name_plural = _("التصنيفات")
-
-
-class ClassificationRule(models.Model):
-    classification = models.ForeignKey(Classification, on_delete=models.CASCADE, related_name="rules")
-    rule = models.TextField(verbose_name=_("قاعدة التصنيف"))
-
-    class Meta:
-        verbose_name = _("قاعدة التصنيف")
-        verbose_name_plural = _("قواعد التصنيف")
-
-
-class IndicatorClassification(models.Model):
-    indicator = models.ForeignKey(
-        Indicator,
-        on_delete=models.CASCADE,
-        related_name="classifications",
-        verbose_name=_("المؤشر"),
-    )
-    classification = models.ForeignKey(
-        Classification,
-        on_delete=models.CASCADE,
-        verbose_name=_("التصنيف"),
-    )
-
-    class Meta:
-        verbose_name = _("تصنيف المؤشر")
-        verbose_name_plural = _("تصنيفات المؤشر")
-        unique_together = ("indicator", "classification")
-
-
 class IndicatorTracking(models.Model):
     class TrackingStatus(models.TextChoices):
         TRACKED = "TRACKED", _("متابع")

@@ -26,7 +26,7 @@ def survey_builder(request):
     response_types = [
         {"value": choice.value, "label": choice.label}
         for choice in SurveyQuestion.ResponseType
-    ]
+    ] if hasattr(SurveyQuestion, 'ResponseType') else []
 
     response_groups = [
         {"value": rg.id, "label": rg.name}
@@ -52,7 +52,7 @@ def survey_builder(request):
         sections = {}
         for q in version.questions.all():
             # Use a default section title if none is provided
-            section_title = q.section_label or _("قسم غير مسمى")
+            section_title = _("قسم غير مسمى")
             if section_title not in sections:
                 sections[section_title] = {
                     "title": section_title,

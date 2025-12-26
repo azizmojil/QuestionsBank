@@ -1,18 +1,7 @@
 from django.contrib import admin
 
-from .models import Indicator, IndicatorListItem, IndicatorClassification, IndicatorTracking, Classification, ClassificationRule
+from .models import Indicator, IndicatorListItem, IndicatorTracking
 from django.utils.translation import gettext_lazy as _
-
-
-class ClassificationRuleInline(admin.TabularInline):
-    model = ClassificationRule
-    extra = 0
-    fields = ("rule",)
-
-
-class IndicatorClassificationInline(admin.TabularInline):
-    model = IndicatorClassification
-    extra = 1
 
 
 @admin.register(Indicator)
@@ -25,15 +14,6 @@ class IndicatorAdmin(admin.ModelAdmin):
             "fields": ("name_ar", "name_en", "code"),
         }),
     )
-
-    inlines = [IndicatorClassificationInline]
-
-
-@admin.register(Classification)
-class ClassificationAdmin(admin.ModelAdmin):
-    list_display = ("name_ar", "name_en")
-    search_fields = ("name_ar", "name_en")
-    inlines = [ClassificationRuleInline]
 
 
 @admin.register(IndicatorTracking)
