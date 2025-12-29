@@ -17,10 +17,13 @@
     const scoringListEl = document.getElementById('scoring-list');
     const markReviewCompleteBtn = document.getElementById('mark-review-complete');
     const paletteEl = document.getElementById('question-palette');
+    const paletteBusinessEl = document.getElementById('question-palette-business');
     const routingConditionsEl = document.getElementById('routing-conditions');
     const routingTargetsEl = document.getElementById('routing-targets');
     const businessConditionsEl = document.getElementById('business-conditions');
     const businessActionsEl = document.getElementById('business-actions');
+    const stageTabs = document.querySelectorAll('.stage-tab');
+    const stagePanels = document.querySelectorAll('.stage-panel');
     const workflowDots = {
         draft: document.getElementById('draft-count'),
         assessment: document.getElementById('assessment-count'),
@@ -116,29 +119,31 @@
     }
 
     function renderPalette() {
-        if (!paletteEl) return;
-        paletteEl.innerHTML = '';
-        Array.from(paletteLookup.values()).forEach((token) => {
-            const chip = document.createElement('div');
-            chip.className = 'draggable-chip';
-            chip.draggable = true;
-            chip.dataset.tokenId = token.id;
-            const labelSpan = document.createElement('span');
-            labelSpan.className = 'chip-label';
-            labelSpan.textContent = token.label;
-            const sourceSpan = document.createElement('span');
-            sourceSpan.className = 'chip-source';
-            sourceSpan.textContent = token.source === 'manual' ? (builderLocale.manual || 'يدوي') : (builderLocale.bank || 'بنك');
-            chip.append(labelSpan, sourceSpan);
-            chip.addEventListener('dragstart', () => {
-                draggedRuleToken = token;
+        [paletteEl, paletteBusinessEl].forEach((palette) => {
+            if (!palette) return;
+            palette.innerHTML = '';
+            Array.from(paletteLookup.values()).forEach((token) => {
+                const chip = document.createElement('div');
+                chip.className = 'draggable-chip';
+                chip.draggable = true;
+                chip.dataset.tokenId = token.id;
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'chip-label';
+                labelSpan.textContent = token.label;
+                const sourceSpan = document.createElement('span');
+                sourceSpan.className = 'chip-source';
+                sourceSpan.textContent = token.source === 'manual' ? (builderLocale.manual || 'يدوي') : (builderLocale.bank || 'بنك');
+                chip.append(labelSpan, sourceSpan);
+                chip.addEventListener('dragstart', () => {
+                    draggedRuleToken = token;
+                });
+                chip.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        addRuleToken(routingConditionsEl, state.routing.conditions, token);
+                    }
+                });
+                palette.appendChild(chip);
             });
-            chip.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    addRuleToken(routingConditionsEl, state.routing.conditions, token);
-                }
-            });
-            paletteEl.appendChild(chip);
         });
     }
 
@@ -688,6 +693,30 @@
     initializeTomSelect(surveyVersionSelect);
     initializeTomSelect(bankQuestionSelect);
 
+    function showStage(target) {
+        stagePanels.forEach((panel) => {
+            const isTarget = panel.dataset.stage === target;
+            panel.classList.toggle('hidden', !isTarget);
+        });
+        stageTabs.forEach((tab) => {
+            const isTarget = tab.dataset.stageTarget === target;
+            tab.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+        });
+        renderRuleBuckets();
+    }
+
+    stageTabs.forEach((tab) => {
+        tab.addEventListener('click', () => showStage(tab.dataset.stageTarget));
+    });
+
+    document.querySelectorAll('.next-stage').forEach((btn) => {
+        btn.addEventListener('click', () => showStage(btn.dataset.nextStage));
+    });
+
+    document.querySelectorAll('.prev-stage').forEach((btn) => {
+        btn.addEventListener('click', () => showStage(btn.dataset.prevStage));
+    });
+
     renderPalette();
     renderInitialList();
     renderAssessmentBoard();
@@ -695,4 +724,5 @@
     setupAssessmentDrops();
     setupRuleDropzones();
     setupSectionSorting();
+    showStage('initial');
 })(); 

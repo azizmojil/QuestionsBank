@@ -8,12 +8,27 @@
 {% endblock %}
 
 {% block content %}
-<section class="builder-grid workflow-grid">
+<section class="stage-nav card">
+    <div class="workflow-head">
+        <p class="eyebrow">{% trans "مسار العمل" %}</p>
+        <h1 class="page-title">{% trans "منشئ الاستبيان" %}</h1>
+        <p class="muted">{% trans "ابدأ بالقائمة المبدئية ثم تابع عبر التقييم والبناء النهائي وقواعد التوجيه والأعمال." %}</p>
+    </div>
+    <div class="stage-tabs" role="tablist">
+        <button class="stage-tab" data-stage-target="initial" role="tab" aria-selected="true">{% trans "القائمة المبدئية" %}</button>
+        <button class="stage-tab" data-stage-target="assessment" role="tab" aria-selected="false">{% trans "التقييم" %}</button>
+        <button class="stage-tab" data-stage-target="final" role="tab" aria-selected="false">{% trans "البناء النهائي" %}</button>
+        <button class="stage-tab" data-stage-target="routing" role="tab" aria-selected="false">{% trans "قواعد التوجيه" %}</button>
+        <button class="stage-tab" data-stage-target="business" role="tab" aria-selected="false">{% trans "قواعد الأعمال" %}</button>
+    </div>
+</section>
+
+<section class="builder-grid workflow-grid stage-panel" data-stage="initial" aria-label="{% trans 'القائمة المبدئية' %}">
     <div class="card workflow-card">
         <div class="workflow-head">
-            <p class="eyebrow">{% trans "مسار العمل" %}</p>
-            <h1 class="page-title">{% trans "منشئ الاستبيان" %}</h1>
-            <p class="muted">{% trans "ابدأ بقائمة أسئلة مبدئية، أرسلها للتقييم، ثم راجع نتائج التسجيل والمراجعة قبل ترتيب الاستبيان النهائي." %}</p>
+            <p class="eyebrow">{% trans "الخطوة ١" %}</p>
+            <h2 class="card-title">{% trans "القائمة المبدئية للأسئلة" %}</h2>
+            <p class="muted">{% trans "اختر إصدار الاستبيان، اجلب الأسئلة من البنك، أو أضف أسئلة مخصصة لتجهيز القائمة الأولية." %}</p>
         </div>
         <div class="workflow-steps" aria-live="polite">
             <div class="flow-step" data-workflow-step="draft">
@@ -22,30 +37,6 @@
                     <p class="step-title">{% trans "القائمة المبدئية" %}</p>
                     <p class="muted">{% trans "إضافة أسئلة من بنك الأسئلة أو إدخالها يدويًا." %}</p>
                     <div class="status-dot" id="draft-count">0</div>
-                </div>
-            </div>
-            <div class="flow-step" data-workflow-step="assessment">
-                <div class="step-pill">2</div>
-                <div>
-                    <p class="step-title">{% trans "التقييم" %}</p>
-                    <p class="muted">{% trans "إرسال القائمة للتقييم ومتابعة التقدم." %}</p>
-                    <div class="status-dot" id="assessment-count">0</div>
-                </div>
-            </div>
-            <div class="flow-step" data-workflow-step="scoring">
-                <div class="step-pill">3</div>
-                <div>
-                    <p class="step-title">{% trans "التسجيل والمراجعة" %}</p>
-                    <p class="muted">{% trans "نقل النتائج للدرجات والمراجعة النهائية." %}</p>
-                    <div class="status-dot" id="scoring-count">0</div>
-                </div>
-            </div>
-            <div class="flow-step" data-workflow-step="final">
-                <div class="step-pill">4</div>
-                <div>
-                    <p class="step-title">{% trans "البناء النهائي" %}</p>
-                    <p class="muted">{% trans "ترتيب الأقسام وإضافة قواعد التوجيه وقواعد الأعمال." %}</p>
-                    <div class="status-dot status-complete" id="final-count">0</div>
                 </div>
             </div>
         </div>
@@ -87,10 +78,13 @@
         <div class="section-actions mt-3">
             <button type="button" class="btn" id="send-to-assessment-btn">{% trans "إرسال القائمة للتقييم" %}</button>
         </div>
+        <div class="stage-actions">
+            <button type="button" class="btn next-stage" data-next-stage="assessment">{% trans "التالي: التقييم" %}</button>
+        </div>
     </div>
 </section>
 
-<section class="builder-grid workflow-grid">
+<section class="builder-grid workflow-grid stage-panel hidden" data-stage="assessment" aria-label="{% trans 'التقييم' %}">
     <div class="card assessment-card">
         <div class="section-head">
             <h2 class="card-title">{% trans "لوحة التقييم" %}</h2>
@@ -122,6 +116,10 @@
         <div class="section-actions mt-3">
             <button type="button" class="btn btn-secondary" id="send-to-scoring-btn">{% trans "إرسال المنجز للتسجيل والمراجعة" %}</button>
         </div>
+        <div class="stage-actions">
+            <button type="button" class="btn btn-secondary prev-stage" data-prev-stage="initial">{% trans "السابق" %}</button>
+            <button type="button" class="btn next-stage" data-next-stage="final">{% trans "التالي: البناء النهائي" %}</button>
+        </div>
     </div>
     <div class="card scoring-card">
         <div class="section-head">
@@ -135,7 +133,7 @@
     </div>
 </section>
 
-<section id="builder-workspace" class="builder-grid builder-columns">
+<section id="builder-workspace" class="builder-grid builder-columns stage-panel hidden" data-stage="final" aria-label="{% trans 'البناء النهائي' %}">
     <div class="card">
         <div class="section-head">
             <div>
@@ -149,28 +147,60 @@
         <form id="builder-form">
             <div id="sections-container" class="section-container" aria-live="polite"></div>
         </form>
+        <div class="stage-actions">
+            <button type="button" class="btn btn-secondary prev-stage" data-prev-stage="assessment">{% trans "السابق" %}</button>
+            <button type="button" class="btn next-stage" data-next-stage="routing">{% trans "التالي: قواعد التوجيه" %}</button>
+        </div>
     </div>
+</section>
+
+<section class="builder-grid stage-panel hidden" data-stage="routing" aria-label="{% trans 'قواعد التوجيه' %}">
     <div class="card rules-card">
         <div class="section-head">
             <div>
-                <h2 class="card-title">{% trans "قواعد التوجيه وقواعد الأعمال" %}</h2>
-                <p class="muted">{% trans "اسحب الأسئلة إلى مناطق القواعد لتحديد الانتقال والشروط التجارية." %}</p>
+                <h2 class="card-title">{% trans "قواعد التوجيه" %}</h2>
+                <p class="muted">{% trans "اسحب الأسئلة إلى مناطق القواعد لتحديد الانتقال." %}</p>
             </div>
         </div>
         <div class="rule-palette" id="question-palette" aria-label="{% trans 'الأسئلة المتاحة للقواعد' %}"></div>
         <div class="rules-grid">
             <div class="rule-stack">
-                <h3>{% trans "قواعد التوجيه" %}</h3>
-                <p class="muted">{% trans "اسحب الأسئلة التي تشكل الشرط ثم الأسئلة المستهدفة." %}</p>
+                <h3>{% trans "شروط التوجيه" %}</h3>
                 <div class="dropzone" id="routing-conditions" aria-label="{% trans 'شروط التوجيه' %}"></div>
-                <div class="dropzone" id="routing-targets" aria-label="{% trans 'الأسئلة التالية' %}"></div>
             </div>
             <div class="rule-stack">
-                <h3>{% trans "قواعد الأعمال" %}</h3>
+                <h3>{% trans "الأسئلة التالية" %}</h3>
+                <div class="dropzone" id="routing-targets" aria-label="{% trans 'الأسئلة التالية' %}"></div>
+            </div>
+        </div>
+        <div class="stage-actions">
+            <button type="button" class="btn btn-secondary prev-stage" data-prev-stage="final">{% trans "السابق" %}</button>
+            <button type="button" class="btn next-stage" data-next-stage="business">{% trans "التالي: قواعد الأعمال" %}</button>
+        </div>
+    </div>
+</section>
+
+<section class="builder-grid stage-panel hidden" data-stage="business" aria-label="{% trans 'قواعد الأعمال' %}">
+    <div class="card rules-card">
+        <div class="section-head">
+            <div>
+                <h2 class="card-title">{% trans "قواعد الأعمال" %}</h2>
                 <p class="muted">{% trans "حدد شروط العمل والإجراءات الناتجة باستخدام السحب والإفلات." %}</p>
+            </div>
+        </div>
+        <div class="rule-palette" aria-label="{% trans 'الأسئلة المتاحة للقواعد' %}" id="question-palette-business"></div>
+        <div class="rules-grid">
+            <div class="rule-stack">
+                <h3>{% trans "شروط العمل" %}</h3>
                 <div class="dropzone" id="business-conditions" aria-label="{% trans 'شروط العمل' %}"></div>
+            </div>
+            <div class="rule-stack">
+                <h3>{% trans "إجراءات العمل" %}</h3>
                 <div class="dropzone" id="business-actions" aria-label="{% trans 'إجراءات العمل' %}"></div>
             </div>
+        </div>
+        <div class="stage-actions">
+            <button type="button" class="btn btn-secondary prev-stage" data-prev-stage="routing">{% trans "السابق" %}</button>
         </div>
     </div>
 </section>

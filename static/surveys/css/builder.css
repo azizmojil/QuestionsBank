@@ -408,3 +408,39 @@ body.dark-mode .preview-block {
         grid-template-columns: 1fr;
     }
 }
+
+.stage-nav {
+    margin-bottom: 1rem;
+}
+
+.stage-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.stage-tab {
+    border: 1px solid var(--border);
+    background: var(--sidebar);
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.stage-tab[aria-selected="true"] {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
+}
+
+.stage-panel.hidden {
+    display: none;
+}
+
+.stage-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
