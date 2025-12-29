@@ -43,7 +43,7 @@ def dashboard(request):
         survey_rows.append({
             "id": survey.id,
             "name": survey.display_name,
-            "status": survey.get_status_display(),
+            "status": latest_version.get_status_display() if latest_version else "",
             "latest_version": latest_version,
             "question_total": latest_version.question_total if latest_version else 0,
         })
@@ -322,7 +322,11 @@ def get_next_question_view(request):
             if not classification_result.classification:
                 log.debug("No classification resolved for survey question %s", survey_question_id)
 
-            classification_str = classification_result.classification or ""
+            classification_str = (
+                str(classification_result.classification)
+                if classification_result.classification
+                else ""
+            )
 
             AssessmentResult.objects.update_or_create(
                 assessment_run=assessment_run,

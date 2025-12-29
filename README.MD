@@ -10,9 +10,6 @@ erDiagram
         bigint id PK
         varchar username
         varchar email
-        varchar password
-        datetime date_joined
-        datetime last_login
     }
 
     SURVEY {
@@ -21,15 +18,13 @@ erDiagram
         varchar name_en
         varchar code
         text description
-        varchar status
-        bigint owner_id
         datetime created_at
         datetime updated_at
     }
 
     SURVEY_VERSION {
         bigint id PK
-        bigint survey_id
+        bigint survey_id FK
         varchar version_label
         date version_date
         varchar interval
@@ -40,12 +35,11 @@ erDiagram
 
     SURVEY_QUESTION {
         bigint id PK
-        bigint survey_version_id
+        bigint survey_version_id FK
         varchar code
         text text_ar
         text text_en
         text help_text
-        varchar section_label
         bool is_required
         datetime created_at
         datetime updated_at
@@ -53,8 +47,8 @@ erDiagram
 
     ASSESSMENT_QUESTION {
         bigint id PK
-        varchar text_ar
-        varchar text_en
+        text text_ar
+        text text_en
         text explanation_ar
         text explanation_en
         varchar option_type
@@ -80,10 +74,9 @@ erDiagram
 
     ASSESSMENT_FLOW_RULE {
         bigint id PK
-        bigint from_question_id
+        bigint to_question_id
         text condition
         int priority
-        bool is_active
         varchar description
         datetime created_at
         datetime updated_at
@@ -92,13 +85,6 @@ erDiagram
     ASSESSMENT_RUN {
         bigint id PK
         bigint survey_version_id
-        varchar label
-        varchar status
-        bigint created_by_id
-        bigint assigned_to_id
-        datetime started_at
-        datetime completed_at
-        text notes
         datetime created_at
         datetime updated_at
     }
@@ -107,12 +93,10 @@ erDiagram
         bigint id PK
         bigint assessment_run_id
         bigint survey_question_id
-        varchar status
+        json results
         bigint assessed_by_id
-        json assessment_path
-        text summary_comment
-        json flags
         datetime assessed_at
+        varchar classification
     }
 
     ASSESSMENT_FILE {
@@ -126,10 +110,15 @@ erDiagram
         datetime uploaded_at
     }
 
+    QUESTION_CLASSIFICATION {
+        bigint id PK
+        varchar name_ar
+        varchar name_en
+    }
+
     QUESTION_CLASSIFICATION_RULE {
         bigint id PK
-        bigint survey_question_id
-        varchar classification
+        bigint classification_id
         text condition
         int priority
         bool is_active
@@ -138,53 +127,21 @@ erDiagram
         datetime updated_at
     }
 
-    REEVALUATION_QUESTION {
+    INDICATOR_SOURCE {
         bigint id PK
-        bigint survey_version_id
-        varchar text_ar
-        varchar text_en
+        varchar name_ar
+        varchar name_en
+        varchar code
         datetime created_at
         datetime updated_at
     }
 
     INDICATOR {
         bigint id PK
+        bigint indicator_source_id
         varchar name_ar
         varchar name_en
-        varchar code
-        datetime created_at
-        datetime updated_at
-    }
-
-    INDICATOR_LIST_ITEM {
-        bigint id PK
-        bigint indicator_id
-        varchar name
-        varchar code
-    }
-
-    INDICATOR_TRACKING {
-        bigint id PK
-        bigint indicator_list_item_id
-        varchar status
-    }
-
-    CLASSIFICATION {
-        bigint id PK
-        varchar name_ar
-        varchar name_en
-    }
-
-    INDICATOR_CLASSIFICATION {
-        bigint id PK
-        bigint indicator_id
-        bigint classification_id
-    }
-
-    CLASSIFICATION_INDICATOR_LIST_ITEM {
-        bigint id PK
-        bigint classification_id
-        bigint indicatorlistitem_id
+        varchar tracking_status
     }
 
     RESPONSE_TYPE {
@@ -204,7 +161,7 @@ erDiagram
         varchar name
     }
 
-    QBANK_SURVEY_QUESTION {
+    QBANK_QUESTION {
         bigint id PK
         text text_ar
         text text_en
@@ -222,41 +179,47 @@ erDiagram
     }
 
     SURVEY ||--o{ SURVEY_VERSION : has_versions
-    SURVEY }o--|| AUTH_USER : owned_by
-    SURVEY }o--o{ AUTH_USER : edited_by
     SURVEY_VERSION ||--o{ SURVEY_QUESTION : contains_questions
-    SURVEY_VERSION ||--o{ ASSESSMENT_RUN : assessed_by
-    SURVEY_VERSION ||--o{ REEVALUATION_QUESTION : has_reevaluation_questions
-
-    ASSESSMENT_RUN ||--o{ ASSESSMENT_RESULT : produces_results
-    ASSESSMENT_RUN }o--|| AUTH_USER : created_by
-    ASSESSMENT_RUN }o--o| AUTH_USER : assigned_to
-
-    ASSESSMENT_RESULT }o--|| SURVEY_QUESTION : assesses
-    ASSESSMENT_RESULT }o--|| ASSESSMENT_RUN : belongs_to
-    ASSESSMENT_RESULT }o--o| AUTH_USER : assessed_by
-    ASSESSMENT_RESULT ||--o{ ASSESSMENT_FILE : has_uploaded_files
-
+    SURVEY_VERSION ||--|| ASSESSMENT_RUN : has_run
+    ASSESSMENT_RUN ||--o{ ASSESSMENT_RESULT : captures_results
+    ASSESSMENT_RESULT }o--|| SURVEY_QUESTION : for_question
+    ASSESSMENT_RESULT ||--o{ ASSESSMENT_FILE : has_files
     ASSESSMENT_FILE }o--o| ASSESSMENT_OPTION : triggered_by
-    ASSESSMENT_FILE }o--o| AUTH_USER : uploaded_by
 
     ASSESSMENT_QUESTION ||--o{ ASSESSMENT_OPTION : has_options
     ASSESSMENT_QUESTION ||--o{ ASSESSMENT_FLOW_RULE : has_routing_rules
     ASSESSMENT_QUESTION }o--o| ASSESSMENT_QUESTION : dynamic_source
-    ASSESSMENT_QUESTION }o--o| INDICATOR : pulls_indicator_list
+    ASSESSMENT_QUESTION }o--|| INDICATOR_SOURCE : pulls_indicator_items
+    INDICATOR_SOURCE ||--o{ INDICATOR : contains_indicators
 
-    INDICATOR ||--o{ INDICATOR_LIST_ITEM : contains_items
-    INDICATOR_LIST_ITEM ||--o{ INDICATOR_TRACKING : tracking
-    INDICATOR ||--o{ INDICATOR_CLASSIFICATION : tagged_with
-    CLASSIFICATION ||--o{ INDICATOR_CLASSIFICATION : classifies_indicators
-    INDICATOR_LIST_ITEM ||--o{ CLASSIFICATION_INDICATOR_LIST_ITEM : classified_by
-    CLASSIFICATION ||--o{ CLASSIFICATION_INDICATOR_LIST_ITEM : classifies_items
-
-    SURVEY_QUESTION ||--o{ QUESTION_CLASSIFICATION_RULE : has_classification_rules
+    QUESTION_CLASSIFICATION ||--o{ QUESTION_CLASSIFICATION_RULE : has_rules
 
     RESPONSE_GROUP }o--o{ RESPONSE : contains_responses
-
-    QBANK_SURVEY_QUESTION }o--o{ RESPONSE_GROUP : uses_groups
-
+    QBANK_QUESTION }o--o{ RESPONSE_GROUP : uses_groups
     MATRIX_ITEM_GROUP }o--o{ MATRIX_ITEM : contains_items
 ```
+
+### Rule JSON used by routing and classification
+
+Both engines expect a lightweight JSON payload shaped as:
+
+```json
+{
+  "logic": "AND",
+  "conditions": [
+    {"question": 123, "operator": "==", "value": "Yes", "type": "value"}
+  ],
+  "fallback": false
+}
+```
+
+- `logic` defaults to `"AND"`; use `"OR"` to short-circuit when any condition matches.
+- Each condition needs a `question` (SurveyQuestion ID), an `operator` (`==`, `!=`, `>`, `>=`, `<`, `<=`, `in`, `not in`, `contains`, `regex`), and a `value`. Add `"type": "count"` to compare the length of a multi-select answer.
+- Set `"fallback": true` to create a default rule that applies when nothing else matched.
+- A shorthand single-condition form is also accepted: `{"question": 123, "operator": "==", "value": "Yes"}` is automatically wrapped into the full structure.
+
+### Future data structure improvements
+
+- Introduce a master labels table (with Arabic/English columns) for shared enums like statuses, option types, and tracking values to keep translations consistent across apps.
+- Link `QuestionClassificationRule` directly to `SurveyQuestion` for referential integrity and easier rule targeting while still allowing fallbacks.
+- Store routing and classification rule versions with a `version`/`effective_from` column so changes can be audited alongside survey versions.

@@ -7,7 +7,7 @@ from django.utils.translation import override
 
 from assessment_flow.models import AssessmentQuestion, AssessmentFlowRule, AssessmentOption
 from assessment_runs.engine import ClassificationEngine
-from assessment_runs.models import QuestionClassificationRule, AssessmentResult, AssessmentRun
+from assessment_runs.models import QuestionClassification, QuestionClassificationRule, AssessmentResult, AssessmentRun
 from surveys.models import Survey, SurveyVersion, SurveyQuestion
 
 User = get_user_model()
@@ -150,15 +150,17 @@ class ClassificationEngineTestCase(TestCase):
                                                 text_en="Survey Question 1")
         self.q2 = SurveyQuestion.objects.create(survey_version=self.version, text_ar="سؤال استبيان 2",
                                                 text_en="Survey Question 2")
+        self.high = QuestionClassification.objects.create(name_ar="مرتفع", name_en="High")
+        self.low = QuestionClassification.objects.create(name_ar="منخفض", name_en="Low")
+        self.critical = QuestionClassification.objects.create(name_ar="حرج", name_en="Critical")
 
     def test_classify_question_matches_value_condition(self):
         rule = QuestionClassificationRule.objects.create(
-            survey_question=self.q1,
-            classification="HIGH",
+            classification=self.high,
             condition=json.dumps({
-                "conditions": [
-                    {"question": self.q1.id, "operator": "==", "value": "Yes"}
-                ]
+                "question": self.q1.id,
+                "operator": "==",
+                "value": "Yes",
             }),
             priority=1,
             is_active=True,
@@ -170,13 +172,12 @@ class ClassificationEngineTestCase(TestCase):
         result = engine.classify_question(self.q1, responses)
 
         self.assertEqual(result.question, self.q1)
-        self.assertEqual(result.classification, "HIGH")
+        self.assertEqual(result.classification, self.high)
         self.assertEqual(result.rule, rule)
 
     def test_fallback_rule_used_when_no_conditions_match(self):
         QuestionClassificationRule.objects.create(
-            survey_question=self.q2,
-            classification="CRITICAL",
+            classification=self.critical,
             condition=json.dumps({
                 "conditions": [
                     {"question": self.q1.id, "operator": "==", "value": "No"}
@@ -186,8 +187,7 @@ class ClassificationEngineTestCase(TestCase):
             is_active=True,
         )
         fallback_rule = QuestionClassificationRule.objects.create(
-            survey_question=self.q2,
-            classification="LOW",
+            classification=self.low,
             condition=json.dumps({"fallback": True}),
             priority=99,
             is_active=True,
@@ -198,7 +198,7 @@ class ClassificationEngineTestCase(TestCase):
 
         result = engine.classify_question(self.q2, responses)
 
-        self.assertEqual(result.classification, "LOW")
+        self.assertEqual(result.classification, self.low)
         self.assertEqual(result.rule, fallback_rule)
 
 
@@ -265,7 +265,7 @@ class AssessmentCompletionSaveTestCase(TestCase):
         self.assertEqual(run.survey_version, self.version)
 
         result = AssessmentResult.objects.get(assessment_run=run, survey_question=self.survey_question)
-        self.assertEqual(result.assessment_path[0]['answer'], self.option.id)
+        self.assertEqual(result.results[0]['answer'], self.option.id)
 
         self.assertContains(response, reverse('survey_question_list', args=[self.version.id]))
 

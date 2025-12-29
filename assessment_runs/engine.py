@@ -6,7 +6,8 @@ import re
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional
 
-from assessment_flow.models import AssessmentQuestion, AssessmentOption
+from assessment_flow.models import AssessmentOption
+from surveys.models import SurveyQuestion
 from .models import QuestionClassification, QuestionClassificationRule
 
 log = logging.getLogger(__name__)
@@ -15,32 +16,32 @@ log = logging.getLogger(__name__)
 @dataclass
 class ClassificationResult:
     """
-    Holds the result of the classification engine for a single AssessmentQuestion.
+    Holds the result of the classification engine for a single SurveyQuestion.
     """
 
-    question: AssessmentQuestion
+    question: SurveyQuestion
     classification: Optional[QuestionClassification]
     rule: Optional[QuestionClassificationRule] = None
 
 
 class ClassificationEngine:
     """
-    Engine for assigning classifications to AssessmentQuestions based on
+    Engine for assigning classifications to SurveyQuestions based on
     QuestionClassificationRule JSON conditions.
     """
 
     def __init__(self, rules: Optional[Iterable[QuestionClassificationRule]] = None):
         if rules is None:
-            rules = QuestionClassificationRule.objects.select_related("classification")
+            rules = QuestionClassificationRule.objects.select_related("classification").filter(is_active=True)
         self._rules: List[QuestionClassificationRule] = list(rules)
 
     def classify_question(
             self,
-            question: AssessmentQuestion | int,
+            question: SurveyQuestion | int,
             responses: Dict[str, Any],
     ) -> ClassificationResult:
         """
-        Return the classification for a single AssessmentQuestion.
+        Return the classification for a single SurveyQuestion.
         """
         question_obj = self._resolve_question(question)
         
@@ -56,13 +57,13 @@ class ClassificationEngine:
 
         return ClassificationResult(question=question_obj, classification=None, rule=None)
 
-    def _resolve_question(self, question: AssessmentQuestion | int) -> AssessmentQuestion:
-        if isinstance(question, AssessmentQuestion):
+    def _resolve_question(self, question: SurveyQuestion | int) -> SurveyQuestion:
+        if isinstance(question, SurveyQuestion):
             return question
         try:
-            return AssessmentQuestion.objects.get(pk=question)
-        except AssessmentQuestion.DoesNotExist as exc:
-            raise ValueError(f"AssessmentQuestion with id {question} does not exist") from exc
+            return SurveyQuestion.objects.get(pk=question)
+        except SurveyQuestion.DoesNotExist as exc:
+            raise ValueError(f"SurveyQuestion with id {question} does not exist") from exc
 
     def _find_matching_rule(
             self,
@@ -74,30 +75,17 @@ class ClassificationEngine:
         AND if the condition evaluates to True.
         """
         for rule in self._rules:
-            raw = getattr(rule, "condition", None)
+            rule_dict = self._load_rule_dict(getattr(rule, "condition", None), getattr(rule, "pk", "<no-pk>"))
+            if not rule_dict:
+                continue
 
             try:
-                if isinstance(raw, str):
-                    if raw.strip():
-                        rule_dict = json.loads(raw)
-                    else:
-                        continue
-                elif isinstance(raw, dict):
-                    rule_dict = raw
-                else:
-                    continue
-
-                # Check if this rule is relevant for the current question
                 if not self._is_rule_relevant_for_question(rule_dict, question_id):
                     continue
 
-                # Evaluate the rule
                 if self._evaluate_rule_dict(rule_dict, responses):
                     return rule
 
-            except json.JSONDecodeError:
-                log.warning("Invalid JSON in classification rule %s", getattr(rule, "pk", "<no-pk>"))
-                continue
             except Exception as exc:
                 log.warning(
                     "Error evaluating classification rule %s: %s",
@@ -109,10 +97,41 @@ class ClassificationEngine:
 
         return None
 
+    def _load_rule_dict(self, raw: Any, rule_id: Any) -> Optional[Dict[str, Any]]:
+        """
+        Normalize stored JSON into a dict and allow shorthand single-condition payloads.
+        """
+        if raw is None:
+            return None
+
+        if isinstance(raw, str):
+            raw = raw.strip()
+            if not raw:
+                return None
+            try:
+                raw = json.loads(raw)
+            except json.JSONDecodeError:
+                log.warning("Invalid JSON in classification rule %s", rule_id)
+                return None
+
+        if not isinstance(raw, dict):
+            return None
+
+        if "conditions" not in raw and {"question", "operator"}.issubset(raw.keys()):
+            return {
+                "logic": "AND",
+                "conditions": [raw],
+                "fallback": raw.get("fallback", False),
+            }
+        return raw
+
     def _is_rule_relevant_for_question(self, rule_dict: Dict, question_id: int) -> bool:
         """
         Check if the rule contains a condition targeting the given question_id.
         """
+        if rule_dict.get("fallback") is True:
+            return True
+
         conditions = rule_dict.get("conditions", [])
         for cond in conditions:
             if not isinstance(cond, dict):

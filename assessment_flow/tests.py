@@ -1,3 +1,5 @@
+import json
+
 from django.test import TestCase
 from django.utils import translation
 
@@ -126,6 +128,25 @@ class RoutingEngineTestCase(TestCase):
         # Rule A should not fire again (it's in used_rules)
         if result.rule:
             self.assertNotEqual(result.rule.id, self.rule_a.id)
+
+    def test_shorthand_condition_structure_is_supported(self):
+        """Routing rules accept single-condition shorthand JSON."""
+        q5 = AssessmentQuestion.objects.create(text_en="Question 5")
+        q6 = AssessmentQuestion.objects.create(text_en="Question 6")
+        shorthand_rule = AssessmentFlowRule.objects.create(
+            to_question=q6,
+            condition=json.dumps({"question": q5.id, "operator": "==", "value": "Go"}),
+            priority=0,
+            description="Shorthand rule",
+        )
+
+        engine = RoutingEngine()
+        responses = {str(q5.id): "Go"}
+
+        result = engine.get_next_question(responses, used_rule_ids=[])
+        self.assertIsNotNone(result.next_question)
+        self.assertEqual(result.next_question.id, q6.id)
+        self.assertEqual(result.rule, shorthand_rule)
 
 
 class ReevaluationQuestionModelTestCase(TestCase):
