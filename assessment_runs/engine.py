@@ -140,8 +140,11 @@ class ClassificationEngine:
             if not isinstance(cond, dict):
                 continue
             q_id = cond.get("question")
-            if q_id and int(q_id) == question_id:
-                return True
+            try:
+                if q_id is not None and int(q_id) == int(question_id):
+                    return True
+            except (TypeError, ValueError):
+                continue
         return False
 
     def _evaluate_rule_dict(

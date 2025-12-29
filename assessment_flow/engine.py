@@ -123,7 +123,7 @@ class RoutingEngine:
             try:
                 raw = json.loads(raw)
             except json.JSONDecodeError:
-                log.warning(f"Invalid JSON in rule {rule_id}")
+                log.warning("Invalid JSON in rule %s", rule_id)
                 return None
 
         if not isinstance(raw, dict):
