@@ -132,7 +132,7 @@ class RoutingEngine:
         if raw.get("fallback") is True and not raw.get("conditions"):
             return {"fallback": True}
 
-        if "conditions" not in raw and {"question", "operator"}.issubset(raw.keys()):
+        if "conditions" not in raw and {"question", "operator", "value"}.issubset(raw.keys()):
             return {
                 "logic": "AND",
                 "conditions": [raw],
