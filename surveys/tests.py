@@ -15,12 +15,7 @@ class SurveyBuilderViewTests(TestCase):
         self.assertIn("response_types", response.context)
         self.assertIn("available_questions", response.context)
 
-    def test_matrix_response_type_is_available(self):
-        response = self.client.get(reverse("survey_builder"))
-        response_types = response.context["response_types"]
-        self.assertTrue(
-            any(rt["value"] == SurveyQuestion.ResponseType.MATRIX for rt in response_types)
-        )
+    # Removed test_matrix_response_type_is_available because ResponseType is removed from SurveyQuestion
 
     def test_builder_page_focuses_on_survey_only(self):
         response = self.client.get(reverse("survey_builder"))
@@ -42,7 +37,7 @@ class SurveyBuilderViewTests(TestCase):
             survey_version=version,
             text_ar="سؤال من القاعدة",
             text_en="Banked question",
-            response_type=SurveyQuestion.ResponseType.SINGLE_CHOICE,
+            # response_type removed
         )
 
         response = self.client.get(reverse("survey_builder"))

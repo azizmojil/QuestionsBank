@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from indicators.models import Indicator, IndicatorListItem
+from indicators.models import IndicatorSource, Indicator
 import os
 
 class Command(BaseCommand):
@@ -14,9 +14,9 @@ class Command(BaseCommand):
         indicator_id = options['indicator_id']
 
         try:
-            indicator = Indicator.objects.get(pk=indicator_id)
-        except Indicator.DoesNotExist:
-            raise CommandError(f'Indicator with ID "{indicator_id}" does not exist.')
+            indicator_source = IndicatorSource.objects.get(pk=indicator_id)
+        except IndicatorSource.DoesNotExist:
+            raise CommandError(f'IndicatorSource with ID "{indicator_id}" does not exist.')
 
         if not os.path.exists(file_path):
             raise CommandError(f'File "{file_path}" does not exist.')
@@ -28,17 +28,16 @@ class Command(BaseCommand):
                     name = line.strip()
                     if name:
                         items_to_create.append(
-                            IndicatorListItem(
-                                indicator=indicator,
-                                name=name,
-                                code=''
+                            Indicator(
+                                indicator_source=indicator_source,
+                                name_ar=name,
                             )
                         )
         except Exception as e:
             raise CommandError(f'Error reading file: {e}')
 
         if items_to_create:
-            IndicatorListItem.objects.bulk_create(items_to_create)
-            self.stdout.write(self.style.SUCCESS(f'Successfully imported {len(items_to_create)} items to "{indicator.name}".'))
+            Indicator.objects.bulk_create(items_to_create)
+            self.stdout.write(self.style.SUCCESS(f'Successfully imported {len(items_to_create)} items to "{indicator_source.name_en or indicator_source.name_ar}".'))
         else:
             self.stdout.write(self.style.WARNING('No items found in the file.'))

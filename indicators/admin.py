@@ -1,22 +1,18 @@
 from django.contrib import admin
 
-from .models import Indicator, IndicatorListItem, IndicatorClassification, IndicatorTracking, Classification, ClassificationRule
+from .models import IndicatorSource, Indicator
 from django.utils.translation import gettext_lazy as _
 
 
-class ClassificationRuleInline(admin.TabularInline):
-    model = ClassificationRule
+class IndicatorInline(admin.TabularInline):
+    model = Indicator
     extra = 0
-    fields = ("rule",)
+    fields = ("name_ar", "name_en", "tracking_status")
+    show_change_link = True
 
 
-class IndicatorClassificationInline(admin.TabularInline):
-    model = IndicatorClassification
-    extra = 1
-
-
-@admin.register(Indicator)
-class IndicatorAdmin(admin.ModelAdmin):
+@admin.register(IndicatorSource)
+class IndicatorSourceAdmin(admin.ModelAdmin):
     list_display = ("name_ar", "name_en", "code", "created_at")
     search_fields = ("name_ar", "name_en", "code")
 
@@ -25,28 +21,21 @@ class IndicatorAdmin(admin.ModelAdmin):
             "fields": ("name_ar", "name_en", "code"),
         }),
     )
-
-    inlines = [IndicatorClassificationInline]
-
-
-@admin.register(Classification)
-class ClassificationAdmin(admin.ModelAdmin):
-    list_display = ("name_ar", "name_en")
-    search_fields = ("name_ar", "name_en")
-    inlines = [ClassificationRuleInline]
+    inlines = [IndicatorInline]
 
 
-@admin.register(IndicatorTracking)
-class IndicatorTrackingAdmin(admin.ModelAdmin):
-    list_display = ("indicator_list_item", "status")
-    list_filter = ("status",)
-    search_fields = ("indicator_list_item__name",)
-    autocomplete_fields = ("indicator_list_item",)
+@admin.register(Indicator)
+class IndicatorAdmin(admin.ModelAdmin):
+    list_display = ("name_ar", "name_en", "indicator_source", "tracking_status")
+    list_filter = ("tracking_status", "indicator_source")
+    search_fields = ("name_ar", "name_en", "indicator_source__name_ar", "indicator_source__name_en")
+    autocomplete_fields = ("indicator_source",)
 
+    def has_add_permission(self, request):
+        return False
 
-@admin.register(IndicatorListItem)
-class IndicatorListItemAdmin(admin.ModelAdmin):
-    list_display = ("name", "indicator", "code")
-    search_fields = ("name", "indicator__name_ar", "indicator__name_en", "code")
-    autocomplete_fields = ("indicator",)
-    readonly_fields = ("indicator", "name")
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False

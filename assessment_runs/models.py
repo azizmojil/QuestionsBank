@@ -1,11 +1,13 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import get_language
 import os
 import uuid
 
 from surveys.models import SurveyQuestion, SurveyVersion
-from assessment_flow.models import AssessmentOption
+from assessment_flow.models import AssessmentOption, get_assessment_file_path
 
 User = get_user_model()
 
@@ -57,36 +59,38 @@ class AssessmentResult(models.Model):
     assessed_at = models.DateTimeField(auto_now=True, verbose_name=_("في"))
     classification = models.CharField(max_length=100, blank=True, verbose_name=_("التصنيف"))
 
-    @property
-    def assessment_path(self):
-        """Alias for the stored results history."""
-        return getattr(self, "results", [])
 
-    @property
-    def status(self):
-        if self.results:
-            return "COMPLETE"
-        return "NOT_VISITED"
+class QuestionClassification(models.Model):
+    """Defines a classification category (e.g., High Risk, Low Risk)."""
+    name_ar = models.CharField(max_length=255, verbose_name=_("التصنيف [عربية]"))
+    name_en = models.CharField(max_length=255, verbose_name=_("التصنيف [إنجليزية]"))
+
+    class Meta:
+        verbose_name = _("تصنيف")
+        verbose_name_plural = _("التصنيفات")
+
+    def __str__(self):
+        lang = get_language()
+        return self.name_ar if lang == 'ar' else self.name_en
 
 
 class QuestionClassificationRule(models.Model):
-    """Rule used to classify a SurveyQuestion after an assessment run."""
+    """Rule used to classify a SurveyQuestion based on assessment results."""
 
     class Meta:
         verbose_name = _("قاعدة تصنيف")
         verbose_name_plural = _("قواعد التصنيف")
         ordering = ["priority", "id"]
 
-    classification = models.CharField(max_length=100, verbose_name=_("التصنيف"))
-    survey_question = models.ForeignKey(
-        SurveyQuestion,
+    classification = models.ForeignKey(
+        QuestionClassification,
         on_delete=models.CASCADE,
-        related_name="classification_rules",
-        verbose_name=_("سؤال الاستبيان"),
+        related_name="rules",
+        verbose_name=_("التصنيف"),
     )
     condition = models.TextField(
         blank=True,
-        verbose_name=_("الشرط"),
+        verbose_name=_("القاعدة (JSON)"),
         help_text=_("منطق JSON يتم تقييمه بواسطة محرك التصنيف."),
     )
     priority = models.IntegerField(default=0, verbose_name=_("الأولوية"))
@@ -96,7 +100,7 @@ class QuestionClassificationRule(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.description or f"Rule for {self.survey_question}"
+        return self.description or f"Rule for {self.classification}"
 
 
 class AssessmentFile(models.Model):

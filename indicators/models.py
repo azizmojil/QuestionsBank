@@ -5,16 +5,16 @@ from django.utils.translation import get_language
 from surveys.models import SurveyVersion, SurveyQuestion
 
 
-class Indicator(models.Model):
+class IndicatorSource(models.Model):
     """A statistical indicator defined on top of survey questions.
 
     Example: Unemployment rate, Internet penetration, etc.
     """
 
     class Meta:
-        verbose_name = _("المؤشر")
-        verbose_name_plural = _("المؤشرات")
-        ordering = ["-created_at"]
+        verbose_name = _("مصدر المؤشر")
+        verbose_name_plural = _("مصادر المؤشرات")
+        ordering = ["code"]
 
     name_ar = models.CharField(
         max_length=255,
@@ -44,100 +44,45 @@ class Indicator(models.Model):
         return name
 
 
-class Classification(models.Model):
-    name_ar = models.CharField(max_length=100, unique=True, verbose_name=_("الاسم [عربية]"))
-    name_en = models.CharField(max_length=100, unique=True, verbose_name=_("الاسم [إنجليزية]"))
+class Indicator(models.Model):
+    """Individual item within an IndicatorSource, representing a specific indicator."""
 
-    def __str__(self):
-        lang = get_language()
-        return self.name_en if lang == 'en' else self.name_ar
-
-    class Meta:
-        verbose_name = _("تصنيف")
-        verbose_name_plural = _("التصنيفات")
-
-
-class ClassificationRule(models.Model):
-    classification = models.ForeignKey(Classification, on_delete=models.CASCADE, related_name="rules")
-    rule = models.TextField(verbose_name=_("قاعدة التصنيف"))
-
-    class Meta:
-        verbose_name = _("قاعدة التصنيف")
-        verbose_name_plural = _("قواعد التصنيف")
-
-
-class IndicatorClassification(models.Model):
-    indicator = models.ForeignKey(
-        Indicator,
-        on_delete=models.CASCADE,
-        related_name="classifications",
-        verbose_name=_("المؤشر"),
-    )
-    classification = models.ForeignKey(
-        Classification,
-        on_delete=models.CASCADE,
-        verbose_name=_("التصنيف"),
-    )
-
-    class Meta:
-        verbose_name = _("تصنيف المؤشر")
-        verbose_name_plural = _("تصنيفات المؤشر")
-        unique_together = ("indicator", "classification")
-
-
-class IndicatorTracking(models.Model):
     class TrackingStatus(models.TextChoices):
         TRACKED = "TRACKED", _("متابع")
         NOT_TRACKED = "NOT_TRACKED", _("غير متابع")
 
-    indicator_list_item = models.ForeignKey(
-        "IndicatorListItem",
-        on_delete=models.CASCADE,
-        related_name="tracking_info",
-        verbose_name=_("عنصر قائمة المؤشر"),
-    )
-    status = models.CharField(
-        max_length=20,
-        choices=TrackingStatus.choices,
-        verbose_name=_("الحالة"),
-    )
-
     class Meta:
-        verbose_name = _("تتبع المؤشر")
-        verbose_name_plural = _("معلومات تتبع المؤشر")
-
-    def __str__(self):
-        return f"{self.indicator_list_item} - {self.get_status_display()}"
-
-
-class IndicatorListItem(models.Model):
-    """Individual item within an Indicator, representing a specific survey question or data point."""
-
-    class Meta:
-        verbose_name = _("اسم المؤشر")
-        verbose_name_plural = _("أسماء المؤشرات")
+        verbose_name = _("المؤشر")
+        verbose_name_plural = _("المؤشرات")
         ordering = ["id"]
-        unique_together = ("indicator", "name")
+        unique_together = ("indicator_source", "name_ar")
 
-    indicator = models.ForeignKey(
-        Indicator,
+    indicator_source = models.ForeignKey(
+        IndicatorSource,
         on_delete=models.CASCADE,
         related_name="items",
-        verbose_name=_("المؤشر"),
+        verbose_name=_("مصدر المؤشر"),
     )
 
-    name = models.CharField(
+    name_ar = models.CharField(
         max_length=255,
-        verbose_name=_("الاسم"),
-        help_text=_("اسم عنصر قائمة المؤشر."),
+        verbose_name=_("المؤشر [عربية]"),
     )
 
-    code = models.CharField(
-        max_length=50,
+    name_en = models.CharField(
+        max_length=255,
+        verbose_name=_("المؤشر [إنجليزية]"),
         blank=True,
-        verbose_name=_("الرمز"),
-        help_text=_("رمز اختياري لعنصر القائمة.")
+    )
+
+    tracking_status = models.CharField(
+        max_length=20,
+        choices=TrackingStatus.choices,
+        default=TrackingStatus.NOT_TRACKED,
+        verbose_name=_("حالة التتبع"),
     )
 
     def __str__(self) -> str:
-        return f"{self.indicator} - {self.name}"
+        lang = get_language()
+        name = self.name_en if lang == 'en' and self.name_en else self.name_ar
+        return f"{self.indicator_source} - {name}"
