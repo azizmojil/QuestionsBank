@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import re
 from dataclasses import dataclass
@@ -10,6 +11,7 @@ from django.db.models import QuerySet
 from .models import AssessmentQuestion, AssessmentFlowRule, AssessmentOption
 
 log = logging.getLogger(__name__)
+_MISSING_PK = "<no-pk>"
 
 
 @dataclass
@@ -89,40 +91,63 @@ class RoutingEngine:
         available_rules.sort(key=lambda r: (r.priority, r.id))
 
         for rule in available_rules:
-            raw = getattr(rule, "condition", None)
+            rule_pk = getattr(rule, "pk", _MISSING_PK)
+            rule_dict = self._load_rule_dict(getattr(rule, "condition", None), rule_pk)
+            if not rule_dict:
+                continue
 
-            # Parse the JSON condition
-            import json
             try:
-                if isinstance(raw, str):
-                    # If it's a string, try to parse it as JSON
-                    if raw.strip():
-                        rule_dict = json.loads(raw)
-                    else:
-                        # Empty string condition -> treat as fallback/always true?
-                        # Or ignore? Let's assume empty = ignore for safety unless explicit fallback.
-                        continue
-                elif isinstance(raw, dict):
-                    rule_dict = raw
-                else:
-                    continue
-
                 if self._evaluate_rule_dict(rule_dict, responses):
                     return rule
 
-            except json.JSONDecodeError:
-                log.warning(f"Invalid JSON in rule {rule.id}")
-                continue
             except Exception as exc:
                 log.warning(
                     "Error evaluating routing rule %s: %s",
-                    getattr(rule, "pk", "<no-pk>"),
+                    rule_pk,
                     exc,
                     exc_info=True,
                 )
                 continue
 
         return None
+
+    def _load_rule_dict(self, raw: Any, rule_id: Any) -> Optional[Dict[str, Any]]:
+        """
+        Normalize stored JSON into a dict and allow shorthand single-condition payloads.
+        """
+        if raw is None:
+            return None
+
+        if isinstance(raw, str):
+            raw = raw.strip()
+            if not raw:
+                return None
+            try:
+                raw = json.loads(raw)
+            except json.JSONDecodeError:
+                log.warning("Invalid JSON in rule %s", rule_id)
+                return None
+
+        if not isinstance(raw, dict):
+            return None
+
+        if raw.get("fallback") is True and not raw.get("conditions"):
+            return {"fallback": True}
+
+        if "conditions" not in raw and {"question", "operator", "value"}.issubset(raw.keys()):
+            condition = {
+                "question": raw.get("question"),
+                "operator": raw.get("operator"),
+                "value": raw.get("value"),
+            }
+            if "type" in raw:
+                condition["type"] = raw.get("type")
+            return {
+                "logic": "AND",
+                "conditions": [condition],
+                "fallback": raw.get("fallback", False),
+            }
+        return raw
 
     def _evaluate_rule_dict(
             self,
