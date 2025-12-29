@@ -8,22 +8,171 @@
 {% endblock %}
 
 {% block content %}
-<section id="builder-workspace" class="builder-grid">
-    <form id="builder-form">
-        <label class="stacked">
-            {% trans "اختر إصدار استبيان" %}
-            <select id="survey-version-select">
-                <option value="" disabled selected>{% trans "اختر إصدارًا لتحميله" %}</option>
-                {% for version in survey_versions %}
-                <option value="{{ version.id }}">{{ version.label }}</option>
-                {% endfor %}
-            </select>
-        </label>
-        <div class="section-actions mt-3">
-            <button type="button" class="btn" id="add-section-btn">{% trans "إضافة قسم" %}</button>
+<section class="builder-grid workflow-grid">
+    <div class="card workflow-card">
+        <div class="workflow-head">
+            <p class="eyebrow">{% trans "مسار العمل" %}</p>
+            <h1 class="page-title">{% trans "منشئ الاستبيان" %}</h1>
+            <p class="muted">{% trans "ابدأ بقائمة أسئلة مبدئية، أرسلها للتقييم، ثم راجع نتائج التسجيل والمراجعة قبل ترتيب الاستبيان النهائي." %}</p>
         </div>
-        <div id="sections-container" class="section-container" aria-live="polite"></div>
-    </form>
+        <div class="workflow-steps" aria-live="polite">
+            <div class="flow-step" data-workflow-step="draft">
+                <div class="step-pill">1</div>
+                <div>
+                    <p class="step-title">{% trans "القائمة المبدئية" %}</p>
+                    <p class="muted">{% trans "إضافة أسئلة من بنك الأسئلة أو إدخالها يدويًا." %}</p>
+                    <div class="status-dot" id="draft-count">0</div>
+                </div>
+            </div>
+            <div class="flow-step" data-workflow-step="assessment">
+                <div class="step-pill">2</div>
+                <div>
+                    <p class="step-title">{% trans "التقييم" %}</p>
+                    <p class="muted">{% trans "إرسال القائمة للتقييم ومتابعة التقدم." %}</p>
+                    <div class="status-dot" id="assessment-count">0</div>
+                </div>
+            </div>
+            <div class="flow-step" data-workflow-step="scoring">
+                <div class="step-pill">3</div>
+                <div>
+                    <p class="step-title">{% trans "التسجيل والمراجعة" %}</p>
+                    <p class="muted">{% trans "نقل النتائج للدرجات والمراجعة النهائية." %}</p>
+                    <div class="status-dot" id="scoring-count">0</div>
+                </div>
+            </div>
+            <div class="flow-step" data-workflow-step="final">
+                <div class="step-pill">4</div>
+                <div>
+                    <p class="step-title">{% trans "البناء النهائي" %}</p>
+                    <p class="muted">{% trans "ترتيب الأقسام وإضافة قواعد التوجيه وقواعد الأعمال." %}</p>
+                    <div class="status-dot status-complete" id="final-count">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card intake-card">
+        <h2 class="card-title">{% trans "القائمة المبدئية للأسئلة" %}</h2>
+        <p class="muted">{% trans "اختر إصدار الاستبيان، اجلب الأسئلة من البنك، أو أضف أسئلة مخصصة لتجهيز القائمة الأولية." %}</p>
+        <div class="intake-grid">
+            <label class="stacked">
+                {% trans "اختر إصدار استبيان" %}
+                <select id="survey-version-select">
+                    <option value="" disabled selected>{% trans "اختر إصدارًا لتحميله" %}</option>
+                    {% for version in survey_versions %}
+                    <option value="{{ version.id }}">{{ version.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <div class="intake-row">
+                <label class="stacked">
+                    {% trans "أسئلة من بنك الأسئلة" %}
+                    <select id="bank-question-select">
+                        <option value="" disabled selected>{% trans "اختر سؤالاً" %}</option>
+                        {% for q in available_questions %}
+                        <option value="{{ q.id }}">{{ q.label }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <button type="button" class="btn" id="add-bank-question">{% trans "إضافة للسلة" %}</button>
+            </div>
+            <div class="intake-row">
+                <label class="stacked">
+                    {% trans "سؤال يدوي" %}
+                    <input type="text" id="manual-question-text" placeholder="{% trans 'أدخل نص السؤال' %}">
+                </label>
+                <button type="button" class="btn btn-secondary" id="add-manual-question">{% trans "إضافة سؤال يدوي" %}</button>
+            </div>
+        </div>
+        <div id="initial-questions" class="pill-list" aria-live="polite" role="status"></div>
+        <div class="section-actions mt-3">
+            <button type="button" class="btn" id="send-to-assessment-btn">{% trans "إرسال القائمة للتقييم" %}</button>
+        </div>
+    </div>
+</section>
+
+<section class="builder-grid workflow-grid">
+    <div class="card assessment-card">
+        <div class="section-head">
+            <h2 class="card-title">{% trans "لوحة التقييم" %}</h2>
+            <p class="muted">{% trans "اسحب وأفلت الأسئلة عبر مراحل التقييم لإبقاء التقدم واضحًا." %}</p>
+        </div>
+        <div class="kanban" id="assessment-board">
+            <div class="kanban-column" data-assessment-column="backlog" aria-label="{% trans 'جاهزة' %}">
+                <div class="kanban-head">
+                    <span class="status-pill pending">{% trans "جاهزة" %}</span>
+                    <span class="status-count" data-count-for="backlog">0</span>
+                </div>
+                <div class="kanban-list" data-kanban-list="backlog"></div>
+            </div>
+            <div class="kanban-column" data-assessment-column="active" aria-label="{% trans 'قيد التقييم' %}">
+                <div class="kanban-head">
+                    <span class="status-pill in-progress">{% trans "قيد العمل" %}</span>
+                    <span class="status-count" data-count-for="active">0</span>
+                </div>
+                <div class="kanban-list" data-kanban-list="active"></div>
+            </div>
+            <div class="kanban-column" data-assessment-column="done" aria-label="{% trans 'تم التقييم' %}">
+                <div class="kanban-head">
+                    <span class="status-pill success">{% trans "منجزة" %}</span>
+                    <span class="status-count" data-count-for="done">0</span>
+                </div>
+                <div class="kanban-list" data-kanban-list="done"></div>
+            </div>
+        </div>
+        <div class="section-actions mt-3">
+            <button type="button" class="btn btn-secondary" id="send-to-scoring-btn">{% trans "إرسال المنجز للتسجيل والمراجعة" %}</button>
+        </div>
+    </div>
+    <div class="card scoring-card">
+        <div class="section-head">
+            <h2 class="card-title">{% trans "التسجيل والمراجعة" %}</h2>
+            <p class="muted">{% trans "بعد التقييم يمكن وضع النتائج في قائمة التسجيل ومتابعة المراجعات." %}</p>
+        </div>
+        <div id="scoring-list" class="scoring-list" aria-live="polite"></div>
+        <div class="section-actions mt-3">
+            <button type="button" class="btn" id="mark-review-complete">{% trans "تأكيد إتمام المراجعة" %}</button>
+        </div>
+    </div>
+</section>
+
+<section id="builder-workspace" class="builder-grid builder-columns">
+    <div class="card">
+        <div class="section-head">
+            <div>
+                <h2 class="card-title">{% trans "البناء النهائي للاستبيان" %}</h2>
+                <p class="muted">{% trans "رتب الأقسام والأسئلة النهائية، ويمكنك إعادة ترتيبها بالسحب والإفلات." %}</p>
+            </div>
+            <div class="section-actions">
+                <button type="button" class="btn" id="add-section-btn">{% trans "إضافة قسم" %}</button>
+            </div>
+        </div>
+        <form id="builder-form">
+            <div id="sections-container" class="section-container" aria-live="polite"></div>
+        </form>
+    </div>
+    <div class="card rules-card">
+        <div class="section-head">
+            <div>
+                <h2 class="card-title">{% trans "قواعد التوجيه وقواعد الأعمال" %}</h2>
+                <p class="muted">{% trans "اسحب الأسئلة إلى مناطق القواعد لتحديد الانتقال والشروط التجارية." %}</p>
+            </div>
+        </div>
+        <div class="rule-palette" id="question-palette" aria-label="{% trans 'الأسئلة المتاحة للقواعد' %}"></div>
+        <div class="rules-grid">
+            <div class="rule-stack">
+                <h3>{% trans "قواعد التوجيه" %}</h3>
+                <p class="muted">{% trans "اسحب الأسئلة التي تشكل الشرط ثم الأسئلة المستهدفة." %}</p>
+                <div class="dropzone" id="routing-conditions" aria-label="{% trans 'شروط التوجيه' %}"></div>
+                <div class="dropzone" id="routing-targets" aria-label="{% trans 'الأسئلة التالية' %}"></div>
+            </div>
+            <div class="rule-stack">
+                <h3>{% trans "قواعد الأعمال" %}</h3>
+                <p class="muted">{% trans "حدد شروط العمل والإجراءات الناتجة باستخدام السحب والإفلات." %}</p>
+                <div class="dropzone" id="business-conditions" aria-label="{% trans 'شروط العمل' %}"></div>
+                <div class="dropzone" id="business-actions" aria-label="{% trans 'إجراءات العمل' %}"></div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <template id="section-template">
@@ -153,7 +302,18 @@
     {
         "yes": "{% trans 'نعم' %}",
         "no": "{% trans 'لا' %}",
-        "untitled": "{% trans 'استبيان بدون عنوان' %}"
+        "untitled": "{% trans 'استبيان بدون عنوان' %}",
+        "manual": "{% trans 'يدوي' %}",
+        "bank": "{% trans 'بنك الأسئلة' %}",
+        "emptyInitial": "{% trans 'لا توجد أسئلة مبدئية بعد' %}",
+        "emptyColumn": "{% trans 'لا توجد عناصر في هذا العمود بعد' %}",
+        "emptyScoring": "{% trans 'لا توجد عناصر بانتظار التسجيل.' %}",
+        "markReviewed": "{% trans 'تمت المراجعة' %}",
+        "reviewed": "{% trans 'مُراجع' %}",
+        "routingConditions": "{% trans 'اسحب شروط التوجيه هنا' %}",
+        "routingTargets": "{% trans 'ضع الأسئلة التالية هنا' %}",
+        "businessConditions": "{% trans 'اسحب شروط الأعمال هنا' %}",
+        "businessActions": "{% trans 'ضع الإجراءات هنا' %}"
     }
 </script>
 {% endblock %}

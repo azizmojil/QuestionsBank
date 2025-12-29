@@ -23,6 +23,12 @@ class SurveyBuilderViewTests(TestCase):
         self.assertNotContains(response, "Response types available")
         self.assertNotContains(response, "Design-first")
 
+    def test_builder_exposes_workflow_and_rules_sections(self):
+        response = self.client.get(reverse("survey_builder"))
+        self.assertContains(response, _("القائمة المبدئية للأسئلة"))
+        self.assertContains(response, _("لوحة التقييم"))
+        self.assertContains(response, _("قواعد التوجيه"))
+
     def test_builder_uses_question_bank_choices(self):
         survey = Survey.objects.create(
             name_ar="بنك الأسئلة",
