@@ -693,7 +693,7 @@
     initializeTomSelect(surveyVersionSelect);
     initializeTomSelect(bankQuestionSelect);
 
-    function showStage(target) {
+    function showStage(target, skipUrlUpdate = false) {
         stagePanels.forEach((panel) => {
             const isTarget = panel.dataset.stage === target;
             panel.classList.toggle('hidden', !isTarget);
@@ -703,6 +703,11 @@
             tab.setAttribute('aria-selected', isTarget ? 'true' : 'false');
         });
         renderRuleBuckets();
+        if (!skipUrlUpdate) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('stage', target);
+            window.history.replaceState({}, '', url.toString());
+        }
     }
 
     stageTabs.forEach((tab) => {
@@ -717,6 +722,8 @@
         btn.addEventListener('click', () => showStage(btn.dataset.prevStage));
     });
 
+    const initialStageFromUrl = new URLSearchParams(window.location.search).get('stage') || 'initial';
+
     renderPalette();
     renderInitialList();
     renderAssessmentBoard();
@@ -724,5 +731,5 @@
     setupAssessmentDrops();
     setupRuleDropzones();
     setupSectionSorting();
-    showStage('initial');
+    showStage(initialStageFromUrl, true);
 })(); 
