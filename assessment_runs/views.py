@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 from django.utils import timezone
 from surveys.models import Survey, SurveyVersion, SurveyQuestion
 from assessment_flow.models import AssessmentQuestion, AssessmentOption
-from indicators.models import IndicatorListItem
+from indicators.models import Indicator
 from assessment_flow.engine import RoutingEngine
 from .models import AssessmentRun, AssessmentResult
 from .engine import ClassificationEngine
@@ -220,8 +220,8 @@ def assessment_page(request, question_id):
                     if isinstance(ans, int):
                         # Try to find option
                         if q_obj.option_type == AssessmentQuestion.OptionType.INDICATOR_LIST:
-                             opt = IndicatorListItem.objects.filter(id=ans).first()
-                             if opt: display_answer.append(opt.name)
+                             opt = Indicator.objects.filter(id=ans).first()
+                             if opt: display_answer.append(opt.name_ar)
                         else:
                              opt = AssessmentOption.objects.filter(id=ans).first()
                              if opt: display_answer.append(opt.display_text)

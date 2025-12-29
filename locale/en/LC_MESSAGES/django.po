@@ -468,12 +468,12 @@ msgid "معلومات تتبع المؤشر"
 msgstr "Indicator Tracking Information"
 
 #: .\indicators\models.py:76
-msgid "اسم المؤشر"
-msgstr "Indicator name"
+msgid "مصدر المؤشر"
+msgstr "Indicator Source"
 
 #: .\indicators\models.py:77
-msgid "أسماء المؤشرات"
-msgstr "Indicator names"
+msgid "مصادر المؤشرات"
+msgstr "Indicator Sources"
 
 #: .\indicators\models.py:90
 msgid "الاسم"

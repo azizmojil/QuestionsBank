@@ -7,7 +7,7 @@ import os
 import uuid
 
 from surveys.models import SurveyQuestion, SurveyVersion
-from indicators.models import Indicator
+from indicators.models import IndicatorSource
 
 User = get_user_model()
 
@@ -52,7 +52,7 @@ class AssessmentQuestion(models.Model):
         related_name="dynamic_option_consumers",
     )
     indicator_source = models.ForeignKey(
-        Indicator,
+        IndicatorSource,
         verbose_name=_("مصدر المؤشر"),
         on_delete=models.SET_NULL,
         null=True,
