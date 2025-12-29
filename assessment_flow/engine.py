@@ -11,6 +11,7 @@ from django.db.models import QuerySet
 from .models import AssessmentQuestion, AssessmentFlowRule, AssessmentOption
 
 log = logging.getLogger(__name__)
+_MISSING_PK = "<no-pk>"
 
 
 @dataclass
@@ -90,7 +91,8 @@ class RoutingEngine:
         available_rules.sort(key=lambda r: (r.priority, r.id))
 
         for rule in available_rules:
-            rule_dict = self._load_rule_dict(getattr(rule, "condition", None), getattr(rule, "pk", "<no-pk>"))
+            rule_pk = getattr(rule, "pk", _MISSING_PK)
+            rule_dict = self._load_rule_dict(getattr(rule, "condition", None), rule_pk)
             if not rule_dict:
                 continue
 
@@ -101,7 +103,7 @@ class RoutingEngine:
             except Exception as exc:
                 log.warning(
                     "Error evaluating routing rule %s: %s",
-                    getattr(rule, "pk", "<no-pk>"),
+                    rule_pk,
                     exc,
                     exc_info=True,
                 )
