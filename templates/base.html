@@ -18,9 +18,11 @@
         </div>
         <nav aria-label="Primary navigation">
             <ul>
-                <li><a href="{% url 'assessment_dashboard' %}">{% trans "لوحة التقييم" %}</a></li>
                 <li><a href="{% url 'survey_list' %}">{% trans "التقييم الذاتي" %}</a></li>
-                <li><a href="{% url 'survey_builder' %}">{% trans "منشئ الاستبيان" %}</a></li>
+                <li><a href="{% url 'survey_builder_initial_root' %}">{% trans "القائمة المبدئية" %}</a></li>
+                <li><a href="{% url 'survey_builder' %}?stage=final">{% trans "البناء النهائي" %}</a></li>
+                <li><a href="{% url 'survey_builder' %}?stage=routing">{% trans "قواعد التوجيه" %}</a></li>
+                <li><a href="{% url 'survey_builder' %}?stage=business">{% trans "قواعد الأعمال" %}</a></li>
             </ul>
         </nav>
         <div class="header-actions">

@@ -35,14 +35,23 @@
 body.dark-mode .stacked input,
 body.dark-mode .stacked textarea,
 body.dark-mode .stacked select {
-    background: #111827;
-    color: #e8e6e3;
-    border-color: #1f2937;
+    background: #ffffff;
+    color: #000000;
+    border-color: #e5e7eb;
 }
 
 .muted {
     color: var(--muted);
     margin: 0;
+}
+
+/* Ensure muted text is readable in both modes */
+body.dark-mode .muted {
+    color: #9ca3af; /* Lighter gray for dark mode */
+}
+
+body:not(.dark-mode) .muted {
+    color: #4b5563; /* Darker gray for light mode */
 }
 
 .section-actions {
@@ -174,4 +183,311 @@ body.dark-mode .preview-block {
     border: 1px solid rgba(14, 165, 233, 0.12);
     padding: 0.75rem;
     border-radius: 10px;
+}
+
+.workflow-grid {
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+}
+
+.workflow-card .workflow-head .page-title {
+    margin: 0.1rem 0;
+}
+
+.workflow-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.flow-step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.75rem;
+    padding: 0.85rem;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    background: rgba(7, 77, 49, 0.03);
+}
+
+.step-pill {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--foreground);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+}
+
+.step-title {
+    margin: 0;
+}
+
+.status-dot {
+    margin-top: 0.35rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    background: var(--sidebar);
+    border-radius: 999px;
+    font-size: 0.9rem;
+}
+
+.status-dot.status-complete {
+    background: rgba(7, 77, 49, 0.12);
+    color: var(--primary);
+}
+
+.intake-grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 1fr;
+    width: 100%; /* Changed from 75% to 100% */
+}
+
+.intake-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.75rem;
+    align-items: end;
+}
+
+.kanban {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.75rem;
+}
+
+.kanban-column {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 200px;
+}
+
+.kanban-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.status-pill {
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.status-pill.pending {
+    background: #fff7ed;
+    color: #9a3412;
+}
+
+.status-pill.in-progress {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.status-pill.success {
+    background: #ecfdf3;
+    color: #166534;
+}
+
+.kanban-list {
+    padding: 0.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.kanban-card {
+    background: rgba(7, 77, 49, 0.05);
+    border: 1px dashed rgba(7, 77, 49, 0.18);
+    border-radius: 10px;
+    padding: 0.75rem;
+    display: grid;
+    gap: 0.25rem;
+}
+
+.kanban-card .chip {
+    font-size: 0.85rem;
+    color: var(--muted-foreground);
+}
+
+.scoring-list {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.scoring-item {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.rule-palette {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+}
+
+.draggable-chip {
+    border: 1px solid var(--border);
+    background: var(--sidebar);
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    cursor: grab;
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.chip-source {
+    font-size: 0.8rem;
+    color: var(--muted-foreground);
+}
+
+.rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.75rem;
+}
+
+.dropzone {
+    min-height: 64px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 0.6rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    background: rgba(7, 77, 49, 0.03);
+}
+
+.drop-placeholder {
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
+}
+
+.drop-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.55rem;
+    border-radius: 999px;
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+}
+
+.drop-pill button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.dragging {
+    opacity: 0.7;
+}
+
+.builder-columns {
+    grid-template-columns: 2fr 1fr;
+}
+
+.drop-active {
+    outline: 2px dashed var(--primary);
+    outline-offset: 2px;
+}
+
+@media (max-width: 960px) {
+    .builder-columns {
+        grid-template-columns: 1fr;
+    }
+}
+
+.stage-nav {
+    margin-bottom: 1rem;
+}
+
+.stage-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.stage-tab {
+    border: 1px solid var(--border);
+    background: var(--sidebar);
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.stage-tab[aria-selected="true"] {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
+}
+
+.stage-panel.hidden {
+    display: none;
+}
+
+.stage-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* Modal styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+}
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-content {
+    background: var(--card);
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
 }

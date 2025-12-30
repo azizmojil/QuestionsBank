@@ -8,22 +8,88 @@
 {% endblock %}
 
 {% block content %}
-<section id="builder-workspace" class="builder-grid">
-    <form id="builder-form">
-        <label class="stacked">
-            {% trans "اختر إصدار استبيان" %}
-            <select id="survey-version-select">
-                <option value="" disabled selected>{% trans "اختر إصدارًا لتحميله" %}</option>
-                {% for version in survey_versions %}
-                <option value="{{ version.id }}">{{ version.label }}</option>
-                {% endfor %}
-            </select>
-        </label>
-        <div class="section-actions mt-3">
-            <button type="button" class="btn" id="add-section-btn">{% trans "إضافة قسم" %}</button>
+<section class="stage-nav card">
+    <div class="workflow-head">
+        <h1 class="page-title">{% trans "منشئ الاستبيان" %}</h1>
+    </div>
+    <div class="stage-tabs" role="tablist">
+        <a href="{% url 'survey_builder_initial_root' %}" class="stage-tab" role="tab" aria-selected="false">{% trans "القائمة المبدئية" %}</a>
+        <button class="stage-tab" data-stage-target="final" role="tab" aria-selected="true">{% trans "البناء النهائي" %}</button>
+        <button class="stage-tab" data-stage-target="routing" role="tab" aria-selected="false">{% trans "قواعد التوجيه" %}</button>
+        <button class="stage-tab" data-stage-target="business" role="tab" aria-selected="false">{% trans "قواعد الأعمال" %}</button>
+    </div>
+</section>
+
+<section id="builder-workspace" class="builder-grid builder-columns stage-panel" data-stage="final" aria-label="{% trans 'البناء النهائي' %}">
+    <div class="card">
+        <div class="section-head">
+            <div>
+                <h2 class="card-title">{% trans "البناء النهائي للاستبيان" %}</h2>
+                <p class="muted">{% trans "رتب الأقسام والأسئلة النهائية، ويمكنك إعادة ترتيبها بالسحب والإفلات." %}</p>
+            </div>
+            <div class="section-actions">
+                <button type="button" class="btn btn-secondary" id="add-section-btn">{% trans "إضافة قسم" %}</button>
+            </div>
         </div>
-        <div id="sections-container" class="section-container" aria-live="polite"></div>
-    </form>
+        <form id="builder-form">
+            <div id="sections-container" class="section-container" aria-live="polite"></div>
+        </form>
+        <div class="stage-actions">
+            <a href="{% url 'survey_builder_initial_root' %}" class="btn btn-secondary prev-stage">{% trans "السابق" %}</a>
+            <button type="button" class="btn next-stage" data-next-stage="routing">{% trans "التالي: قواعد التوجيه" %}</button>
+        </div>
+    </div>
+</section>
+
+<section class="builder-grid stage-panel hidden" data-stage="routing" aria-label="{% trans 'قواعد التوجيه' %}">
+    <div class="card rules-card">
+        <div class="section-head">
+            <div>
+                <h2 class="card-title">{% trans "قواعد التوجيه" %}</h2>
+                <p class="muted">{% trans "اسحب الأسئلة إلى مناطق القواعد لتحديد الانتقال." %}</p>
+            </div>
+        </div>
+        <div class="rule-palette" id="question-palette" aria-label="{% trans 'الأسئلة المتاحة للقواعد' %}"></div>
+        <div class="rules-grid">
+            <div class="rule-stack">
+                <h3>{% trans "شروط التوجيه" %}</h3>
+                <div class="dropzone" id="routing-conditions" aria-label="{% trans 'شروط التوجيه' %}"></div>
+            </div>
+            <div class="rule-stack">
+                <h3>{% trans "الأسئلة التالية" %}</h3>
+                <div class="dropzone" id="routing-targets" aria-label="{% trans 'الأسئلة التالية' %}"></div>
+            </div>
+        </div>
+        <div class="stage-actions">
+            <button type="button" class="btn btn-secondary prev-stage" data-prev-stage="final">{% trans "السابق" %}</button>
+            <button type="button" class="btn next-stage" data-next-stage="business">{% trans "التالي: قواعد الأعمال" %}</button>
+        </div>
+    </div>
+</section>
+
+<section class="builder-grid stage-panel hidden" data-stage="business" aria-label="{% trans 'قواعد الأعمال' %}">
+    <div class="card rules-card">
+        <div class="section-head">
+            <div>
+                <h2 class="card-title">{% trans "قواعد الأعمال" %}</h2>
+                <p class="muted">{% trans "حدد شروط العمل والإجراءات الناتجة باستخدام السحب والإفلات." %}</p>
+            </div>
+        </div>
+        <div class="rule-palette" aria-label="{% trans 'الأسئلة المتاحة للقواعد' %}" id="question-palette-business"></div>
+        <div class="rules-grid">
+            <div class="rule-stack">
+                <h3>{% trans "شروط العمل" %}</h3>
+                <div class="dropzone" id="business-conditions" aria-label="{% trans 'شروط العمل' %}"></div>
+            </div>
+            <div class="rule-stack">
+                <h3>{% trans "إجراءات العمل" %}</h3>
+                <div class="dropzone" id="business-actions" aria-label="{% trans 'إجراءات العمل' %}"></div>
+            </div>
+        </div>
+        <div class="stage-actions">
+            <button type="button" class="btn btn-secondary prev-stage" data-prev-stage="routing">{% trans "السابق" %}</button>
+        </div>
+    </div>
 </section>
 
 <template id="section-template">
@@ -39,8 +105,8 @@
             </div>
             <div class="section-controls">
                 <button type="button" class="btn btn-secondary remove-section">{% trans "حذف القسم" %}</button>
-                <button type="button" class="btn add-question">{% trans "إضافة سؤال" %}</button>
-                <button type="button" class="btn add-matrix-question">{% trans "إضافة سؤال مصفوفة" %}</button>
+                <button type="button" class="btn btn-secondary add-question">{% trans "إضافة سؤال" %}</button>
+                <button type="button" class="btn btn-secondary add-matrix-question">{% trans "إضافة سؤال مصفوفة" %}</button>
             </div>
         </div>
         <div class="questions-area">
@@ -153,7 +219,17 @@
     {
         "yes": "{% trans 'نعم' %}",
         "no": "{% trans 'لا' %}",
-        "untitled": "{% trans 'استبيان بدون عنوان' %}"
+        "untitled": "{% trans 'استبيان بدون عنوان' %}",
+        "manual": "{% trans 'يدوي' %}",
+        "bank": "{% trans 'بنك الأسئلة' %}",
+        "emptyColumn": "{% trans 'لا توجد عناصر في هذا العمود بعد' %}",
+        "emptyScoring": "{% trans 'لا توجد عناصر بانتظار التسجيل.' %}",
+        "markReviewed": "{% trans 'تمت المراجعة' %}",
+        "reviewed": "{% trans 'مُراجع' %}",
+        "routingConditions": "{% trans 'اسحب شروط التوجيه هنا' %}",
+        "routingTargets": "{% trans 'ضع الأسئلة التالية هنا' %}",
+        "businessConditions": "{% trans 'اسحب شروط الأعمال هنا' %}",
+        "businessActions": "{% trans 'ضع الإجراءات هنا' %}"
     }
 </script>
 {% endblock %}

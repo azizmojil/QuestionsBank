@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "منشئ الاستبيان - القائمة المبدئية" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'surveys/css/builder_initial.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="builder-grid workflow-grid stage-panel" data-stage="initial" aria-label="{% trans 'القائمة المبدئية' %}">
+    <div class="card intake-card">
+        <h2 class="card-title">{% trans "القائمة المبدئية للأسئلة" %}</h2>
+        <div class="intake-grid">
+            <label class="stacked">
+                {% trans "اختر إصدار استبيان" %}
+                <select id="survey-version-select">
+                    <option value="" disabled selected>{% trans "اختر إصدارًا لتحميله" %}</option>
+                    {% for version in survey_versions %}
+                    <option value="{{ version.id }}">{{ version.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="stacked">
+                {% trans "أسئلة من بنك الأسئلة" %}
+                <select id="bank-question-select">
+                    <option value="" disabled selected>{% trans "اختر سؤالاً" %}</option>
+                    {% for q in available_questions %}
+                    <option value="{{ q.id }}">{{ q.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="stacked">
+                {% trans "إدخال سؤال يدوياً" %}
+                <input type="text" id="manual-question-text" placeholder="{% trans 'أدخل نص السؤال' %}">
+            </label>
+        </div>
+    </div>
+</section>
+
+<div class="card box mt-3">
+    <div class="table-card">
+        <table class="data-table questions-table">
+            <thead class="table-header">
+                <tr>
+                    <th scope="col">{% trans "السؤال" %}</th>
+                    <th scope="col">{% trans "المصدر" %}</th>
+                    <th scope="col">{% trans "الإجراء" %}</th>
+                </tr>
+            </thead>
+            <tbody id="initial-questions-body" class="table-body">
+                <!-- Rows will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <div class="section-actions mt-3" style="padding: 1rem;">
+        <button type="button" class="btn btn-secondary" id="send-to-assessment-btn">{% trans "إرسال القائمة للتقييم" %}</button>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmation-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-content">
+        <h3>{% trans "تأكيد الإرسال" %}</h3>
+        <p>{% trans "هل أنت متأكد من إرسال القائمة للتقييم؟ لا يمكن التراجع عن هذا الإجراء." %}</p>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="cancel-submit">{% trans "إلغاء" %}</button>
+            <button type="button" class="btn btn-secondary" id="confirm-submit">{% trans "تأكيد وإرسال" %}</button>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="success-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-content">
+        <h3>{% trans "تم إرسال الأسئلة بنجاح" %}</h3>
+        <p>{% trans "تم تحديث إصدار الاستبيان بالقائمة المبدئية للأسئلة." %}</p>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="go-to-assessment-btn">{% trans "الانتقال للتقييم" %}</button>
+        </div>
+    </div>
+</div>
+
+{{ available_questions|json_script:"available-questions-data" }}
+{{ survey_structures|json_script:"survey-structures-data" }}
+<script id="builder-locale" type="application/json">
+    {}
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'surveys/js/builder_initial.js' %}"></script>
+{% endblock %}
