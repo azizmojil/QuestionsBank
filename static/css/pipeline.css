@@ -1,40 +1,79 @@
+.progress-card {
+  padding: 1.75rem;
+}
+
 .progress-steps {
   width: 100%;
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 16px;
-  direction: ltr; /* Force LTR for the progress bar layout */
+  max-width: 960px;
+  margin: 0 auto;
+  direction: ltr;
+  --brand-ink: var(--foreground);
+  --progress-primary-glow: color-mix(in srgb, var(--primary) 16%, transparent);
+  --progress-done-bg: color-mix(in srgb, var(--primary) 10%, transparent);
+  --progress-in-progress-bg: color-mix(in srgb, var(--ring) 14%, transparent);
+  --progress-not-started-bg: color-mix(in srgb, var(--foreground) 4%, transparent);
+  --progress-skipped-bg: color-mix(in srgb, var(--destructive) 10%, transparent);
+}
+
+.progress-steps__header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.progress-steps__eyebrow {
+  color: var(--ring);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.progress-steps__title {
+  color: var(--foreground);
+  font-size: 1.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.progress-steps__description {
+  color: var(--muted-foreground);
+  max-width: 640px;
+  margin: 0 auto;
+  line-height: 1.6;
 }
 
 .progress-steps__container {
   display: flex;
   justify-content: space-between;
-  margin-top: 70px;
   position: relative;
+  margin-top: 2rem;
+  gap: 0.5rem;
 }
 
 .progress-steps__container:before {
   content: '';
   position: absolute;
-  background: #f3e7f3;
+  background: var(--border);
   height: 4px;
   width: 100%;
   top: 50%;
   transform: translateY(-50%);
   left: 0;
   z-index: 0;
+  border-radius: 999px;
 }
 
 .progress-steps__filled-line {
   content: '';
   position: absolute;
-  background: #4a154b;
+  background: var(--primary);
   height: 4px;
   top: 50%;
   transform: translateY(-50%);
   left: 0;
   transition: width 0.4s ease;
   z-index: 0;
+  border-radius: 999px;
 }
 
 .progress-steps__item {
@@ -43,97 +82,177 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex: 1;
+  min-width: 90px;
 }
 
 .progress-steps__circle {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background-color: #ffffff;
-  border: 3px solid #f3e7f3;
-  transition: 0.4s ease;
+  background-color: var(--card);
+  border: 3px solid var(--border);
+  transition: 0.3s ease;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-weight: 700;
+  color: var(--muted-foreground);
+  box-shadow: var(--shadow-md);
 }
 
-.progress-steps__circle--completed {
-  border-color: #4a154b;
-  background-color: #4a154b; /* Optional: fill completed circles */
+.progress-steps__circle--done {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 4px 16px var(--progress-primary-glow);
+}
+
+.progress-steps__circle--in_progress {
+  border-color: var(--ring);
+  background-color: var(--accent);
+  color: var(--brand-ink);
+}
+
+.progress-steps__circle--not_started {
+  border-style: dashed;
+}
+
+.progress-steps__circle--skipped {
+  border-color: var(--destructive);
+  color: var(--destructive);
 }
 
 .progress-steps__count {
-  font-size: 19px;
-  color: #f3e7f3; /* Default color for incomplete steps */
-  font-weight: 600;
+  font-size: 1rem;
 }
 
-/* When circle is completed, change checkmark/count color if needed */
-.progress-steps__circle--completed .progress-steps__checkmark {
-    color: #ffffff;
-}
-
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .progress-steps__count {
-    font-size: 16px;
+    font-size: 0.95rem;
   }
 }
 
 .progress-steps__label-container {
-  position: absolute;
-  top: 50px; /* Adjusted to sit below circle */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px; /* Fixed width to prevent wrapping issues */
+  margin-top: 0.75rem;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
 .progress-steps__label {
-  font-size: 16px;
-  color: #4a154b;
-  font-weight: 500;
+  font-size: 1rem;
+  color: var(--foreground);
+  font-weight: 600;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .progress-steps__label {
-    font-size: 14px;
+    font-size: 0.95rem;
   }
 }
 
-.progress-steps__buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 80px;
+.progress-steps__status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1px solid transparent;
 }
 
-.progress-steps__button {
-  border-radius: 4px;
-  border: 0;
-  background: #4a154b;
-  color: #ffffff;
-  cursor: pointer;
-  padding: 10px 20px;
-  font-size: 16px;
-  transition: transform 0.1s ease;
+.progress-steps__status--done {
+  background: var(--progress-done-bg);
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
-.progress-steps__button:active {
-  transform: scale(0.98);
+.progress-steps__status--in_progress {
+  background: var(--progress-in-progress-bg);
+  color: var(--brand-ink);
+  border-color: var(--ring);
 }
 
-.progress-steps__button:disabled {
-  background: #f3e7f3;
-  color: #888;
-  cursor: not-allowed;
+.progress-steps__status--not_started {
+  background: var(--progress-not-started-bg);
+  color: var(--muted-foreground);
+  border-color: var(--border);
 }
 
-.progress-steps__checkmark {
-  font-size: 20px;
+.progress-steps__status--skipped {
+  background: var(--progress-skipped-bg);
+  color: var(--destructive);
+  border-color: var(--destructive);
+}
+
+.progress-steps__legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-top: 2rem;
+  color: var(--muted-foreground);
+}
+
+.progress-steps__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-weight: 600;
-  color: #ffffff;
-  /* Removed rotation transform as 'L' or checkmark icon usually handles orientation,
-     or use a proper icon font/svg */
-  transform: scaleX(-1) rotate(-45deg); /* Kept original transform logic if it was making a checkmark from 'L' */
+}
+
+.progress-steps__status-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
   display: inline-block;
-  margin-top: -4px; /* Minor adjustment */
+  border: 2px solid var(--border);
+}
+
+.progress-steps__status-dot--done {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.progress-steps__status-dot--in_progress {
+  background: var(--accent);
+  border-color: var(--ring);
+}
+
+.progress-steps__status-dot--not_started {
+  background: var(--card);
+  border-style: dashed;
+}
+
+.progress-steps__status-dot--skipped {
+  background: var(--progress-skipped-bg);
+  border-color: var(--destructive);
+}
+
+.progress-steps__icon {
+  font-size: 1.1rem;
+}
+
+.progress-steps__icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  fill: currentColor;
+}
+
+.progress-steps__icon--spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid var(--ring);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
