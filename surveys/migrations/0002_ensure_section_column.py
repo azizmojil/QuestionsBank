@@ -20,10 +20,10 @@ def ensure_section_column(apps, schema_editor):
         return
 
     SurveyQuestion = apps.get_model("surveys", "SurveyQuestion")
-    SurveySection = apps.get_model("surveys", "SurveySection")
+    apps.get_model("surveys", "SurveySection")
 
     field = models.ForeignKey(
-        SurveySection,
+        "surveys.SurveySection",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
