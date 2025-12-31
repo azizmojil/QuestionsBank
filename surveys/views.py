@@ -1,23 +1,32 @@
 import json
-from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from django.utils.translation import gettext_lazy as _
-from django.utils.translation import get_language
+import logging
+
+from django.db import transaction
 from django.db.models import Count
-from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404
+from django.utils.translation import get_language
+from django.utils.translation import gettext_lazy as _
+from django.views.decorators.http import require_POST
 
 from .models import SurveyQuestion, SurveyVersion, SurveySection
 from Rbank.models import ResponseGroup, ResponseType
 from Qbank.models import MatrixItemGroup, Questions, QuestionStaging
 from assessment_runs.models import AssessmentRun
 
+logger = logging.getLogger(__name__)
+
+
+def _active_language() -> str:
+    """Return a two-letter language code with a safe default."""
+    return (get_language() or "ar")[:2]
+
 
 def survey_builder(request):
     available_questions_qs = (
         SurveyQuestion.objects.select_related("survey_version")
         # .exclude(survey_version__status=SurveyVersion.Status.ARCHIVED) # Status field removed
-        .order_by("-created_at")
+        .order_by("-created_at")[:200]
     )
     available_questions = [
         {
@@ -140,61 +149,76 @@ def submit_final_questionnaire(request):
             )
 
         survey_version = get_object_or_404(SurveyVersion, pk=version_id)
-        current_lang = (get_language() or "ar")[:2]
+        current_lang = _active_language()
 
-        # Replace existing sections with the submitted structure
-        survey_version.sections.all().delete()
+        cloned_questions = {}
 
-        created_sections = 0
-        for idx, section_data in enumerate(sections_data):
-            title_value = section_data.get("title") or ""
-            description_value = section_data.get("description") or ""
+        with transaction.atomic():
+            # Replace existing sections with the submitted structure
+            survey_version.sections.all().delete()
 
-            section = SurveySection.objects.create(
-                survey_version=survey_version,
-                title_ar=section_data.get("title_ar") or (title_value if current_lang == "ar" else ""),
-                title_en=section_data.get("title_en") or (title_value if current_lang == "en" else ""),
-                description_ar=section_data.get("description_ar") or (description_value if current_lang == "ar" else ""),
-                description_en=section_data.get("description_en") or (description_value if current_lang == "en" else ""),
-                order=idx,
-            )
-            created_sections += 1
+            created_sections = 0
+            for idx, section_data in enumerate(sections_data):
+                title_value = section_data.get("title") or ""
+                description_value = section_data.get("description") or ""
 
-            for q_data in section_data.get("questions", []):
-                q_obj = None
-                qid = q_data.get("id") or q_data.get("question_id")
-                label = q_data.get("label")
+                section = SurveySection.objects.create(
+                    survey_version=survey_version,
+                    title_ar=section_data.get("title_ar") or (title_value if current_lang == "ar" else ""),
+                    title_en=section_data.get("title_en") or (title_value if current_lang == "en" else ""),
+                    description_ar=section_data.get("description_ar") or (description_value if current_lang == "ar" else ""),
+                    description_en=section_data.get("description_en") or (description_value if current_lang == "en" else ""),
+                    order=idx,
+                )
+                created_sections += 1
 
-                if qid:
-                    q_obj = SurveyQuestion.objects.filter(pk=qid).first()
-                    if q_obj and q_obj.survey_version_id != survey_version.id:
+                for q_data in section_data.get("questions", []):
+                    q_obj = None
+                    qid = q_data.get("id") or q_data.get("question_id")
+                    label = q_data.get("label")
+
+                    if qid:
+                        cached = cloned_questions.get(str(qid))
+                        if cached:
+                            q_obj = cached
+                        else:
+                            q_obj = SurveyQuestion.objects.filter(pk=qid).first()
+                            if q_obj and q_obj.survey_version_id != survey_version.id:
+                                q_obj = SurveyQuestion.objects.create(
+                                    survey_version=survey_version,
+                                    text_ar=q_obj.text_ar,
+                                    text_en=q_obj.text_en,
+                                    code=q_obj.code,
+                                    response_group=q_obj.response_group,
+                                    response_type=q_obj.response_type,
+                                    matrix_item_group=q_obj.matrix_item_group,
+                                    is_matrix=q_obj.is_matrix,
+                                    is_required=q_obj.is_required,
+                                )
+                            if q_obj:
+                                cloned_questions[str(qid)] = q_obj
+
+                    if q_obj is None and label:
+                        text_ar = label if current_lang == "ar" else ""
+                        text_en = label if current_lang == "en" else ""
                         q_obj = SurveyQuestion.objects.create(
                             survey_version=survey_version,
-                            text_ar=q_obj.text_ar,
-                            text_en=q_obj.text_en,
-                            code=q_obj.code,
+                            text_ar=text_ar,
+                            text_en=text_en,
                         )
+                        cloned_questions[str(q_obj.id)] = q_obj
 
-                if q_obj is None and label:
-                    text_ar = label if current_lang == "ar" else ""
-                    text_en = label if current_lang == "en" else ""
-                    q_obj = SurveyQuestion.objects.create(
-                        survey_version=survey_version,
-                        text_ar=text_ar,
-                        text_en=text_en,
-                    )
+                    if q_obj is None:
+                        continue
 
-                if q_obj is None:
-                    continue
-
-                q_obj.section = section
-                q_obj.response_group_id = q_data.get("response_group_id")
-                q_obj.response_type_id = q_data.get("response_type_id")
-                q_obj.matrix_item_group_id = q_data.get("matrix_item_group_id")
-                q_obj.is_matrix = bool(q_data.get("is_matrix"))
-                if "is_required" in q_data:
-                    q_obj.is_required = bool(q_data.get("is_required"))
-                q_obj.save()
+                    q_obj.section = section
+                    q_obj.response_group_id = q_data.get("response_group_id")
+                    q_obj.response_type_id = q_data.get("response_type_id")
+                    q_obj.matrix_item_group_id = q_data.get("matrix_item_group_id")
+                    q_obj.is_matrix = bool(q_data.get("is_matrix"))
+                    if "is_required" in q_data:
+                        q_obj.is_required = bool(q_data.get("is_required"))
+                    q_obj.save()
 
         return JsonResponse(
             {
@@ -203,9 +227,10 @@ def submit_final_questionnaire(request):
             }
         )
 
-    except Exception as exc:  # pragma: no cover - unexpected runtime errors
+    except Exception:  # pragma: no cover - unexpected runtime errors
+        logger.exception("Failed to submit final questionnaire")
         return JsonResponse(
-            {"status": "error", "message": str(exc)},
+            {"status": "error", "message": _("حدث خطأ غير متوقع")},
             status=500,
         )
 
@@ -326,7 +351,7 @@ def submit_initial_questions(request):
         if survey_version.questions.exists():
              return JsonResponse({'status': 'error', 'message': 'This survey version already has questions and cannot be modified.'}, status=403)
 
-        current_lang = get_language()
+        current_lang = _active_language()
         
         for q_data in questions:
             source = q_data.get('source')

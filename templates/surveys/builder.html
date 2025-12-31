@@ -30,6 +30,7 @@
             <button class="btn btn-primary" id="save-final-btn">{% trans "حفظ الاستبيان النهائي" %}</button>
         </div>
     </div>
+    <div id="save-status" class="save-status" role="status" aria-live="polite"></div>
 </div>
 
 <section class="builder-grid workflow-grid stage-panel" data-stage="final" aria-label="{% trans 'منشئ الاستبيان النهائي' %}">
@@ -58,6 +59,7 @@
     </div>
 </section>
 
+<div id="builder-config" data-submit-url="{% url 'submit_final_questionnaire' %}" class="sr-only"></div>
 {{ available_questions|json_script:"available-questions-data" }}
 {{ response_types|json_script:"response-types-data" }}
 {{ response_groups|json_script:"response-groups-data" }}

@@ -65,6 +65,28 @@
     border: 0;
 }
 
+.save-status {
+    min-height: 1.5rem;
+    font-weight: 600;
+}
+
+.save-status.visible {
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+}
+
+.save-status.is-success {
+    color: #0f5132;
+    background: #d1e7dd;
+    border: 1px solid #badbcc;
+}
+
+.save-status.is-error {
+    color: #842029;
+    background: #f8d7da;
+    border: 1px solid #f5c2c7;
+}
+
 .section-card {
     border: 1px solid var(--border);
     border-radius: 12px;

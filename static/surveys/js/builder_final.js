@@ -3,9 +3,12 @@
     const addSectionBtn = document.getElementById('add-section-btn');
     const saveBtn = document.getElementById('save-final-btn');
     const sectionsContainer = document.getElementById('sections-container');
+    const statusBox = document.getElementById('save-status');
 
     const localeEl = document.getElementById('builder-locale');
     const locale = localeEl ? JSON.parse(localeEl.textContent) : {};
+    const configEl = document.getElementById('builder-config');
+    const submitUrl = (configEl && configEl.dataset.submitUrl) || '/surveys/builder/final/submit/';
 
     const availableQuestionsEl = document.getElementById('available-questions-data');
     const responseTypesEl = document.getElementById('response-types-data');
@@ -23,6 +26,20 @@
     availableQuestions.forEach(q => paletteLookup.set(String(q.id), { ...q, id: String(q.id) }));
 
     const state = { sections: [] };
+
+    function setStatus(message, tone = 'info') {
+        if (!statusBox) return;
+        statusBox.textContent = message || '';
+        statusBox.className = 'save-status';
+        if (message) {
+            statusBox.classList.add('visible');
+            if (tone === 'error') {
+                statusBox.classList.add('is-error');
+            } else if (tone === 'success') {
+                statusBox.classList.add('is-success');
+            }
+        }
+    }
 
     function getQuestionLabel(questionId, fallback) {
         if (!questionId) return fallback || locale.manual_placeholder || '';
@@ -188,7 +205,7 @@
             const selectedId = questionSelect.value;
             const manualText = manualInput.value.trim();
             if (!selectedId && !manualText) {
-                alert(locale.add_question || 'Add a question first');
+                setStatus(locale.add_question || 'Add a question first', 'error');
                 return;
             }
 
@@ -204,6 +221,7 @@
             };
 
             section.questions.push(question);
+            setStatus('');
             renderSections();
         });
 
@@ -296,7 +314,7 @@
     function saveStructure() {
         const versionId = versionSelect.value;
         if (!versionId) {
-            alert(locale.error || 'Select a survey version first.');
+            setStatus(locale.error || 'Select a survey version first.', 'error');
             return;
         }
 
@@ -318,7 +336,7 @@
             })),
         };
 
-        fetch('/surveys/builder/final/submit/', {
+        fetch(submitUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -331,11 +349,11 @@
                 return res.json();
             })
             .then(() => {
-                alert(locale.saved || 'Saved');
+                setStatus(locale.saved || 'Saved', 'success');
             })
             .catch((err) => {
                 const message = err && err.message ? err.message : (locale.error || 'Error');
-                alert(message);
+                setStatus(message, 'error');
             });
     }
 
