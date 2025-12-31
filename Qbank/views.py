@@ -129,4 +129,5 @@ def save_translation(request):
 
 
 def pipeline_overview(request):
+    """Render the pipeline visualization page."""
     return render(request, 'Qbank/pipeline.html')
