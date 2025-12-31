@@ -8,10 +8,10 @@
   const connectorColor = (getComputedStyle(document.documentElement).getPropertyValue('--pipeline-connector') || '').trim() || '#d6c08c';
 
   const defaultLabels = {
-    done: 'Done',
-    in_progress: 'In progress',
-    blocked: 'Blocked',
-    not_started: 'Not started',
+    done: 'مكتمل',
+    in_progress: 'قيد التنفيذ',
+    blocked: 'محجوب',
+    not_started: 'لم يبدأ',
   };
 
   const labelMap = { ...defaultLabels, ...statusLabels };

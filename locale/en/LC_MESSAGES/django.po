@@ -68,16 +68,14 @@ msgid "الأسئلة"
 msgstr "Questions"
 
 #: .\Qbank\models.py:40
-#, fuzzy
 #| msgid "اسم المسح [عربية]"
 msgid "السؤال المقترح [عربية]"
-msgstr "Survey name [Arabic]"
+msgstr "Proposed question [Arabic]"
 
 #: .\Qbank\models.py:41
-#, fuzzy
 #| msgid "السؤال [إنجليزية]"
 msgid "السؤال المقترح [إنجليزية]"
-msgstr "Question [English]"
+msgstr "Proposed question [English]"
 
 #: .\Qbank\models.py:47 .\surveys\models.py:92
 #: .\templates\Qbank\linguistic_review.html:21
@@ -93,19 +91,17 @@ msgstr "Survey version"
 
 #: .\Qbank\models.py:56
 msgid "مرسل للترجمة"
-msgstr ""
+msgstr "Sent for translation"
 
 #: .\Qbank\models.py:64
-#, fuzzy
 #| msgid "تاريخ الإصدار"
 msgid "سؤال قيد الإعداد"
-msgstr "Version date"
+msgstr "Staged question"
 
 #: .\Qbank\models.py:65
-#, fuzzy
 #| msgid "تاريخ الإصدار"
 msgid "أسئلة قيد الإعداد"
-msgstr "Version date"
+msgstr "Staged questions"
 
 #: .\Qbank\models.py:70
 msgid "العنصر [عربية]"
@@ -137,10 +133,9 @@ msgid "مكتمل"
 msgstr "Complete"
 
 #: .\Qbank\views.py:212
-#, fuzzy
 #| msgid "قواعد التصنيف"
 msgid "قيد التنفيذ"
-msgstr "Classification Rules"
+msgstr "In progress"
 
 #: .\Qbank\views.py:213
 #: .\templates\assessment_runs\survey_question_list.html:52
@@ -149,7 +144,7 @@ msgstr "Not started"
 
 #: .\Qbank\views.py:214
 msgid "محجوب"
-msgstr ""
+msgstr "Blocked"
 
 #: .\QuestionsBank\settings.py:114
 msgid "Arabic"
@@ -389,28 +384,24 @@ msgid "التصنيف"
 msgstr "Classification"
 
 #: .\assessment_runs\models.py:65
-#, fuzzy
 #| msgid "التوضيح [عربية]"
 msgid "التصنيف [عربية]"
-msgstr "Explanation [Arabic]"
+msgstr "Classification [Arabic]"
 
 #: .\assessment_runs\models.py:66
-#, fuzzy
 #| msgid "التوضيح [إنجليزية]"
 msgid "التصنيف [إنجليزية]"
-msgstr "Explanation [English]"
+msgstr "Classification [English]"
 
 #: .\assessment_runs\models.py:69
-#, fuzzy
 #| msgid "التصنيف"
 msgid "تصنيف"
 msgstr "Classification"
 
 #: .\assessment_runs\models.py:70
-#, fuzzy
 #| msgid "التصنيف"
 msgid "التصنيفات"
-msgstr "Classification"
+msgstr "Classifications"
 
 #: .\assessment_runs\models.py:81
 msgid "قاعدة تصنيف"
@@ -670,13 +661,12 @@ msgstr "Section label"
 #: .\templates\Qbank\linguistic_review.html:4
 #: .\templates\Qbank\linguistic_review.html:13 .\templates\base.html:24
 msgid "تدقيق لغوي"
-msgstr ""
+msgstr "Linguistic review"
 
 #: .\templates\Qbank\linguistic_review.html:22
-#, fuzzy
 #| msgid "تاريخ الإنشاء"
 msgid "تاريخ الإضافة"
-msgstr "Created At"
+msgstr "Date added"
 
 #: .\templates\Qbank\linguistic_review.html:23
 #: .\templates\Qbank\translation_queue.html:24
@@ -688,94 +678,85 @@ msgstr "Action"
 
 #: .\templates\Qbank\linguistic_review.html:43
 msgid "تعديل"
-msgstr ""
+msgstr "Edit"
 
 #: .\templates\Qbank\linguistic_review.html:47
-#, fuzzy
 #| msgid "سؤال التقييم"
 msgid "إرسال للترجمة"
-msgstr "Submit assessment"
+msgstr "Send for translation"
 
 #: .\templates\Qbank\linguistic_review.html:54
-#, fuzzy
 #| msgid "اختر استبياناً لبدء التقييم."
 msgid "لا توجد أسئلة قيد الإعداد حالياً."
-msgstr "Choose a survey to start assessing."
+msgstr "No questions are currently in preparation."
 
 #: .\templates\Qbank\linguistic_review.html:65
-#, fuzzy
 #| msgid "تفاصيل السؤال"
 msgid "تعديل السؤال"
-msgstr "Question Details"
+msgstr "Edit question"
 
 #: .\templates\Qbank\linguistic_review.html:72
 #: .\templates\Qbank\linguistic_review.html:85
 #: .\templates\surveys\builder_initial.html:67
 msgid "إلغاء"
-msgstr ""
+msgstr "Cancel"
 
 #: .\templates\Qbank\linguistic_review.html:73
-#, fuzzy
 #| msgid "تاريخ التحديث"
 msgid "حفظ التعديلات"
-msgstr "Updated At"
+msgstr "Save changes"
 
 #: .\templates\Qbank\linguistic_review.html:82
 msgid "تأكيد الإرسال للترجمة"
-msgstr ""
+msgstr "Confirm sending for translation"
 
 #: .\templates\Qbank\linguistic_review.html:83
 msgid "هل أنت متأكد من إرسال هذا السؤال للترجمة؟"
-msgstr ""
+msgstr "Are you sure you want to send this question for translation?"
 
 #: .\templates\Qbank\linguistic_review.html:86
 msgid "تأكيد"
-msgstr ""
+msgstr "Confirm"
 
 #: .\templates\Qbank\linguistic_review.html:94
 #: .\templates\Qbank\translation_queue.html:58
 msgid "تم بنجاح"
-msgstr ""
+msgstr "Success"
 
 #: .\templates\Qbank\linguistic_review.html:97
 #: .\templates\Qbank\translation_queue.html:61
 msgid "إغلاق"
-msgstr ""
+msgstr "Close"
 
 #: .\templates\Qbank\linguistic_review.html:182
-#, fuzzy
 #| msgid "تفاصيل السؤال"
 msgid "تم تحديث السؤال بنجاح."
-msgstr "Question Details"
+msgstr "Question updated successfully."
 
 #: .\templates\Qbank\linguistic_review.html:223
 msgid "تم إرسال السؤال للترجمة بنجاح."
-msgstr ""
+msgstr "The question was sent for translation successfully."
 
 #: .\templates\Qbank\translation_queue.html:4
 #: .\templates\Qbank\translation_queue.html:13 .\templates\base.html:25
-#, fuzzy
 #| msgid "قائمة المؤشرات"
 msgid "قائمة الترجمة"
-msgstr "Indicator list"
+msgstr "Translation queue"
 
 #: .\templates\Qbank\translation_queue.html:20
-#, fuzzy
 #| msgid "السؤال [عربية]"
 msgid "السؤال (عربي)"
-msgstr "Question [Arabic]"
+msgstr "Question (Arabic)"
 
 #: .\templates\Qbank\translation_queue.html:21
-#, fuzzy
 #| msgid "السؤال [إنجليزية]"
 msgid "السؤال (إنجليزي)"
-msgstr "Question [English]"
+msgstr "Question (English)"
 
 #: .\templates\Qbank\translation_queue.html:23
-#, fuzzy
 #| msgid "تاريخ الإصدار"
 msgid "تاريخ الإرسال"
-msgstr "Version date"
+msgstr "Sent at"
 
 #: .\templates\Qbank\translation_queue.html:41
 #: .\templates\assessment_runs\assessment_page.html:31
@@ -783,14 +764,13 @@ msgid "إرسال"
 msgstr "Submit"
 
 #: .\templates\Qbank\translation_queue.html:47
-#, fuzzy
 #| msgid "اختر استبياناً لبدء التقييم."
 msgid "لا توجد أسئلة في قائمة الترجمة حالياً."
-msgstr "Choose a survey to start assessing."
+msgstr "There are no questions in the translation queue right now."
 
 #: .\templates\Qbank\translation_queue.html:59
 msgid "تم حفظ الترجمة بنجاح."
-msgstr ""
+msgstr "Translation saved successfully."
 
 #: .\templates\assessment_runs\_options_renderer.html:14
 msgid "ابحث للإضافة..."
@@ -845,52 +825,44 @@ msgid "يرجى اختيار خيار واحد على الأقل."
 msgstr "Please select at least one option."
 
 #: .\templates\assessment_runs\dashboard.html:4
-#, fuzzy
 #| msgid "نتيجة التقييم"
 msgid "لوحة التقييم"
 msgstr "Assessment dashboard"
 
 #: .\templates\assessment_runs\dashboard.html:17
-#, fuzzy
 #| msgid "رمز الإصدار"
 msgid "الإصدارات"
 msgstr "Versions"
 
 #: .\templates\assessment_runs\dashboard.html:32
-#, fuzzy
 #| msgid "اختر إصداراً"
 msgid "أحدث إصدار"
-msgstr "Select a version"
+msgstr "Latest version"
 
 #: .\templates\assessment_runs\dashboard.html:33
-#, fuzzy
 #| msgid "الأسئلة"
 msgid "عدد الأسئلة"
-msgstr "Questions"
+msgstr "Number of questions"
 
 #: .\templates\assessment_runs\dashboard.html:45
-#, fuzzy
 #| msgid "تاريخ الإصدار"
 msgid "لا يوجد إصدار"
-msgstr "Version date"
+msgstr "No version available"
 
 #: .\templates\assessment_runs\dashboard.html:51
-#, fuzzy
 #| msgid "رمز الإصدار"
 msgid "عرض الإصدارات"
-msgstr "Version Label"
+msgstr "View versions"
 
 #: .\templates\assessment_runs\dashboard.html:53
-#, fuzzy
 #| msgid "تاريخ إنشاء آخر إصدار"
 msgid "بانتظار إنشاء إصدار"
-msgstr "Last version creation date"
+msgstr "Waiting for a version to be created"
 
 #: .\templates\assessment_runs\dashboard.html:59
-#, fuzzy
 #| msgid "اختر استبياناً لبدء التقييم."
 msgid "لا توجد استبيانات متاحة حالياً."
-msgstr "Choose a survey to start assessing."
+msgstr "There are no surveys available right now."
 
 #: .\templates\assessment_runs\survey_list.html:4
 msgid "الاستبيانات - منصة QnR"
@@ -907,7 +879,6 @@ msgid "أسئلة الاستبيان - %(version_label)s"
 msgstr "Survey Questions - %(version_label)s"
 
 #: .\templates\assessment_runs\survey_question_list.html:23
-#, fuzzy
 #| msgid "سؤال التقييم"
 msgid "إرسال التقييم"
 msgstr "Submit assessment"
@@ -918,13 +889,11 @@ msgid "%(completed)s من %(total)s أسئلة مكتملة"
 msgstr "%(completed)s of %(total)s questions completed"
 
 #: .\templates\assessment_runs\survey_question_list.html:59
-#, fuzzy
 #| msgid "سؤال إعادة التقييم"
 msgid "إعادة التقييم"
-msgstr "Reevaluation"
+msgstr "Reassessment"
 
 #: .\templates\assessment_runs\survey_question_list.html:62
-#, fuzzy
 #| msgid "ابدأ التقييم"
 msgid "بدء التقييم"
 msgstr "Start assessment"
@@ -952,39 +921,34 @@ msgid "التاريخ"
 msgstr "Date"
 
 #: .\templates\assessment_runs\survey_version_list.html:28
-#, fuzzy
 #| msgid "الحالة"
 msgid "الحالة:"
-msgstr "Status"
+msgstr "Status:"
 
 #: .\templates\base.html:21
-#, fuzzy
 #| msgid "مسار التقييم"
 msgid "مسار الاعتماد"
-msgstr "Assessment Flow"
+msgstr "Accreditation pipeline"
 
 #: .\templates\base.html:22
 msgid "التقييم الذاتي"
-msgstr "Self Assessment"
+msgstr "Self assessment"
 
 #: .\templates\base.html:23 .\templates\surveys\builder_initial.html:11
-#, fuzzy
 #| msgid "قائمة المؤشرات"
 msgid "القائمة المبدئية"
-msgstr "Indicator list"
+msgstr "Initial list"
 
 #: .\templates\base.html:26 .\templates\surveys\builder_routing.html:11
 #: .\templates\surveys\builder_routing.html:15
-#, fuzzy
 #| msgid "قواعد التصنيف"
 msgid "قواعد التوجيه"
-msgstr "Classification Rules"
+msgstr "Routing rules"
 
 #: .\templates\base.html:27
-#, fuzzy
 #| msgid "قواعد التصنيف"
 msgid "قواعد الأعمال"
-msgstr "Classification Rules"
+msgstr "Business rules"
 
 #: .\templates\base.html:36
 msgid "التبديل إلى الإنجليزية"
@@ -1003,7 +967,6 @@ msgid "التبديل إلى الوضع الفاتح"
 msgstr "Switch to light mode"
 
 #: .\templates\home.html:4
-#, fuzzy
 #| msgid "تسجيل الدخول"
 msgid "تسجيل الدخول - بنك الأسئلة"
 msgstr "Login - Questions Bank"
@@ -1021,13 +984,11 @@ msgid "اسم المستخدم أو كلمة المرور غير صحيحة."
 msgstr "Invalid username or password."
 
 #: .\templates\home.html:27
-#, fuzzy
 #| msgid "اسم المؤشر"
 msgid "اسم المستخدم"
 msgstr "Username"
 
 #: .\templates\home.html:32
-#, fuzzy
 #| msgid "مجموعة المصفوفة"
 msgid "كلمة المرور"
 msgstr "Password"
@@ -1042,57 +1003,54 @@ msgstr "Request access"
 
 #: .\templates\pipeline.html:4
 msgid "Pipeline"
-msgstr ""
+msgstr "Pipeline"
 
 #: .\templates\pipeline.html:26
 msgid "Survey creation"
-msgstr ""
+msgstr "Survey creation"
 
 #: .\templates\pipeline.html:34
 msgid "Self assessment"
-msgstr ""
+msgstr "Self assessment"
 
 #: .\templates\pipeline.html:42
 msgid "Routing"
-msgstr ""
+msgstr "Routing"
 
 #: .\templates\pipeline.html:50
 msgid "Business"
-msgstr ""
+msgstr "Business"
 
 #: .\templates\pipeline.html:58
 msgid "Lang review"
-msgstr ""
+msgstr "Language review"
 
 #: .\templates\pipeline.html:66
 msgid "Translation"
-msgstr ""
+msgstr "Translation"
 
 #: .\templates\pipeline.html:74
 msgid "Approval"
-msgstr ""
+msgstr "Approval"
 
 #: .\templates\pipeline.html:82
 msgid "QBank"
-msgstr ""
+msgstr "QBank"
 
 #: .\templates\pipeline.html:91
-#, fuzzy
 #| msgid "اختر استبياناً لبدء التقييم."
 msgid "لا توجد إصدارات متاحة حالياً."
-msgstr "Choose a survey to start assessing."
+msgstr "No versions available right now."
 
 #: .\templates\surveys\builder_initial.html:4
-#, fuzzy
 #| msgid "منشئ الاستبيان - منصة QnR"
 msgid "منشئ الاستبيان - القائمة المبدئية"
-msgstr "Survey Builder - Qbank Platform"
+msgstr "Survey builder - initial list"
 
 #: .\templates\surveys\builder_initial.html:13
-#, fuzzy
 #| msgid "قائمة المؤشرات"
 msgid "القائمة المبدئية للأسئلة"
-msgstr "Indicator list"
+msgstr "Initial list of questions"
 
 #: .\templates\surveys\builder_initial.html:16
 msgid "اختر إصدار استبيان"
@@ -1103,97 +1061,98 @@ msgid "اختر إصدارًا لتحميله"
 msgstr "Select a version"
 
 #: .\templates\surveys\builder_initial.html:25
-#, fuzzy
 #| msgid "تسجيل الدخول"
 msgid "أسئلة من بنك الأسئلة"
-msgstr "Login - Questions Bank"
+msgstr "Questions from the Question Bank"
 
 #: .\templates\surveys\builder_initial.html:27
-#, fuzzy
 #| msgid "إضافة سؤال"
 msgid "اختر سؤالاً"
-msgstr "Add question"
+msgstr "Select a question"
 
 #: .\templates\surveys\builder_initial.html:34
-#, fuzzy
 #| msgid "إضافة سؤال مصفوفة"
 msgid "إدخال سؤال يدوياً"
-msgstr "Add matrix question"
+msgstr "Enter a question manually"
 
 #: .\templates\surveys\builder_initial.html:35
-#, fuzzy
 #| msgid "إلى السؤال"
 msgid "أدخل نص السؤال"
-msgstr "To Question"
+msgstr "Enter the question text"
 
 #: .\templates\surveys\builder_initial.html:47
-#, fuzzy
 #| msgid "مصدر المؤشر"
 msgid "المصدر"
-msgstr "Indicator Source"
+msgstr "Source"
 
 #: .\templates\surveys\builder_initial.html:57
-#, fuzzy
 #| msgid "سؤال التقييم"
 msgid "إرسال القائمة للتقييم"
-msgstr "Submit assessment"
+msgstr "Send the list for assessment"
 
 #: .\templates\surveys\builder_initial.html:64
-#, fuzzy
 #| msgid "تاريخ الإصدار"
 msgid "تأكيد الإرسال"
-msgstr "Version date"
+msgstr "Confirm submission"
 
 #: .\templates\surveys\builder_initial.html:65
 msgid "هل أنت متأكد من إرسال القائمة للتقييم؟ لا يمكن التراجع عن هذا الإجراء."
 msgstr ""
+"Are you sure you want to send the list for assessment? This action cannot be"
+" undone."
 
 #: .\templates\surveys\builder_initial.html:68
-#, fuzzy
 #| msgid "إرسال"
 msgid "تأكيد وإرسال"
-msgstr "Submit"
+msgstr "Confirm and submit"
 
 #: .\templates\surveys\builder_initial.html:76
 msgid "تم إرسال الأسئلة بنجاح"
-msgstr ""
+msgstr "Questions sent successfully."
 
 #: .\templates\surveys\builder_initial.html:77
 msgid "تم تحديث إصدار الاستبيان بالقائمة المبدئية للأسئلة."
-msgstr ""
+msgstr "Survey version updated with the initial question list."
 
 #: .\templates\surveys\builder_initial.html:79
-#, fuzzy
 #| msgid "اكتمل التقييم"
 msgid "الانتقال للتقييم"
-msgstr "Assessment Complete"
+msgstr "Go to assessment"
 
 #: .\templates\surveys\builder_routing.html:4
-#, fuzzy
 #| msgid "منشئ الاستبيان - منصة QnR"
 msgid "منشئ الاستبيان - قواعد التوجيه"
-msgstr "Survey Builder - Qbank Platform"
+msgstr "Survey builder - routing rules"
 
 #: .\templates\surveys\builder_routing.html:16
 msgid "اسحب الأسئلة إلى مناطق القواعد لتحديد الانتقال."
-msgstr ""
+msgstr "Drag questions into the rule areas to define the transition."
 
 #: .\templates\surveys\builder_routing.html:19
-#, fuzzy
 #| msgid "لا توجد أسئلة متاحة بعد"
 msgid "الأسئلة المتاحة للقواعد"
-msgstr "No questions available yet"
+msgstr "Questions available for rules"
 
 #: .\templates\surveys\builder_routing.html:22
 #: .\templates\surveys\builder_routing.html:23
-#, fuzzy
 #| msgid "شروط التصنيف"
 msgid "شروط التوجيه"
-msgstr "Classification Conditions"
+msgstr "Routing conditions"
 
 #: .\templates\surveys\builder_routing.html:26
 #: .\templates\surveys\builder_routing.html:27
-#, fuzzy
 #| msgid "أسئلة التقييم"
 msgid "الأسئلة التالية"
-msgstr "Assessment Questions"
+msgstr "Next questions"
+
+msgid "إنشاء الاستبيان"
+msgstr "Survey creation"
+
+msgid "التوجيه"
+msgstr "Routing"
+
+msgid "الترجمة"
+msgstr "Translation"
+
+msgid "الاعتماد"
+msgstr "Approval"
