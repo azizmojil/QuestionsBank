@@ -54,10 +54,21 @@ class SurveyQuestionInline(admin.TabularInline):
         "text_en",
         "code",
     )
+    readonly_fields = ("text_ar", "text_en", "code")
+    
     # Make 'text' a textarea
     formfield_overrides = {
         models.TextField: {'widget': admin.widgets.AdminTextareaWidget(attrs={'rows': 1})},
     }
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return True
 
 
 @admin.register(SurveyVersion)

@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "قائمة الترجمة" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'surveys/css/builder_initial.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="card box">
+    <div class="section-head">
+        <h1 class="page-title">{% trans "قائمة الترجمة" %}</h1>
+    </div>
+
+    <div class="table-card">
+        <table class="data-table">
+            <thead class="table-header">
+                <tr>
+                    <th scope="col">{% trans "السؤال (عربي)" %}</th>
+                    <th scope="col">{% trans "السؤال (إنجليزي)" %}</th>
+                    <th scope="col">{% trans "الاستبيان" %}</th>
+                    <th scope="col">{% trans "تاريخ الإرسال" %}</th>
+                    <th scope="col">{% trans "الإجراء" %}</th>
+                </tr>
+            </thead>
+            <tbody class="table-body">
+                {% for question in questions %}
+                <tr class="table-row" data-id="{{ question.id }}">
+                    <td>{{ question.text_ar }}</td>
+                    <td>
+                        <input type="text" class="text-en-input" value="{{ question.text_en }}" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border);">
+                    </td>
+                    <td>
+                        <div>{{ question.survey.display_name }}</div>
+                        <div class="muted" style="font-size: 0.85rem;">{{ question.survey_version.version_label }}</div>
+                    </td>
+                    <td>{{ question.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm send-btn">
+                            {% trans "إرسال" %}
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">{% trans "لا توجد أسئلة في قائمة الترجمة حالياً." %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="success-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-content">
+        <h3>{% trans "تم بنجاح" %}</h3>
+        <p>{% trans "تم حفظ الترجمة بنجاح." %}</p>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="close-success">{% trans "إغلاق" %}</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const successModal = document.getElementById('success-modal');
+        const closeSuccessBtn = document.getElementById('close-success');
+
+        function showModal(modal) {
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function hideModal(modal) {
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.querySelectorAll('.send-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const row = e.target.closest('tr');
+                const id = row.dataset.id;
+                const textEn = row.querySelector('.text-en-input').value;
+
+                fetch('{% url "save_translation" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        text_en: textEn
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showModal(successModal);
+                    } else {
+                        alert('Error saving translation: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred.');
+                });
+            });
+        });
+
+        closeSuccessBtn.addEventListener('click', () => {
+            hideModal(successModal);
+            // Optionally reload to reflect changes or remove row if needed
+            // window.location.reload();
+        });
+    });
+</script>
+{% endblock %}

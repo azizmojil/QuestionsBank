@@ -19,12 +19,15 @@ from django.contrib import admin
 from django.urls import path, include
 
 from Qbank import views as qnr_views
+from surveys import views as survey_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', qnr_views.home, name='home'),
+    path('qbank/', include('Qbank.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('assessment/', include('assessment_runs.urls')),
     path('surveys/', include('surveys.urls')),
+    path('initialbuilder/', survey_views.survey_builder_initial, name='survey_builder_initial_root'),
     path('i18n/set-language/', set_language, name='set_language'),
 ]

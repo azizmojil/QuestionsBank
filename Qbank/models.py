@@ -3,6 +3,7 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
 from Rbank.models import ResponseGroup
+from surveys.models import Survey, SurveyVersion
 
 
 class Questions(models.Model):
@@ -30,6 +31,38 @@ class Questions(models.Model):
     class Meta:
         verbose_name = _("سؤال")
         verbose_name_plural = _("الأسئلة")
+
+
+class QuestionStaging(models.Model):
+    """
+    Staging area for manually entered questions from the initial builder.
+    """
+    text_ar = models.TextField(blank=True, verbose_name=_("السؤال المقترح [عربية]"))
+    text_en = models.TextField(blank=True, verbose_name=_("السؤال المقترح [إنجليزية]"))
+    
+    survey = models.ForeignKey(
+        Survey,
+        on_delete=models.CASCADE,
+        related_name="staged_questions",
+        verbose_name=_("الاستبيان")
+    )
+    survey_version = models.ForeignKey(
+        SurveyVersion,
+        on_delete=models.CASCADE,
+        related_name="staged_questions",
+        verbose_name=_("إصدار الاستبيان")
+    )
+
+    is_sent_for_translation = models.BooleanField(default=False, verbose_name=_("مرسل للترجمة"))
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.text_ar or self.text_en} ({self.survey_version})"
+
+    class Meta:
+        verbose_name = _("سؤال قيد الإعداد")
+        verbose_name_plural = _("أسئلة قيد الإعداد")
 
 
 class MatrixItem(models.Model):

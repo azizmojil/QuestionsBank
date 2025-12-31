@@ -7,7 +7,7 @@ import os
 import uuid
 
 from surveys.models import SurveyQuestion, SurveyVersion
-from assessment_flow.models import AssessmentOption, get_assessment_file_path
+from assessment_flow.models import AssessmentOption
 
 User = get_user_model()
 
