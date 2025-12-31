@@ -8,6 +8,35 @@
     overflow: hidden;
 }
 
+.pipeline-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--accent);
+    color: var(--accent-foreground);
+    border: 1px solid var(--ring);
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.pipeline-hero-title {
+    margin: 0.25rem 0 0.35rem;
+}
+
+.pipeline-hero-subtitle {
+    margin: 0 0 0.75rem;
+    color: var(--muted-foreground);
+}
+
+.pipeline-hero-actions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
 .pipeline-node {
     text-align: center;
     padding: 1.5rem;
@@ -89,7 +118,7 @@ html[dir="rtl"] .pipeline-lane::before {
 }
 
 .path-three {
-    background: #fffaf0;
+    background: var(--muted);
     border-color: var(--ring);
 }
 
@@ -102,6 +131,12 @@ html[dir="rtl"] .pipeline-lane::before {
     background: var(--card);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
+}
+
+.pipeline-node:focus,
+.step-card:focus {
+    outline: 2px solid var(--ring);
+    outline-offset: 4px;
 }
 
 .step-card::before {
@@ -175,25 +210,10 @@ html[dir="rtl"] .step-card::before {
 }
 
 .final-pill {
-    background: #0b2f21;
-    color: #fff;
-    border-color: #0b2f21;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
     margin-bottom: 0.35rem;
-}
-
-body.dark-mode .final-pill,
-.dark .final-pill {
-    background: #0b2f21;
-    color: #fff;
-}
-
-.hero-title {
-    margin: 0.25rem 0 0.35rem;
-}
-
-.hero-subtitle {
-    margin: 0 0 0.75rem;
-    color: var(--muted-foreground);
 }
 
 .pipeline-chip {
