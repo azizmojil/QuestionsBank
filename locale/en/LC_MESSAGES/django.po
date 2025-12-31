@@ -227,12 +227,12 @@ msgid "سؤال مصدر الخيارات الديناميكي"
 msgstr "Dynamic Option Source Question"
 
 #: .\assessment_flow\models.py:62 .\assessment_flow\models.py:183
-msgid "Created At"
-msgstr ""
+msgid "تاريخ الإنشاء"
+msgstr "Created At"
 
 #: .\assessment_flow\models.py:63 .\assessment_flow\models.py:184
-msgid "Updated At"
-msgstr ""
+msgid "تاريخ التحديث"
+msgstr "Updated At"
 
 #: .\assessment_flow\models.py:67
 msgid "سؤال التقييم"
@@ -248,27 +248,27 @@ msgstr "Response option"
 
 #: .\assessment_flow\models.py:99
 msgid "إدخال نصي حر"
-msgstr ""
+msgstr "Free text input"
 
 #: .\assessment_flow\models.py:100
 msgid "إدخال رقمي"
-msgstr ""
+msgstr "Numeric input"
 
 #: .\assessment_flow\models.py:101
 msgid "إدخال رابط"
-msgstr ""
+msgstr "URL input"
 
 #: .\assessment_flow\models.py:119
-msgid "Assessment Option"
-msgstr ""
+msgid "خيار التقييم"
+msgstr "Assessment Option"
 
 #: .\assessment_flow\models.py:120
-msgid "Assessment Options"
-msgstr ""
+msgid "خيارات التقييم"
+msgstr "Assessment Options"
 
 #: .\assessment_flow\models.py:149
-msgid "To Question"
-msgstr ""
+msgid "إلى السؤال"
+msgstr "To Question"
 
 #: .\assessment_flow\models.py:154
 msgid "الشرط"
@@ -281,12 +281,12 @@ msgstr ""
 "'NEXT_Q_CODE'\""
 
 #: .\assessment_flow\models.py:165
-msgid "Assessment Flow Rule"
-msgstr ""
+msgid "قاعدة مسار التقييم"
+msgstr "Assessment Flow Rule"
 
 #: .\assessment_flow\models.py:166
-msgid "Assessment Flow Rules"
-msgstr ""
+msgid "قواعد مسار التقييم"
+msgstr "Assessment Flow Rules"
 
 #: .\assessment_flow\models.py:179 .\assessment_runs\models.py:38
 #: .\surveys\admin.py:12 .\surveys\models.py:102 .\surveys\models.py:205
@@ -371,7 +371,7 @@ msgstr "Classification Conditions"
 
 #: .\assessment_runs\models.py:93
 msgid "القاعدة (JSON)"
-msgstr ""
+msgstr "Rule (JSON)"
 
 #: .\assessment_runs\models.py:94
 msgid "منطق JSON يتم تقييمه بواسطة محرك التصنيف."
@@ -610,8 +610,8 @@ msgid "تاريخ الإنشاء"
 msgstr "Created"
 
 #: .\surveys\models.py:178
-msgid "Duplicate version label for this survey."
-msgstr ""
+msgid "تسمية إصدار مكررة لهذا الاستبيان."
+msgstr "Duplicate version label for this survey."
 
 #: .\surveys\models.py:191
 msgid "سؤال الاستبيان"
@@ -735,25 +735,25 @@ msgstr "Please select at least one option."
 
 #: .\templates\assessment_runs\assessment_page.html:31
 msgid "إرسال"
-msgstr ""
+msgstr "Submit"
 
 #: .\templates\assessment_runs\dashboard.html:4 .\templates\base.html:21
 #, fuzzy
 #| msgid "نتيجة التقييم"
 msgid "لوحة التقييم"
-msgstr "Assessment result"
+msgstr "Assessment dashboard"
 
 #: .\templates\assessment_runs\dashboard.html:17
 #, fuzzy
 #| msgid "رمز الإصدار"
 msgid "الإصدارات"
-msgstr "Version Label"
+msgstr "Versions"
 
 #: .\templates\assessment_runs\dashboard.html:32
 #, fuzzy
 #| msgid "أسئلة الاستبيان"
 msgid "حالة الاستبيان"
-msgstr "Survey Questions"
+msgstr "Survey status"
 
 #: .\templates\assessment_runs\dashboard.html:33
 #, fuzzy
@@ -814,12 +814,12 @@ msgstr "Survey Questions - %(version_label)s"
 #, fuzzy
 #| msgid "سؤال التقييم"
 msgid "إرسال التقييم"
-msgstr "Assessment Question"
+msgstr "Submit assessment"
 
 #: .\templates\assessment_runs\survey_question_list.html:28
 #, python-format
 msgid "%(completed)s من %(total)s أسئلة مكتملة"
-msgstr ""
+msgstr "%(completed)s of %(total)s questions completed"
 
 #: .\templates\assessment_runs\survey_question_list.html:50
 msgid "مكتمل"
@@ -827,13 +827,13 @@ msgstr "Complete"
 
 #: .\templates\assessment_runs\survey_question_list.html:52
 msgid "لم يبدأ"
-msgstr ""
+msgstr "Not started"
 
 #: .\templates\assessment_runs\survey_question_list.html:59
 #, fuzzy
 #| msgid "سؤال إعادة التقييم"
 msgid "إعادة التقييم"
-msgstr "Assessment Question"
+msgstr "Reevaluation"
 
 #: .\templates\assessment_runs\survey_question_list.html:62
 #, fuzzy
@@ -893,31 +893,31 @@ msgstr "Switch to light mode"
 #, fuzzy
 #| msgid "تسجيل الدخول"
 msgid "تسجيل الدخول - بنك الأسئلة"
-msgstr "Login"
+msgstr "Login - Questions Bank"
 
 #: .\templates\home.html:14
 msgid "مرحباً بك"
-msgstr ""
+msgstr "Welcome"
 
 #: .\templates\home.html:15
 msgid "سجل الدخول للمتابعة إلى بنك الأسئلة"
-msgstr ""
+msgstr "Log in to continue to Questions Bank"
 
 #: .\templates\home.html:22
 msgid "اسم المستخدم أو كلمة المرور غير صحيحة."
-msgstr ""
+msgstr "Invalid username or password."
 
 #: .\templates\home.html:27
 #, fuzzy
 #| msgid "اسم المؤشر"
 msgid "اسم المستخدم"
-msgstr "Indicator name"
+msgstr "Username"
 
 #: .\templates\home.html:32
 #, fuzzy
 #| msgid "مجموعة المصفوفة"
 msgid "كلمة المرور"
-msgstr "Matrix Item Group"
+msgstr "Password"
 
 #: .\templates\home.html:36
 msgid "تسجيل الدخول"
@@ -925,7 +925,7 @@ msgstr "Login"
 
 #: .\templates\home.html:42
 msgid "طلب وصول"
-msgstr ""
+msgstr "Request access"
 
 #: .\templates\surveys\builder.html:4
 msgid "منشئ الاستبيان - منصة QnR"
@@ -961,7 +961,7 @@ msgstr "Add question"
 
 #: .\templates\surveys\builder.html:43
 msgid "إضافة سؤال مصفوفة"
-msgstr "أسئلة المصفوفة"
+msgstr "Add matrix question"
 
 #: .\templates\surveys\builder.html:57 .\templates\surveys\builder.html:98
 msgid "حذف"
@@ -969,11 +969,11 @@ msgstr "Remove"
 
 #: .\templates\surveys\builder.html:60
 msgid "اختر سؤالاً من قاعدة البيانات"
-msgstr "Select the question from which to source the options."
+msgstr "Select a question from the database."
 
 #: .\templates\surveys\builder.html:64
 msgid "لا توجد أسئلة متاحة بعد"
-msgstr ""
+msgstr "No questions available yet"
 
 #: .\templates\surveys\builder.html:79 .\templates\surveys\builder.html:118
 msgid "إلزامي"
@@ -989,7 +989,7 @@ msgstr "Matrix columns"
 
 #: .\templates\surveys\builder.html:101
 msgid "أضف سؤالاً إلى المصفوفة"
-msgstr "أسئلة المصفوفة"
+msgstr "Add a question to the matrix"
 
 #: .\templates\surveys\builder.html:115
 msgid "مجموعة المصفوفة"
@@ -1001,11 +1001,11 @@ msgstr "Matrix Item Group"
 
 #: .\templates\surveys\builder.html:154
 msgid "نعم"
-msgstr ""
+msgstr "Yes"
 
 #: .\templates\surveys\builder.html:155
 msgid "لا"
-msgstr ""
+msgstr "No"
 
 #: .\templates\surveys\builder.html:156
 msgid "استبيان بدون عنوان"

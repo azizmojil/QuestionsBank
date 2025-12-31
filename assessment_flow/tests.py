@@ -2,7 +2,12 @@ from django.test import TestCase
 from django.utils import translation
 
 from surveys.models import Survey, SurveyVersion
-from .models import AssessmentQuestion, AssessmentFlowRule, ReevaluationQuestion
+from .models import (
+    AssessmentFlowRule,
+    AssessmentOption,
+    AssessmentQuestion,
+    ReevaluationQuestion,
+)
 from .engine import RoutingEngine
 
 
@@ -157,3 +162,24 @@ class ReevaluationQuestionModelTestCase(TestCase):
 
         with translation.override("en"):
             self.assertEqual(question_missing_en.display_text, "سؤال بالعربية فقط")
+
+
+class AssessmentFlowLocalizationTestCase(TestCase):
+    def test_arabic_labels_are_source_strings(self):
+        self.assertEqual(
+            AssessmentQuestion._meta.get_field("created_at").verbose_name, "تاريخ الإنشاء"
+        )
+        self.assertEqual(
+            AssessmentQuestion._meta.get_field("updated_at").verbose_name, "تاريخ التحديث"
+        )
+        self.assertEqual(AssessmentOption._meta.verbose_name, "خيار التقييم")
+        self.assertEqual(AssessmentOption._meta.verbose_name_plural, "خيارات التقييم")
+        self.assertEqual(
+            AssessmentFlowRule._meta.get_field("to_question").verbose_name, "إلى السؤال"
+        )
+        self.assertEqual(
+            AssessmentFlowRule._meta.verbose_name, "قاعدة مسار التقييم"
+        )
+        self.assertEqual(
+            AssessmentFlowRule._meta.verbose_name_plural, "قواعد مسار التقييم"
+        )

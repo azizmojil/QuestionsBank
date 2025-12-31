@@ -143,7 +143,7 @@ class SurveyVersion(models.Model):
                 survey=self.survey,
                 version_label=generated_label,
             ).exclude(pk=self.pk).exists():
-                raise ValidationError({"version_label": _("Duplicate version label for this survey.")})
+                raise ValidationError({"version_label": _("تسمية إصدار مكررة لهذا الاستبيان.")})
             self.version_label = generated_label
         super().save(*args, **kwargs)
 
