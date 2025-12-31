@@ -1,7 +1,7 @@
   {% extends "base.html" %}
   {% load static i18n %}
 
-  {% block title %}{% trans "Pipeline" %}{% endblock %}
+{% block title %}{% trans "مسار الاعتماد" %}{% endblock %}
 
   {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/pipeline.css' %}">
@@ -23,7 +23,7 @@
               <div class="pnode span-rows col1" data-id="version" data-step="1">
                 <div class="pnode__circle"></div>
                 <div class="pnode__meta">
-                  <div class="pnode__label">{% trans "Survey creation" %}</div>
+                  <div class="pnode__label">{% trans "إنشاء الاستبيان" %}</div>
                   <div class="pnode__status"></div>
                 </div>
               </div>
@@ -31,7 +31,7 @@
               <div class="pnode lane1 col2" data-id="self" data-step="2">
                 <div class="pnode__circle"></div>
                 <div class="pnode__meta">
-                  <div class="pnode__label">{% trans "Self assessment" %}</div>
+                  <div class="pnode__label">{% trans "التقييم الذاتي" %}</div>
                   <div class="pnode__status"></div>
                 </div>
               </div>
@@ -39,7 +39,7 @@
               <div class="pnode lane1 col3" data-id="routing" data-step="3">
                 <div class="pnode__circle"></div>
                 <div class="pnode__meta">
-                  <div class="pnode__label">{% trans "Routing" %}</div>
+                  <div class="pnode__label">{% trans "التوجيه" %}</div>
                   <div class="pnode__status"></div>
                 </div>
               </div>
@@ -47,7 +47,7 @@
               <div class="pnode lane1 col4" data-id="business" data-step="4">
                 <div class="pnode__circle"></div>
                 <div class="pnode__meta">
-                  <div class="pnode__label">{% trans "Business" %}</div>
+                  <div class="pnode__label">{% trans "قواعد الأعمال" %}</div>
                   <div class="pnode__status"></div>
                 </div>
               </div>
@@ -55,7 +55,7 @@
               <div class="pnode lane2 col2" data-id="lang" data-step="2A">
                 <div class="pnode__circle"></div>
                 <div class="pnode__meta">
-                  <div class="pnode__label">{% trans "Lang review" %}</div>
+                  <div class="pnode__label">{% trans "تدقيق لغوي" %}</div>
                   <div class="pnode__status"></div>
                 </div>
               </div>
@@ -63,7 +63,7 @@
               <div class="pnode lane2 col3" data-id="translation" data-step="3A">
                 <div class="pnode__circle"></div>
                 <div class="pnode__meta">
-                  <div class="pnode__label">{% trans "Translation" %}</div>
+                  <div class="pnode__label">{% trans "الترجمة" %}</div>
                   <div class="pnode__status"></div>
                 </div>
               </div>
@@ -71,7 +71,7 @@
               <div class="pnode span-rows-2 col5 gate" data-id="approval" data-step="5">
                 <div class="pnode__circle"></div>
                 <div class="pnode__meta">
-                  <div class="pnode__label">{% trans "Approval" %}</div>
+                  <div class="pnode__label">{% trans "الاعتماد" %}</div>
                   <div class="pnode__status"></div>
                 </div>
               </div>
@@ -79,7 +79,7 @@
               <div class="pnode lane3 col4 post" data-id="qbank" data-step="Q">
                 <div class="pnode__circle"></div>
                 <div class="pnode__meta">
-                  <div class="pnode__label">{% trans "QBank" %}</div>
+                  <div class="pnode__label">{% trans "بنك الأسئلة" %}</div>
                   <div class="pnode__status"></div>
                 </div>
               </div>
