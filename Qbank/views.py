@@ -130,7 +130,7 @@ def save_translation(request):
 
 
 def pipeline_overview(request):
-    """Render the pipeline overview page with backend-driven survey version states."""
+    """Render the pipeline overview page describing the survey processing paths."""
 
     def status_value(*, started: bool, done: bool) -> str:
         if done:
@@ -153,13 +153,17 @@ def pipeline_overview(request):
         )
 
         assessment_run = getattr(version, "assessment_run", None)
+        version_status = getattr(version, "status", SurveyVersion.Status.LOCKED)
         results_count = 0
         if assessment_run:
             prefetched = getattr(assessment_run, "_prefetched_objects_cache", {}).get("results")
             results_count = len(prefetched) if prefetched is not None else assessment_run.results.count()
 
         return {
-            "version": "done",
+            "version": status_value(
+                started=True, # Always started if the version exists
+                done=bool(total_questions),
+            ),
             "self": status_value(
                 started=bool(assessment_run),
                 done=bool(total_questions and results_count >= total_questions),
@@ -181,9 +185,9 @@ def pipeline_overview(request):
                 done=bool(staged_sent and staged_translated == staged_sent),
             ),
             "approval": status_value(
-                started=version.status
+                started=version_status
                 in {SurveyVersion.Status.ACTIVE, SurveyVersion.Status.LOCKED, SurveyVersion.Status.ARCHIVED},
-                done=version.status in {SurveyVersion.Status.LOCKED, SurveyVersion.Status.ARCHIVED},
+                done=version_status in {SurveyVersion.Status.LOCKED, SurveyVersion.Status.ARCHIVED},
             ),
             "qbank": status_value(
                 started=bool(total_questions),

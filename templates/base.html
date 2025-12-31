@@ -16,6 +16,7 @@
         <div class="brand">
             <a href="{% url 'home' %}" class="logo">{% trans "بنك الأسئلة" %}</a>
         </div>
+
         <nav aria-label="Primary navigation">
             <ul>
                 <li><a href="{% url 'pipeline_overview' %}">{% trans "مسار الاعتماد" %}</a></li>
@@ -24,34 +25,74 @@
                 <li><a href="{% url 'linguistic_review' %}">{% trans "تدقيق لغوي" %}</a></li>
                 <li><a href="{% url 'translation_queue' %}">{% trans "قائمة الترجمة" %}</a></li>
                 <li><a href="{% url 'survey_builder_routing' %}">{% trans "قواعد التوجيه" %}</a></li>
-                <li><a href="{% url 'survey_builder' %}?stage=business">{% trans "قواعد الأعمال" %}</a></li>
+                <li><a href="{% url 'survey_builder' %}?stage=final">{% trans "الاستبيان النهائي" %}</a></li>
             </ul>
         </nav>
+
         <div class="header-actions">
+
+            <!-- Language switch (Ar / En) -->
             <form id="language-switch-form" action="{% url 'set_language' %}" method="post" class="language-switch-form">
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                <input type="hidden" name="language" value="{% if LANGUAGE_CODE == 'ar' %}en{% else %}ar{% endif %}">
-                <button class="language-switch" id="language-switch" type="submit"
-                        aria-label="{% if LANGUAGE_CODE == 'ar' %}{% trans 'التبديل إلى الإنجليزية' %}{% else %}{% trans 'التبديل إلى العربية' %}{% endif %}">
-                    <span class="language-label">{% if LANGUAGE_CODE == 'ar' %}En{% else %}Ar{% endif %}</span>
-                </button>
+                <input type="hidden" name="language" id="language-switch-target" value="{{ LANGUAGE_CODE }}">
+
+                <div class="v-switch v-switch--gold">
+                    <input
+                        class="v-switch__input"
+                        id="language-switch"
+                        type="checkbox"
+                        role="switch"
+                        aria-checked="{% if LANGUAGE_CODE == 'ar' %}true{% else %}false{% endif %}"
+                        aria-label="{% trans 'تبديل اللغة' %}"
+                        data-label-to-ar="{% trans 'التبديل إلى العربية' %}"
+                        data-label-to-en="{% trans 'التبديل إلى الإنجليزية' %}"
+                        {% if LANGUAGE_CODE == 'ar' %}checked{% endif %}
+                    >
+
+                    <label class="v-switch__track" for="language-switch">
+                        <span class="v-switch__thumb" aria-hidden="true"></span>
+                    </label>
+
+                    <div class="v-switch__text" aria-hidden="true">
+                        <span>ع</span>
+                        <span>E</span>
+                    </div>
+                </div>
             </form>
-            <button class="theme-switch" id="theme-switch" type="button" aria-pressed="false"
+
+            <div class="v-switch v-switch--gold">
+                <input
+                    class="v-switch__input"
+                    id="theme-switch"
+                    type="checkbox"
+                    role="switch"
+                    aria-checked="false"
                     data-label-dark="{% trans 'التبديل إلى الوضع الداكن' %}"
                     data-label-light="{% trans 'التبديل إلى الوضع الفاتح' %}"
-                    data-icon-sun="☀️"
-                    data-icon-moon="🌙">
-                <span class="theme-icon" aria-hidden="true">☀️</span>
-            </button>
+                >
+
+                <label class="v-switch__track" for="theme-switch">
+                    <span class="v-switch__thumb" aria-hidden="true"></span>
+                </label>
+
+                <div class="v-switch__text" aria-hidden="true">
+                    <span>☀️</span>
+                    <span>🌘</span>
+                </div>
+            </div>
+
         </div>
     </header>
+
     <main id="main-content" class="page-content" role="main">
         {% block content %}
         {% endblock %}
     </main>
+
     <footer class="site-footer">
     </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script src="{% static 'js/base.js' %}"></script>
     {% block extra_js %}{% endblock %}

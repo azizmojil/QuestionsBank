@@ -5,28 +5,45 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'surveys/css/builder_initial.css' %}">
+<link rel="stylesheet" href="{% static 'surveys/css/builder_routing.css' %}">
 {% endblock %}
 
 {% block content %}
-<section class="builder-grid stage-panel" data-stage="routing" aria-label="{% trans 'قواعد التوجيه' %}">
-    <div class="card rules-card">
-        <div class="section-head">
-            <div>
-                <h2 class="card-title">{% trans "قواعد التوجيه" %}</h2>
-                <p class="muted">{% trans "اسحب الأسئلة إلى مناطق القواعد لتحديد الانتقال." %}</p>
-            </div>
-        </div>
-        <div class="rule-palette" id="question-palette" aria-label="{% trans 'الأسئلة المتاحة للقواعد' %}"></div>
-        <div class="rules-grid">
-            <div class="rule-stack">
-                <h3>{% trans "شروط التوجيه" %}</h3>
-                <div class="dropzone" id="routing-conditions" aria-label="{% trans 'شروط التوجيه' %}"></div>
-            </div>
-            <div class="rule-stack">
-                <h3>{% trans "الأسئلة التالية" %}</h3>
-                <div class="dropzone" id="routing-targets" aria-label="{% trans 'الأسئلة التالية' %}"></div>
-            </div>
+<div class="card box mb-3">
+    <div class="section-head routing-head">
+        <h1 class="page-title">{% trans "قواعد التوجيه" %}</h1>
+        <div class="controls">
+            <select id="survey-version-select" class="form-select">
+                <option value="" disabled selected>{% trans "اختر إصدار الاستبيان" %}</option>
+                {% for version in survey_versions %}
+                <option value="{{ version.id }}">{{ version.label }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-secondary" id="save-flow">{% trans "حفظ المخطط" %}</button>
         </div>
     </div>
-</section>
+</div>
+
+<div class="routing-container">
+    <aside class="sidebar-panel">
+        <h3>{% trans "الأسئلة" %}</h3>
+        <div id="questions-list" class="questions-list">
+            <!-- Questions will be loaded here -->
+            <div class="muted text-center">{% trans "اختر إصداراً لتحميل الأسئلة" %}</div>
+        </div>
+    </aside>
+
+    <main class="main-panel" id="flow-container" data-data-url="{% url 'survey_routing_data' %}" data-save-url="{% url 'survey_routing_save' %}">
+        <svg class="connections" id="connections-layer"></svg>
+        <div class="flow-canvas" id="canvas">
+            <!-- Nodes will be dropped here -->
+        </div>
+    </main>
+</div>
+
+{{ routing_locale|json_script:"routing-locale" }}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'surveys/js/builder_routing.js' %}"></script>
 {% endblock %}

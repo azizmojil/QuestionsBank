@@ -85,6 +85,16 @@ class SurveyVersion(models.Model):
         BIANNUALLY = "B", _("نصف سنوي")
         ANNUALLY = "A", _("سنوي")
 
+    class LangReviewStatus(models.TextChoices):
+        DONE = "DONE", _("مكتمل")
+        IN_PROGRESS = "IN_PROGRESS", _("قيد التنفيذ")
+        NO_MANUAL_QUESTIONS = "NO_MANUAL_QUESTIONS", _("لا توجد أسئلة يدوية")
+
+    class TranslationStatus(models.TextChoices):
+        DONE = "DONE", _("مكتمل")
+        IN_PROGRESS = "IN_PROGRESS", _("قيد التنفيذ")
+        NO_MANUAL_QUESTIONS = "NO_MANUAL_QUESTIONS", _("لا توجد أسئلة يدوية")
+
     survey = models.ForeignKey(
         Survey,
         on_delete=models.CASCADE,
@@ -112,16 +122,44 @@ class SurveyVersion(models.Model):
         help_text=_("تواتر الاستبيان."),
     )
 
-    status = models.CharField(
-        max_length=20,
-        choices=Status.choices,
-        default=Status.DRAFT,
-        verbose_name=_("الحالة"),
-        help_text=_("مسودة: قابلة للتحرير؛ نشطة: قيد الجمع؛ مقفلة: هيكل ثابت؛ مؤرشفة: للاطلاع التاريخي."),
+    # Pipeline Status Fields
+    initial_questionnaire_built = models.BooleanField(default=False, verbose_name=_("بناء الاستبيان الأولي"))
+    initial_questionnaire_built_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="built_initial_questionnaires", verbose_name=_("تم البناء بواسطة"))
+    initial_questionnaire_built_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاريخ البناء"))
+
+    self_assessment_done = models.BooleanField(default=False, verbose_name=_("التقييم الذاتي"))
+    self_assessment_done_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="assessed_surveys", verbose_name=_("تم التقييم بواسطة"))
+    self_assessment_done_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاريخ التقييم"))
+
+    routing_logic_done = models.BooleanField(default=False, verbose_name=_("منطق التوجيه"))
+    routing_logic_done_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="routed_surveys", verbose_name=_("تم التوجيه بواسطة"))
+    routing_logic_done_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاريخ التوجيه"))
+
+    business_logic_done = models.BooleanField(default=False, verbose_name=_("منطق الأعمال"))
+    business_logic_done_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="business_logic_surveys", verbose_name=_("تم منطق الأعمال بواسطة"))
+    business_logic_done_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاريخ منطق الأعمال"))
+
+    lang_review_status = models.CharField(
+        max_length=30,
+        choices=LangReviewStatus.choices,
+        default=LangReviewStatus.IN_PROGRESS,
+        verbose_name=_("حالة التدقيق اللغوي")
     )
+    lang_review_done_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="reviewed_surveys", verbose_name=_("تم التدقيق بواسطة"))
+    lang_review_done_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاريخ التدقيق"))
+
+    translation_status = models.CharField(
+        max_length=30,
+        choices=TranslationStatus.choices,
+        default=TranslationStatus.IN_PROGRESS,
+        verbose_name=_("حالة الترجمة")
+    )
+    translation_done_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="translated_surveys", verbose_name=_("تم الترجمة بواسطة"))
+    translation_done_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاريخ الترجمة"))
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاريخ الإنشاء"))
     updated_at = models.DateTimeField(auto_now=True)
+    routing_layout = models.JSONField(default=dict, blank=True, verbose_name=_("مخطط التوجيه"))
 
     def __str__(self) -> str:
         return f"{self.survey.display_name} - {self.version_label or '(new)'}"
@@ -148,6 +186,50 @@ class SurveyVersion(models.Model):
         super().save(*args, **kwargs)
 
 
+class SurveySection(models.Model):
+    """Logical section within a survey version."""
+
+    class Meta:
+        verbose_name = _("قسم الاستبيان")
+        verbose_name_plural = _("أقسام الاستبيان")
+        ordering = ["order", "id"]
+
+    survey_version = models.ForeignKey(
+        SurveyVersion,
+        on_delete=models.CASCADE,
+        related_name="sections",
+        verbose_name=_("إصدار الاستبيان"),
+    )
+    title_ar = models.CharField(max_length=255, blank=True, verbose_name=_("عنوان القسم [عربية]"))
+    title_en = models.CharField(max_length=255, blank=True, verbose_name=_("عنوان القسم [إنجليزية]"))
+    description_ar = models.TextField(blank=True, verbose_name=_("وصف القسم [عربية]"))
+    description_en = models.TextField(blank=True, verbose_name=_("وصف القسم [إنجليزية]"))
+    order = models.PositiveIntegerField(default=0, verbose_name=_("الترتيب"))
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.display_title
+
+    @property
+    def display_title(self) -> str:
+        lang = (get_language() or "ar")[:2]
+        if lang == "ar" and self.title_ar:
+            return self.title_ar
+        if lang == "en" and self.title_en:
+            return self.title_en
+        return self.title_en or self.title_ar or _("قسم غير مسمى")
+
+    @property
+    def display_description(self) -> str:
+        lang = (get_language() or "ar")[:2]
+        if lang == "ar" and self.description_ar:
+            return self.description_ar
+        if lang == "en" and self.description_en:
+            return self.description_en
+        return self.description_en or self.description_ar or ""
+
+
 class SurveyQuestion(models.Model):
     """Individual question belonging to a specific SurveyVersion.
 
@@ -165,6 +247,47 @@ class SurveyQuestion(models.Model):
         on_delete=models.CASCADE,
         related_name="questions",
         verbose_name=_("إصدار الاستبيان")
+    )
+
+    section = models.ForeignKey(
+        "SurveySection",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="questions",
+        verbose_name=_("القسم"),
+    )
+
+    response_group = models.ForeignKey(
+        "Rbank.ResponseGroup",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="survey_questions",
+        verbose_name=_("مجموعة الإجابات"),
+    )
+
+    response_type = models.ForeignKey(
+        "Rbank.ResponseType",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="survey_questions",
+        verbose_name=_("نوع الإجابة"),
+    )
+
+    matrix_item_group = models.ForeignKey(
+        "Qbank.MatrixItemGroup",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="survey_questions",
+        verbose_name=_("مجموعة عناصر المصفوفة"),
+    )
+
+    is_matrix = models.BooleanField(
+        default=False,
+        verbose_name=_("سؤال مصفوفة"),
     )
 
     code = models.CharField(
@@ -217,3 +340,27 @@ class SurveyQuestion(models.Model):
         if lang == "en" and self.text_en:
             return self.text_en
         return self.text_en or self.text_ar
+
+
+class SurveyRoutingRule(models.Model):
+    """Declarative routing rule for survey questions."""
+
+    to_question = models.ForeignKey(
+        SurveyQuestion,
+        verbose_name=_("إلى السؤال"),
+        on_delete=models.CASCADE,
+        related_name="incoming_survey_rules",
+    )
+    condition = models.TextField(_("الشرط"), blank=True)
+    priority = models.IntegerField(default=0)
+    description = models.CharField(max_length=255, blank=True, verbose_name=_("الوصف"))
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["to_question_id", "priority", "id"]
+        verbose_name = _("قاعدة مسار الاستبيان")
+        verbose_name_plural = _("قواعد مسار الاستبيان")
+
+    def __str__(self) -> str:
+        return self.description or f"Rule to Q{self.to_question_id}"

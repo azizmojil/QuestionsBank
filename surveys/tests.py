@@ -1,10 +1,14 @@
+import json
+
 from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
 
-from .models import Survey, SurveyQuestion, SurveyVersion
+from .models import Survey, SurveyQuestion, SurveyVersion, SurveySection
+from Qbank.models import MatrixItemGroup, MatrixItem
+from Rbank.models import ResponseGroup, ResponseType
 
 
 class SurveyBuilderViewTests(TestCase):
@@ -106,3 +110,89 @@ class SurveyConstraintTests(TestCase):
                 name_en="Survey 1",
                 code="SURV3",
             )
+
+
+class FinalBuilderSubmissionTests(TestCase):
+    def setUp(self):
+        self.survey = Survey.objects.create(
+            name_ar="استبيان نهائي",
+            name_en="Final Survey",
+            code="FS1",
+        )
+        self.version = SurveyVersion.objects.create(
+            survey=self.survey,
+            interval=SurveyVersion.SurveyInterval.MONTHLY,
+        )
+        self.question = SurveyQuestion.objects.create(
+            survey_version=self.version,
+            text_ar="سؤال موجود",
+            text_en="Existing question",
+        )
+        self.response_type = ResponseType.objects.create(name_ar="اختيار", name_en="Choice")
+        self.response_group = ResponseGroup.objects.create(name="نعم/لا")
+        self.matrix_item = MatrixItem.objects.create(text_ar="صف", text_en="Row")
+        self.matrix_group = MatrixItemGroup.objects.create(name="مجموعة مصفوفة")
+        self.matrix_group.items.add(self.matrix_item)
+
+    def test_submit_final_questionnaire_creates_sections_and_updates_questions(self):
+        payload = {
+            "version_id": self.version.id,
+            "sections": [
+                {
+                    "title": "القسم الأول",
+                    "description": "وصف",
+                    "questions": [
+                        {
+                            "id": self.question.id,
+                            "response_group_id": self.response_group.id,
+                            "response_type_id": self.response_type.id,
+                            "matrix_item_group_id": self.matrix_group.id,
+                            "is_required": True,
+                            "is_matrix": True,
+                        }
+                    ],
+                }
+            ],
+        }
+
+        response = self.client.post(
+            reverse("submit_final_questionnaire"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(SurveySection.objects.filter(survey_version=self.version).count(), 1)
+        section = SurveySection.objects.first()
+
+        self.question.refresh_from_db()
+        self.assertEqual(self.question.section, section)
+        self.assertTrue(self.question.is_required)
+        self.assertTrue(self.question.is_matrix)
+        self.assertEqual(self.question.response_group, self.response_group)
+        self.assertEqual(self.question.response_type, self.response_type)
+        self.assertEqual(self.question.matrix_item_group, self.matrix_group)
+
+    def test_manual_questions_are_created_in_final_builder(self):
+        payload = {
+            "version_id": self.version.id,
+            "sections": [
+                {
+                    "title": "قسم جديد",
+                    "description": "",
+                    "questions": [
+                        {
+                            "label": "سؤال يدوي",
+                            "is_required": False,
+                        }
+                    ],
+                }
+            ],
+        }
+
+        response = self.client.post(
+            reverse("submit_final_questionnaire"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(SurveyQuestion.objects.filter(survey_version=self.version, text_ar="سؤال يدوي").count(), 1)

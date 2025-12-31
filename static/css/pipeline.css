@@ -5,6 +5,20 @@
   --muted: #9b8a66;
   --bg: var(--card, #ffffff);
   --pipeline-connector: #d6c08c;
+
+  /* --- Pipeline state colors (LIGHT mode) --- */
+  --pipeline-done: #16A34A;        /* green */
+  --pipeline-in-progress: #F59E0B; /* orange */
+  --pipeline-not-started: #111827; /* black-ish */
+  --pipeline-blocked: #DC2626;     /* red */
+}
+
+/* Dark mode hooks consistent with base.css usage */
+.dark, body.dark-mode{
+  --pipeline-done: #22D3EE;        /* cyan (not green) */
+  --pipeline-in-progress: #F59E0B; /* orange */
+  --pipeline-not-started: #F9FAFB; /* white */
+  --pipeline-blocked: #F87171;     /* red visible on dark */
 }
 
 .pipeline-wrap{
@@ -95,6 +109,9 @@
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
+
+  /* Default icon stroke/fill color (covers dash/X via currentColor) */
+  color: var(--pipeline-not-started);
 }
 
 .pnode__count{
@@ -111,32 +128,71 @@
   justify-content: center;
 }
 
+/* Make checkmark inherit the circle color (done color) */
 .pnode__icon--check svg{
   width: 18px;
   height: 18px;
-  fill: var(--accent);
+  fill: currentColor;
 }
 
+/* Spinner uses in-progress color (orange) */
 .pnode__icon--spinner{
   width: 16px;
   height: 16px;
-  border: 2px solid var(--warn);
+  border: 2px solid var(--pipeline-in-progress);
   border-top-color: transparent;
   border-radius: 50%;
   animation: pspin 1s linear infinite;
 }
 @keyframes pspin { to { transform: rotate(360deg); } }
 
-/* States */
-.pnode.is-done .pnode__circle{ border-color: var(--accent); }
-.pnode.is-in_progress .pnode__circle{ border-color: var(--warn); }
-.pnode.is-blocked{ opacity: 0.65; }
-.pnode.is-blocked .pnode__circle{ border-color: var(--muted); }
+/* ------------------------ */
+/* States (theme-friendly)  */
+/* ------------------------ */
 
-.pnode.is-done .pnode__status{ background: var(--track); color: var(--accent); }
-.pnode.is-in_progress .pnode__status{ background: #fff4e0; color: #6a4a04; }
-.pnode.is-not_started .pnode__status{ background: #f6f0df; color: #3f3826; }
-.pnode.is-blocked .pnode__status{ background: #ece2c6; color: #5c5035; }
+.pnode.is-done .pnode__circle{
+  border-color: var(--pipeline-done);
+  color: var(--pipeline-done);
+}
+
+.pnode.is-in_progress .pnode__circle{
+  border-color: var(--pipeline-in-progress);
+  color: var(--pipeline-in-progress);
+}
+
+.pnode.is-not_started .pnode__circle{
+  border-color: var(--pipeline-not-started);
+  color: var(--pipeline-not-started);
+}
+
+/* Keep blocked circles fully opaque (no connector line bleed-through) */
+.pnode.is-blocked{ opacity: 1; }
+.pnode.is-blocked .pnode__circle{
+  border-color: var(--pipeline-blocked);
+  background: var(--bg);
+  color: var(--pipeline-blocked);
+}
+.pnode.is-blocked .pnode__meta{
+  opacity: 0.65;
+}
+
+/* Status pills: keep your existing backgrounds, align text color to state */
+.pnode.is-done .pnode__status{
+  background: var(--track);
+  color: var(--pipeline-done);
+}
+.pnode.is-in_progress .pnode__status{
+  background: #fff4e0;
+  color: var(--pipeline-in-progress);
+}
+.pnode.is-not_started .pnode__status{
+  background: #f6f0df;
+  color: var(--pipeline-not-started);
+}
+.pnode.is-blocked .pnode__status{
+  background: #ece2c6;
+  color: var(--pipeline-blocked);
+}
 
 .pnode.gate .pnode__label{ font-weight: 800; }
 .pnode.post .pnode__circle{ border-style: dashed; }
@@ -149,6 +205,61 @@
   pointer-events: none;
 }
 
+/* ------------------------------------------------------------------ */
+/* Per-node label/tags positioning around circles (your specification) */
+/* ------------------------------------------------------------------ */
+
+/* Helpers for vertical layouts */
+.pipeline-grid .pnode.is-vertical,
+.pipeline-grid .pnode.is-vertical .pnode__meta{
+  text-align: center;
+}
+.pipeline-grid .pnode.is-vertical{
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.pipeline-grid .pnode.is-vertical .pnode__meta{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ABOVE: Survey creation, Self assessment, Routing, Business */
+.pipeline-grid .pnode[data-id="version"],
+.pipeline-grid .pnode[data-id="self"],
+.pipeline-grid .pnode[data-id="routing"],
+.pipeline-grid .pnode[data-id="business"]{
+  flex-direction: column-reverse; /* meta above circle */
+  align-items: center;
+  gap: 8px;
+}
+.pipeline-grid .pnode[data-id="version"] .pnode__meta,
+.pipeline-grid .pnode[data-id="self"] .pnode__meta,
+.pipeline-grid .pnode[data-id="routing"] .pnode__meta,
+.pipeline-grid .pnode[data-id="business"] .pnode__meta{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* BELOW: Lang review, Translation */
+.pipeline-grid .pnode[data-id="lang"],
+.pipeline-grid .pnode[data-id="translation"]{
+  flex-direction: column; /* circle above meta */
+  align-items: center;
+  gap: 8px;
+}
+.pipeline-grid .pnode[data-id="lang"] .pnode__meta,
+.pipeline-grid .pnode[data-id="translation"] .pnode__meta{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Responsive */
 @media (max-width: 980px){
   .pipeline-grid{
     overflow-x: auto;
@@ -156,3 +267,19 @@
   }
   .pipeline-lines{ display: none; } /* avoids misalignment during horizontal scroll */
 }
+
+.pipeline-page,
+.pipeline-card,
+.pipeline-wrap,
+.pipeline-grid {
+  direction: inherit;
+}
+
+/* If something upstream forces LTR, re-assert RTL on pipeline when document is RTL */
+html[dir="rtl"] .pipeline-page,
+html[dir="rtl"] .pipeline-card,
+html[dir="rtl"] .pipeline-wrap,
+html[dir="rtl"] .pipeline-grid {
+  direction: rtl;
+}
+
