@@ -10,6 +10,7 @@ from surveys.models import SurveyQuestion
 def home(request):
     return render(request, 'home.html')
 
+
 def linguistic_review(request):
     # Filter out questions that are already sent for translation
     staged_questions = QuestionStaging.objects.filter(is_sent_for_translation=False).select_related('survey', 'survey_version').all().order_by('-created_at')
@@ -125,3 +126,7 @@ def save_translation(request):
         
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+
+def pipeline_overview(request):
+    return render(request, 'Qbank/pipeline.html')

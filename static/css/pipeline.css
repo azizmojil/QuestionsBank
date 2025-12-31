@@ -1,0 +1,217 @@
+.pipeline-page {
+    max-width: 1100px;
+    margin: 0 auto 3rem;
+}
+
+.pipeline-diagram {
+    position: relative;
+    overflow: hidden;
+}
+
+.pipeline-node {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+}
+
+.pipeline-node.start {
+    background: linear-gradient(135deg, rgba(7, 77, 49, 0.08), rgba(219, 161, 2, 0.14));
+    border: 1px dashed var(--ring);
+}
+
+.pipeline-node.end {
+    background: linear-gradient(135deg, rgba(7, 77, 49, 0.12), rgba(219, 161, 2, 0.28));
+    border: 1px solid var(--ring);
+}
+
+.node-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-foreground);
+    font-weight: 700;
+    border: 1px solid var(--ring);
+}
+
+.pipeline-lanes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.pipeline-lane {
+    position: relative;
+    padding-top: 0.5rem;
+}
+
+.pipeline-lane::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 1rem;
+    inset-block-end: 0.75rem;
+    inset-inline-start: 18px;
+    width: 3px;
+    background: var(--border);
+    border-radius: 999px;
+    opacity: 0.9;
+}
+
+html[dir="rtl"] .pipeline-lane::before {
+    inset-inline-start: auto;
+    inset-inline-end: 18px;
+}
+
+.lane-header {
+    margin-inline-start: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.lane-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(7, 77, 49, 0.1);
+    color: var(--foreground);
+    font-weight: 700;
+    border: 1px solid var(--primary);
+}
+
+.lane-pill-secondary {
+    background: rgba(219, 161, 2, 0.12);
+    border-color: var(--ring);
+}
+
+.path-three {
+    background: #fffaf0;
+    border-color: var(--ring);
+}
+
+.step-card {
+    position: relative;
+    margin-inline-start: 2.5rem;
+    margin-bottom: 1rem;
+    padding: 1rem 1.25rem;
+    border-radius: 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+.step-card::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 1.1rem;
+    inset-inline-start: -26px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 0 6px rgba(7, 77, 49, 0.15);
+}
+
+html[dir="rtl"] .step-card::before {
+    inset-inline-start: auto;
+    inset-inline-end: -26px;
+}
+
+.step-card h4 {
+    margin: 0 0 0.35rem;
+}
+
+.step-card p {
+    margin: 0;
+    color: var(--muted-foreground);
+}
+
+.step-card.split {
+    background: linear-gradient(135deg, rgba(7, 77, 49, 0.06), rgba(219, 161, 2, 0.12));
+}
+
+.split-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.split-chips span {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    background: var(--muted);
+    border: 1px solid var(--border);
+    font-weight: 600;
+}
+
+.pipeline-merge {
+    margin-top: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.merge-lines {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.merge-lines span {
+    display: block;
+    height: 14px;
+    border-bottom: 2px dashed var(--border);
+}
+
+.final {
+    background: linear-gradient(135deg, rgba(7, 77, 49, 0.12), rgba(219, 161, 2, 0.24));
+}
+
+.final-pill {
+    background: #0b2f21;
+    color: #fff;
+    border-color: #0b2f21;
+    margin-bottom: 0.35rem;
+}
+
+body.dark-mode .final-pill,
+.dark .final-pill {
+    background: #0b2f21;
+    color: #fff;
+}
+
+.hero-title {
+    margin: 0.25rem 0 0.35rem;
+}
+
+.hero-subtitle {
+    margin: 0 0 0.75rem;
+    color: var(--muted-foreground);
+}
+
+.pipeline-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(7, 77, 49, 0.08);
+    border: 1px solid var(--primary);
+    font-weight: 700;
+}
+
+.pipeline-chip-secondary {
+    background: rgba(219, 161, 2, 0.12);
+    border-color: var(--ring);
+}
+
+.pipeline-chip-outline {
+    background: transparent;
+    border-style: dashed;
+}

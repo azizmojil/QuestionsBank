@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "مسار الاعتماد" %}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/pipeline.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="pipeline-page">
+    <div class="hero card">
+        <div>
+            <p class="hero-highlight">{% trans "مخطط المسارات" %}</p>
+            <h1 class="hero-title">{% trans "مسار الاعتماد وإرسال الأسئلة" %}</h1>
+            <p class="hero-subtitle">
+                {% trans "يربط هذا المخطط بين المراحل التشغيلية بدءاً من إنشاء نسخة الاستبيان وحتى الإرسال إلى بنك الأسئلة." %}
+            </p>
+            <div class="hero-actions">
+                <span class="pipeline-chip">{% trans "المسار 1: تقييم المحتوى" %}</span>
+                <span class="pipeline-chip pipeline-chip-secondary">{% trans "المسار 2: الجودة اللغوية" %}</span>
+                <span class="pipeline-chip pipeline-chip-outline">{% trans "المسار 3: الإرسال النهائي" %}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="pipeline-diagram card">
+        <div class="pipeline-node start">
+            <div class="node-label">{% trans "بدء" %}</div>
+            <h3>{% trans "إنشاء نسخة الاستبيان" %}</h3>
+            <p>{% trans "من هنا ينقسم العمل إلى مسارين متوازيين لضمان سلامة المحتوى واللغة." %}</p>
+        </div>
+
+        <div class="pipeline-lanes">
+            <div class="pipeline-lane">
+                <div class="lane-header">
+                    <span class="lane-pill">{% trans "المسار 1" %}</span>
+                    <p>{% trans "التقييم وبناء القواعد" %}</p>
+                </div>
+                <div class="step-card">
+                    <h4>{% trans "التقييم الذاتي" %}</h4>
+                    <p>{% trans "يقوم فريق العمل بمراجعة أولية للأسئلة." %}</p>
+                </div>
+                <div class="step-card">
+                    <h4>{% trans "مراجعة المؤشرات" %}</h4>
+                    <p>{% trans "التحقق من ربط الأسئلة بالمؤشرات المناسبة." %}</p>
+                </div>
+                <div class="step-card">
+                    <h4>{% trans "قواعد التوجيه" %}</h4>
+                    <p>{% trans "إعداد مسارات التفرع المنطقية للأسئلة." %}</p>
+                </div>
+                <div class="step-card">
+                    <h4>{% trans "قواعد الأعمال" %}</h4>
+                    <p>{% trans "ضبط المعالجات الخاصة قبل الانتقال للموافقة." %}</p>
+                </div>
+            </div>
+
+            <div class="pipeline-lane">
+                <div class="lane-header">
+                    <span class="lane-pill lane-pill-secondary">{% trans "المسار 2" %}</span>
+                    <p>{% trans "الجودة اللغوية والترجمة" %}</p>
+                </div>
+                <div class="step-card">
+                    <h4>{% trans "التدقيق اللغوي" %}</h4>
+                    <p>{% trans "مراجعة الصياغة والتأكد من سلامة اللغة." %}</p>
+                </div>
+                <div class="step-card split">
+                    <h4>{% trans "الترجمة" %}</h4>
+                    <p>{% trans "يتفرع العمل إلى مسارين لغويين لضمان دقة المحتوى المترجم." %}</p>
+                    <div class="split-chips">
+                        <span>{% trans "مخرجات العربية" %}</span>
+                        <span>{% trans "مخرجات الإنجليزية" %}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pipeline-merge">
+            <div class="merge-lines" aria-hidden="true">
+                <span></span><span></span>
+            </div>
+            <div class="step-card final">
+                <div class="lane-pill final-pill">{% trans "التقاء المسارات 1 و 2" %}</div>
+                <h4>{% trans "الموافقة النهائية" %}</h4>
+                <p>{% trans "تجميع نتائج المسارين للمصادقة النهائية على النسخة." %}</p>
+            </div>
+        </div>
+
+        <div class="pipeline-node end">
+            <div class="lane-pill path-three">{% trans "المسار 3" %}</div>
+            <h3>{% trans "إرسال إلى بنك الأسئلة" %}</h3>
+            <p>{% trans "بعد الاعتماد يتم نشر النسخة المعتمدة في بنك الأسئلة للاستخدام." %}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
