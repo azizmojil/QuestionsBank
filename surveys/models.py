@@ -159,6 +159,7 @@ class SurveyVersion(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاريخ الإنشاء"))
     updated_at = models.DateTimeField(auto_now=True)
+    routing_layout = models.JSONField(default=dict, blank=True, verbose_name=_("مخطط التوجيه"))
 
     def __str__(self) -> str:
         return f"{self.survey.display_name} - {self.version_label or '(new)'}"
@@ -339,3 +340,27 @@ class SurveyQuestion(models.Model):
         if lang == "en" and self.text_en:
             return self.text_en
         return self.text_en or self.text_ar
+
+
+class SurveyRoutingRule(models.Model):
+    """Declarative routing rule for survey questions."""
+
+    to_question = models.ForeignKey(
+        SurveyQuestion,
+        verbose_name=_("إلى السؤال"),
+        on_delete=models.CASCADE,
+        related_name="incoming_survey_rules",
+    )
+    condition = models.TextField(_("الشرط"), blank=True)
+    priority = models.IntegerField(default=0)
+    description = models.CharField(max_length=255, blank=True, verbose_name=_("الوصف"))
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["to_question_id", "priority", "id"]
+        verbose_name = _("قاعدة مسار الاستبيان")
+        verbose_name_plural = _("قواعد مسار الاستبيان")
+
+    def __str__(self) -> str:
+        return self.description or f"Rule to Q{self.to_question_id}"

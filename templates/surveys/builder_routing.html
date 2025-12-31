@@ -5,110 +5,12 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'surveys/css/builder_initial.css' %}">
-<style>
-    .routing-container {
-        display: grid;
-        grid-template-columns: 250px 1fr;
-        gap: 1.5rem;
-        height: calc(100vh - 200px);
-    }
-
-    .sidebar-panel {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 1rem;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .main-panel {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 1.5rem;
-        overflow-y: auto;
-        position: relative;
-    }
-
-    .draggable-item {
-        background: var(--secondary);
-        border: 1px solid var(--border);
-        padding: 0.75rem;
-        border-radius: 8px;
-        cursor: grab;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-    }
-
-    .draggable-item:active {
-        cursor: grabbing;
-    }
-
-    .flow-canvas {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        background-image: radial-gradient(var(--border) 1px, transparent 1px);
-        background-size: 20px 20px;
-    }
-
-    .flow-node {
-        position: absolute;
-        background: var(--card);
-        border: 2px solid var(--primary);
-        border-radius: 8px;
-        padding: 1rem;
-        width: 200px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        cursor: move;
-        z-index: 10;
-    }
-
-    .flow-node-header {
-        font-weight: bold;
-        border-bottom: 1px solid var(--border);
-        padding-bottom: 0.5rem;
-        margin-bottom: 0.5rem;
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .connection-point {
-        width: 12px;
-        height: 12px;
-        background: var(--primary);
-        border-radius: 50%;
-        position: absolute;
-        cursor: crosshair;
-    }
-
-    .point-in { top: -6px; left: 50%; transform: translateX(-50%); }
-    .point-out { bottom: -6px; left: 50%; transform: translateX(-50%); }
-
-    svg.connections {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 1;
-    }
-
-    path.connection-line {
-        fill: none;
-        stroke: var(--primary);
-        stroke-width: 2;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'surveys/css/builder_routing.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="card box mb-3">
-    <div class="section-head" style="padding: 1rem;">
+    <div class="section-head routing-head">
         <h1 class="page-title">{% trans "قواعد التوجيه" %}</h1>
         <div class="controls">
             <select id="survey-version-select" class="form-select">
@@ -125,13 +27,13 @@
 <div class="routing-container">
     <aside class="sidebar-panel">
         <h3>{% trans "الأسئلة" %}</h3>
-        <div id="questions-list">
+        <div id="questions-list" class="questions-list">
             <!-- Questions will be loaded here -->
             <div class="muted text-center">{% trans "اختر إصداراً لتحميل الأسئلة" %}</div>
         </div>
     </aside>
 
-    <main class="main-panel" id="flow-container">
+    <main class="main-panel" id="flow-container" data-data-url="{% url 'survey_routing_data' %}" data-save-url="{% url 'survey_routing_save' %}">
         <svg class="connections" id="connections-layer"></svg>
         <div class="flow-canvas" id="canvas">
             <!-- Nodes will be dropped here -->
@@ -139,178 +41,9 @@
     </main>
 </div>
 
-{{ available_questions|json_script:"available-questions-data" }}
+{{ routing_locale|json_script:"routing-locale" }}
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const versionSelect = document.getElementById('survey-version-select');
-        const questionsList = document.getElementById('questions-list');
-        const canvas = document.getElementById('canvas');
-        const connectionsLayer = document.getElementById('connections-layer');
-
-        let draggedItem = null;
-        let activeConnection = null;
-        let nodes = [];
-        let connections = [];
-
-        // Load questions when version changes
-        versionSelect.addEventListener('change', (e) => {
-            const versionId = e.target.value;
-            // In a real app, fetch questions for this version via AJAX
-            // For now, we use the available_questions passed from view (filtered by version in backend ideally)
-            // But the view passes ALL available questions.
-            // Let's simulate fetching or filtering.
-
-            // Clear canvas
-            canvas.innerHTML = '';
-            connectionsLayer.innerHTML = '';
-            nodes = [];
-            connections = [];
-
-            // Populate sidebar
-            const allQuestions = JSON.parse(document.getElementById('available-questions-data').textContent);
-            questionsList.innerHTML = '';
-
-            allQuestions.forEach(q => {
-                const el = document.createElement('div');
-                el.className = 'draggable-item';
-                el.draggable = true;
-                el.textContent = q.label;
-                el.dataset.id = q.id;
-
-                el.addEventListener('dragstart', (ev) => {
-                    draggedItem = q;
-                    ev.dataTransfer.setData('text/plain', JSON.stringify(q));
-                });
-
-                questionsList.appendChild(el);
-            });
-        });
-
-        // Canvas Drag & Drop
-        canvas.addEventListener('dragover', (e) => e.preventDefault());
-
-        canvas.addEventListener('drop', (e) => {
-            e.preventDefault();
-            if (!draggedItem) return;
-
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            createNode(draggedItem, x, y);
-            draggedItem = null;
-        });
-
-        function createNode(data, x, y) {
-            const node = document.createElement('div');
-            node.className = 'flow-node';
-            node.style.left = `${x}px`;
-            node.style.top = `${y}px`;
-            node.dataset.id = data.id;
-
-            node.innerHTML = `
-                <div class="flow-node-header">
-                    <span>Q${data.id}</span>
-                    <button class="btn-close" style="background:none;border:none;cursor:pointer;">&times;</button>
-                </div>
-                <div class="flow-node-body">${data.label}</div>
-                <div class="connection-point point-in" title="Input"></div>
-                <div class="connection-point point-out" title="Output"></div>
-            `;
-
-            // Make node draggable within canvas
-            let isDragging = false;
-            let startX, startY;
-
-            node.addEventListener('mousedown', (e) => {
-                if (e.target.classList.contains('connection-point')) return;
-                isDragging = true;
-                startX = e.clientX - node.offsetLeft;
-                startY = e.clientY - node.offsetTop;
-                node.style.zIndex = 100;
-            });
-
-            window.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                const newX = e.clientX - startX;
-                const newY = e.clientY - startY;
-                node.style.left = `${newX}px`;
-                node.style.top = `${newY}px`;
-                updateConnections();
-            });
-
-            window.addEventListener('mouseup', () => {
-                isDragging = false;
-                node.style.zIndex = 10;
-            });
-
-            // Connection logic
-            const outPoint = node.querySelector('.point-out');
-            outPoint.addEventListener('mousedown', (e) => {
-                e.stopPropagation();
-                startConnection(node, e);
-            });
-
-            const inPoint = node.querySelector('.point-in');
-            inPoint.addEventListener('mouseup', (e) => {
-                e.stopPropagation();
-                endConnection(node);
-            });
-
-            // Remove node
-            node.querySelector('.btn-close').addEventListener('click', () => {
-                node.remove();
-                // Remove associated connections
-                // (Implementation omitted for brevity)
-            });
-
-            canvas.appendChild(node);
-            nodes.push(node);
-        }
-
-        function startConnection(sourceNode, e) {
-            // Create SVG line following mouse
-            // (Implementation simplified)
-            activeConnection = { source: sourceNode };
-        }
-
-        function endConnection(targetNode) {
-            if (!activeConnection || activeConnection.source === targetNode) return;
-
-            // Draw permanent line
-            drawConnection(activeConnection.source, targetNode);
-            activeConnection = null;
-        }
-
-        function drawConnection(source, target) {
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.classList.add('connection-line');
-            // Calculate path d attribute based on source/target positions
-            // ...
-            connectionsLayer.appendChild(path);
-            connections.push({ source, target, element: path });
-            updateConnections();
-        }
-
-        function updateConnections() {
-            connections.forEach(conn => {
-                const srcRect = conn.source.getBoundingClientRect();
-                const tgtRect = conn.target.getBoundingClientRect();
-                const canvasRect = canvas.getBoundingClientRect();
-
-                const x1 = srcRect.left + srcRect.width/2 - canvasRect.left;
-                const y1 = srcRect.bottom - canvasRect.top;
-                const x2 = tgtRect.left + tgtRect.width/2 - canvasRect.left;
-                const y2 = tgtRect.top - canvasRect.top;
-
-                // Simple bezier curve
-                const d = `M ${x1} ${y1} C ${x1} ${y1+50}, ${x2} ${y2-50}, ${x2} ${y2}`;
-                conn.element.setAttribute('d', d);
-            });
-        }
-    });
-</script>
+<script src="{% static 'surveys/js/builder_routing.js' %}"></script>
 {% endblock %}

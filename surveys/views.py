@@ -262,14 +262,161 @@ def survey_builder_routing(request):
         for version in survey_versions
     ]
 
+    routing_locale = {
+        "selectVersion": str(_("يرجى اختيار إصدار استبيان.")),
+        "fallbackPrompt": str(_("اجعل هذا المسار احتياطياً بدون شروط؟")),
+        "operatorPrompt": str(_("أدخل عامل المقارنة (مثل == أو in):")),
+        "valuePrompt": str(_("أدخل قيمة الشرط:")),
+        "saveSuccess": str(_("تم حفظ قواعد التوجيه بنجاح.")),
+        "saveError": str(_("تعذر حفظ قواعد التوجيه.")),
+        "duplicateConnection": str(_("هذا الاتصال موجود بالفعل.")),
+        "missingVersion": str(_("يجب اختيار الإصدار قبل حفظ القواعد.")),
+        "questionLabel": str(_("سؤال")),
+        "deleteConnection": str(_("هل تريد حذف هذا الاتصال؟")),
+        "removeNode": str(_("هل تريد حذف هذه العقدة ومساراتها؟")),
+    }
+
     return render(
         request,
         "surveys/builder_routing.html",
         {
             "available_questions": available_questions,
             "survey_versions": version_choices,
+            "routing_locale": routing_locale,
         },
     )
+
+
+def survey_routing_data(request):
+    version_id = request.GET.get("version_id")
+    if not version_id:
+        return JsonResponse(
+            {"message": str(_("معرّف الإصدار مطلوب."))},
+            status=400,
+        )
+
+    version = get_object_or_404(SurveyVersion, pk=version_id)
+
+    questions = [
+        {
+            "id": question.id,
+            "label": question.display_text,
+            "code": question.code,
+        }
+        for question in version.questions.all().order_by("id")
+    ]
+
+    rules = []
+    for rule in SurveyRoutingRule.objects.filter(
+        to_question__survey_version=version
+    ).order_by("priority", "id"):
+        try:
+            condition = json.loads(rule.condition) if rule.condition else {}
+        except json.JSONDecodeError:
+            condition = {}
+        rules.append(
+            {
+                "id": rule.id,
+                "to_question": rule.to_question_id,
+                "priority": rule.priority,
+                "description": rule.description,
+                "condition": condition,
+            }
+        )
+
+    return JsonResponse(
+        {
+            "questions": questions,
+            "rules": rules,
+            "layout": version.routing_layout or {},
+        }
+    )
+
+
+@require_POST
+def save_survey_routing(request):
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse(
+            {"message": str(_("تعذر قراءة بيانات الطلب."))},
+            status=400,
+        )
+
+    version_id = payload.get("version_id")
+    if not version_id:
+        return JsonResponse(
+            {"message": str(_("معرّف الإصدار مطلوب."))},
+            status=400,
+        )
+
+    version = get_object_or_404(SurveyVersion, pk=version_id)
+    rules_payload = payload.get("rules") or []
+    if not isinstance(rules_payload, list):
+        return JsonResponse(
+            {"message": str(_("صيغة القواعد غير صالحة."))},
+            status=400,
+        )
+    layout = payload.get("layout") or {}
+
+    cleaned_rules = []
+
+    for idx, rule in enumerate(rules_payload):
+        to_question_id = rule.get("to_question")
+        if not to_question_id:
+            return JsonResponse(
+                {"message": str(_("حقل 'to_question' مطلوب لكل قاعدة."))},
+                status=400,
+            )
+
+        question = SurveyQuestion.objects.filter(
+            pk=to_question_id, survey_version=version
+        ).first()
+        if not question:
+            return JsonResponse(
+                {"message": str(_("السؤال المحدد لا ينتمي لهذا الإصدار."))},
+                status=400,
+            )
+
+        condition = rule.get("condition") or {}
+        if not isinstance(condition, dict):
+            return JsonResponse(
+                {"message": str(_("صيغة الشرط غير صالحة."))},
+                status=400,
+            )
+
+        cleaned_rules.append(
+            SurveyRoutingRule(
+                to_question=question,
+                condition=json.dumps(condition),
+                priority=rule.get("priority", idx),
+                description=rule.get("description", "") or "",
+            )
+        )
+
+    with transaction.atomic():
+        SurveyRoutingRule.objects.filter(
+            to_question__survey_version=version
+        ).delete()
+        if cleaned_rules:
+            SurveyRoutingRule.objects.bulk_create(cleaned_rules)
+
+        layout_payload = layout if isinstance(layout, dict) else {}
+        version.routing_layout = layout_payload
+        version.routing_logic_done = True
+        version.routing_logic_done_at = timezone.now()
+        update_fields = [
+            "routing_layout",
+            "routing_logic_done",
+            "routing_logic_done_at",
+        ]
+        if request.user.is_authenticated:
+            version.routing_logic_done_by = request.user
+            update_fields.append("routing_logic_done_by")
+
+        version.save(update_fields=update_fields)
+
+    return JsonResponse({"status": "ok"})
 
 def survey_builder_initial(request):
     # Fetch questions from Qbank.models.Questions instead of SurveyQuestion
