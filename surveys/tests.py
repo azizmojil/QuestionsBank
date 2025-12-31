@@ -286,6 +286,7 @@ class SurveyRoutingBuilderTests(TestCase):
 
 class SurveySchemaTests(TestCase):
     def _table_columns(self, table_name):
+        """Lightweight schema check mirroring the migration guard."""
         with connection.cursor() as cursor:
             return [
                 col.name

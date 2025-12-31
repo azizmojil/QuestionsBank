@@ -1,4 +1,4 @@
-from django.db import migrations, models
+from django.db import migrations
 
 
 def ensure_section_column(apps, schema_editor):
@@ -7,8 +7,10 @@ def ensure_section_column(apps, schema_editor):
     Add the nullable section_id column if it is missing to prevent runtime errors.
     """
     connection = schema_editor.connection
-    table_name = "surveys_surveyquestion"
-    column_name = "section_id"
+    SurveyQuestion = apps.get_model("surveys", "SurveyQuestion")
+    section_field = SurveyQuestion._meta.get_field("section")
+    table_name = SurveyQuestion._meta.db_table
+    column_name = section_field.column
 
     with connection.cursor() as cursor:
         columns = [
@@ -19,16 +21,9 @@ def ensure_section_column(apps, schema_editor):
     if column_name in columns:
         return
 
-    SurveyQuestion = apps.get_model("surveys", "SurveyQuestion")
-
-    field = models.ForeignKey(
-        "surveys.SurveySection",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="questions",
-    )
-    field.set_attributes_from_name("section")
+    _, _, args, kwargs = section_field.deconstruct()
+    field = section_field.__class__(*args, **kwargs)
+    field.set_attributes_from_name(section_field.name)
     schema_editor.add_field(SurveyQuestion, field)
 
 
