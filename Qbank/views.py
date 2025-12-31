@@ -2,10 +2,20 @@ import json
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from django.utils.translation import get_language
+from django.utils.translation import get_language, gettext_lazy as _
 
 from .models import QuestionStaging
 from surveys.models import SurveyQuestion
+
+PIPELINE_STEPS = [
+    {"label": _("القائمة المبدئية"), "status": "done"},
+    {"label": _("تدقيق لغوي"), "status": "done"},
+    {"label": _("قائمة الترجمة"), "status": "in_progress"},
+    {"label": _("قواعد التوجيه"), "status": "not_started"},
+    {"label": _("قواعد الأعمال"), "status": "skipped"},
+    {"label": _("إنشاء نسخة الاستبيان"), "status": "not_started"},
+    {"label": _("الموافقة النهائية"), "status": "not_started"},
+]
 
 def home(request):
     return render(request, 'home.html')
@@ -130,4 +140,20 @@ def save_translation(request):
 
 def pipeline_overview(request):
     """Render the pipeline overview page describing the survey processing paths."""
-    return render(request, 'Qbank/pipeline.html')
+    steps = PIPELINE_STEPS
+    IN_PROGRESS_WEIGHT = 0.5
+
+    completed = sum(1 for step in steps if step["status"] == "done")
+    in_progress = sum(1 for step in steps if step["status"] == "in_progress")
+    total_segments = len(steps)
+    progress_ratio = (completed + (IN_PROGRESS_WEIGHT * in_progress)) / total_segments
+    progress_percentage = min(progress_ratio * 100, 100)
+
+    return render(
+        request,
+        'Qbank/pipeline.html',
+        {
+            "steps": steps,
+            "progress_percentage": progress_percentage,
+        },
+    )

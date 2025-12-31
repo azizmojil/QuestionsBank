@@ -23,5 +23,16 @@ class PipelineViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'Qbank/pipeline.html')
+        self.assertContains(response, _("القائمة المبدئية"))
+        self.assertContains(response, _("تدقيق لغوي"))
+        self.assertContains(response, _("قائمة الترجمة"))
+        self.assertContains(response, _("قواعد التوجيه"))
+        self.assertContains(response, _("قواعد الأعمال"))
         self.assertContains(response, _("إنشاء نسخة الاستبيان"))
         self.assertContains(response, _("الموافقة النهائية"))
+
+    def test_pipeline_page_shows_status_markers(self):
+        response = self.client.get(reverse('pipeline_overview'))
+
+        for status_label in (_("مكتمل"), _("قيد التنفيذ"), _("لم يبدأ"), _("تم التجاوز")):
+            self.assertContains(response, status_label)

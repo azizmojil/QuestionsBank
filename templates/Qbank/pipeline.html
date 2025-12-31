@@ -8,45 +8,87 @@
 {% endblock %}
 
 {% block content %}
-<div class="progress-steps">
-    <div class="progress-steps__container">
-        <div class="progress-steps__item">
-            <div class="progress-steps__circle progress-steps__circle--completed">
-                <div class="progress-steps__checkmark">L</div>
+<div class="card progress-card">
+    <div class="progress-steps">
+        <div class="progress-steps__header">
+            <p class="progress-steps__eyebrow">{% trans "مسار الاعتماد" %}</p>
+            <h2 class="progress-steps__title">{% trans "تتبع مراحل بناء الاستبيان" %}</h2>
+            <p class="progress-steps__description">
+                {% trans "استخدم هذا المسار للتأكد من اكتمال كل مرحلة قبل الانتقال إلى الموافقة النهائية." %}
+            </p>
+        </div>
+
+        <div class="progress-steps__container">
+            <div class="progress-steps__filled-line" style="width: {{ progress_percentage }}%;"></div>
+
+            {% for step in steps %}
+            <div class="progress-steps__item progress-steps__item--{{ step.status }}">
+                <div class="progress-steps__circle progress-steps__circle--{{ step.status }}">
+                    {% if step.status == 'done' %}
+                        <span class="progress-steps__icon progress-steps__icon--check" aria-hidden="true">
+                            <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+                                <path d="M6.5 11.3 3.2 8l1.1-1.1 2.2 2.2L11.7 4l1.1 1.1z" />
+                            </svg>
+                        </span>
+                    {% elif step.status == 'in_progress' %}
+                        <span class="progress-steps__icon progress-steps__icon--spinner" aria-hidden="true"></span>
+                    {% elif step.status == 'skipped' %}
+                        <span class="progress-steps__icon progress-steps__icon--cross" aria-hidden="true">
+                            <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+                                <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" />
+                            </svg>
+                        </span>
+                    {% else %}
+                        <span class="progress-steps__count">{{ forloop.counter }}</span>
+                    {% endif %}
+                    <span class="sr-only">
+                        {% if step.status == 'done' %}
+                            {% trans "مكتمل" %}
+                        {% elif step.status == 'in_progress' %}
+                            {% trans "قيد التنفيذ" %}
+                        {% elif step.status == 'skipped' %}
+                            {% trans "تم التجاوز" %}
+                        {% else %}
+                            {% trans "لم يبدأ" %}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="progress-steps__label-container">
+                    <span class="progress-steps__label">{{ step.label }}</span>
+                    <span class="progress-steps__status progress-steps__status--{{ step.status }}">
+                        {% if step.status == 'done' %}
+                            {% trans "مكتمل" %}
+                        {% elif step.status == 'in_progress' %}
+                            {% trans "قيد التنفيذ" %}
+                        {% elif step.status == 'skipped' %}
+                            {% trans "تم التجاوز" %}
+                        {% else %}
+                            {% trans "لم يبدأ" %}
+                        {% endif %}
+                    </span>
+                </div>
             </div>
-            <div class="progress-steps__label-container">
-                <span class="progress-steps__label">{% trans "القائمة المبدئية" %}</span>
+            {% endfor %}
+        </div>
+
+        <div class="progress-steps__legend" aria-hidden="true">
+            <div class="progress-steps__legend-item">
+                <span class="progress-steps__status-dot progress-steps__status-dot--done"></span>
+                <span>{% trans "مكتمل" %}</span>
+            </div>
+            <div class="progress-steps__legend-item">
+                <span class="progress-steps__status-dot progress-steps__status-dot--in_progress"></span>
+                <span>{% trans "قيد التنفيذ" %}</span>
+            </div>
+            <div class="progress-steps__legend-item">
+                <span class="progress-steps__status-dot progress-steps__status-dot--not_started"></span>
+                <span>{% trans "لم يبدأ" %}</span>
+            </div>
+            <div class="progress-steps__legend-item">
+                <span class="progress-steps__status-dot progress-steps__status-dot--skipped"></span>
+                <span>{% trans "تم التجاوز" %}</span>
             </div>
         </div>
-        <div class="progress-steps__item">
-            <div class="progress-steps__circle progress-steps__circle--completed">
-                <div class="progress-steps__checkmark">L</div>
-            </div>
-            <div class="progress-steps__label-container">
-                <span class="progress-steps__label">{% trans "تدقيق لغوي" %}</span>
-            </div>
-        </div>
-        <div class="progress-steps__item">
-            <div class="progress-steps__circle">
-                <span class="progress-steps__count">3</span>
-            </div>
-            <div class="progress-steps__label-container">
-                <span class="progress-steps__label">{% trans "قائمة الترجمة" %}</span>
-            </div>
-        </div>
-        <div class="progress-steps__item">
-            <div class="progress-steps__circle">
-                <span class="progress-steps__count">4</span>
-            </div>
-            <div class="progress-steps__label-container">
-                <span class="progress-steps__label">{% trans "قواعد التوجيه" %}</span>
-            </div>
-        </div>
-        <div class="progress-steps__filled-line" style="width: 33.33%;"></div>
-    </div>
-    <div class="progress-steps__buttons">
-        <button class="progress-steps__button" disabled>{% trans "السابق" %}</button>
-        <button class="progress-steps__button">{% trans "التالي" %}</button>
     </div>
 </div>
 {% endblock %}
