@@ -1,76 +1,66 @@
 from __future__ import annotations
 
-import logging
-import re
 from dataclasses import dataclass
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, Optional
 
-from django.db.models import QuerySet
+from assessment_flow.engine import RoutingEngine as AssessmentRoutingEngine
+from assessment_flow.engine import RoutingResult as AssessmentRoutingResult
 
-from .models import SurveyQuestion, SurveyVersion
-
-log = logging.getLogger(__name__)
+from .models import SurveyQuestion, SurveyRoutingRule, SurveyVersion
 
 
 @dataclass
 class RoutingResult:
-    """
-    Holds the result of the routing engine.
-    """
+    """Routing result for survey questions."""
+
     next_question: Optional[SurveyQuestion]
-    # rule: Optional[SurveyFlowRule] = None # If we had a rule model
+    rule: Optional[SurveyRoutingRule] = None
 
 
-class SurveyRoutingEngine:
+class SurveyRoutingEngine(AssessmentRoutingEngine):
     """
-    Core engine for resolving the next SurveyQuestion based on
-    stored routing logic and user responses.
+    Survey routing engine that reuses the assessment routing logic
+    against SurveyRoutingRule objects scoped to a SurveyVersion.
     """
 
-    def __init__(self, survey_version: SurveyVersion):
-        """
-        :param survey_version: The survey version context.
-        """
+    def __init__(
+        self,
+        survey_version: SurveyVersion,
+        rules: Optional[Iterable[SurveyRoutingRule]] = None,
+    ):
         self.survey_version = survey_version
-        # In a real implementation, we would load rules here.
-        # For now, we assume a simple linear flow or basic logic.
-        self._questions = list(survey_version.questions.all())
-
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
+        rules = (
+            SurveyRoutingRule.objects.filter(
+                to_question__survey_version=survey_version
+            ).select_related("to_question")
+            if rules is None
+            else rules
+        )
+        super().__init__(rules=rules)
 
     def get_next_question(
-            self,
-            current_question_id: Optional[int],
-            responses: Dict[int, Any],
+        self,
+        responses: Dict[int, Any],
+        used_rule_ids: Optional[Iterable[int]] = None,
     ) -> RoutingResult:
+        result: AssessmentRoutingResult = super().get_next_question(
+            responses=responses,
+            used_rule_ids=used_rule_ids,
+        )
+        return RoutingResult(next_question=result.next_question, rule=result.rule)
+
+    # ------------------------------------------------------------------
+    # Overrides
+    # ------------------------------------------------------------------
+
+    def _check_translated_equality(
+        self,
+        question_id: int,
+        answer: Any,
+        expected: Any,
+    ) -> bool:
         """
-        Determine the next SurveyQuestion to route to.
-
-        :param current_question_id: The ID of the question just answered.
-        :param responses: Mapping of question_id -> answer.
-        :return: The next SurveyQuestion to show, or None if end of survey.
+        Survey questions do not have translated option tables like assessment
+        options. Fall back to a simple string equality check.
         """
-        
-        # Simple linear flow implementation for now
-        if not self._questions:
-            return RoutingResult(next_question=None)
-
-        if current_question_id is None:
-            # Start with the first question
-            return RoutingResult(next_question=self._questions[0])
-
-        try:
-            # Find current index
-            current_index = next(i for i, q in enumerate(self._questions) if q.id == current_question_id)
-            
-            # Return next question if available
-            if current_index + 1 < len(self._questions):
-                return RoutingResult(next_question=self._questions[current_index + 1])
-            
-        except StopIteration:
-            log.warning(f"Current question {current_question_id} not found in version {self.survey_version.id}")
-        
-        # End of survey
-        return RoutingResult(next_question=None)
+        return str(answer).strip() == str(expected).strip()

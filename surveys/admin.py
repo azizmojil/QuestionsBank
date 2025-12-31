@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
-from .models import Survey, SurveyVersion, SurveyQuestion
+from .models import Survey, SurveyVersion, SurveyQuestion, SurveyRoutingRule
 
 
 class SurveyVersionInline(admin.TabularInline):
@@ -107,3 +107,16 @@ class SurveyQuestionAdmin(admin.ModelAdmin):
 
     def get_fieldsets(self, request, obj=None):
         return []
+
+
+@admin.register(SurveyRoutingRule)
+class SurveyRoutingRuleAdmin(admin.ModelAdmin):
+    list_display = ("to_question", "priority", "description")
+    search_fields = (
+        "description",
+        "to_question__text_ar",
+        "to_question__text_en",
+        "to_question__code",
+    )
+    list_filter = ("to_question__survey_version",)
+    autocomplete_fields = ("to_question",)
