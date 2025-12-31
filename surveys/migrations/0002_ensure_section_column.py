@@ -1,4 +1,4 @@
-from django.db import migrations
+from django.db import migrations, models
 
 
 def ensure_section_column(apps, schema_editor):
@@ -19,12 +19,18 @@ def ensure_section_column(apps, schema_editor):
     if column_name in columns:
         return
 
-    quoted_table = connection.ops.quote_name(table_name)
-    quoted_column = connection.ops.quote_name(column_name)
+    SurveyQuestion = apps.get_model("surveys", "SurveyQuestion")
+    SurveySection = apps.get_model("surveys", "SurveySection")
 
-    schema_editor.execute(
-        f"ALTER TABLE {quoted_table} ADD COLUMN {quoted_column} integer NULL"
+    field = models.ForeignKey(
+        SurveySection,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="questions",
     )
+    field.set_attributes_from_name("section")
+    schema_editor.add_field(SurveyQuestion, field)
 
 
 class Migration(migrations.Migration):
@@ -34,5 +40,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # Reverse is intentionally a noop; the base schema already includes this
+        # column, and dropping it would make earlier migration states invalid.
         migrations.RunPython(ensure_section_column, migrations.RunPython.noop),
     ]
