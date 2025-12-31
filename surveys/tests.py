@@ -1,6 +1,6 @@
 import json
 
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, transaction, connection
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -282,3 +282,15 @@ class SurveyRoutingBuilderTests(TestCase):
         rule = rules.first()
         self.assertEqual(rule.priority, 2)
         self.assertEqual(json.loads(rule.condition), payload["rules"][0]["condition"])
+
+
+class SurveySchemaTests(TestCase):
+    def test_section_column_exists(self):
+        table_name = SurveyQuestion._meta.db_table
+        with connection.cursor() as cursor:
+            columns = [
+                col.name
+                for col in connection.introspection.get_table_description(cursor, table_name)
+            ]
+
+        self.assertIn("section_id", columns)

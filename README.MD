@@ -33,7 +33,18 @@ erDiagram
         varchar version_label
         date version_date
         varchar interval
-        varchar status
+        datetime created_at
+        datetime updated_at
+    }
+
+    SURVEY_SECTION {
+        bigint id PK
+        bigint survey_version_id
+        varchar title_ar
+        varchar title_en
+        text description_ar
+        text description_en
+        int order
         datetime created_at
         datetime updated_at
     }
@@ -41,11 +52,15 @@ erDiagram
     SURVEY_QUESTION {
         bigint id PK
         bigint survey_version_id
+        bigint section_id
         varchar code
         text text_ar
         text text_en
         text help_text
-        varchar section_label
+        bigint response_group_id
+        bigint response_type_id
+        bigint matrix_item_group_id
+        bool is_matrix
         bool is_required
         datetime created_at
         datetime updated_at
