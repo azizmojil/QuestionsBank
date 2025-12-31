@@ -5,17 +5,8 @@ from django.views.decorators.http import require_POST
 from django.utils.translation import get_language, gettext_lazy as _
 
 from .models import QuestionStaging
-from surveys.models import SurveyQuestion
-
-PIPELINE_STEPS = [
-    {"label": _("القائمة المبدئية"), "status": "done"},
-    {"label": _("تدقيق لغوي"), "status": "done"},
-    {"label": _("قائمة الترجمة"), "status": "in_progress"},
-    {"label": _("قواعد التوجيه"), "status": "not_started"},
-    {"label": _("قواعد الأعمال"), "status": "skipped"},
-    {"label": _("إنشاء نسخة الاستبيان"), "status": "not_started"},
-    {"label": _("الموافقة النهائية"), "status": "not_started"},
-]
+from surveys.models import SurveyQuestion, SurveyVersion
+from assessment_runs.models import AssessmentRun
 
 def home(request):
     return render(request, 'home.html')
@@ -139,21 +130,101 @@ def save_translation(request):
 
 
 def pipeline_overview(request):
-    """Render the pipeline overview page describing the survey processing paths."""
-    steps = PIPELINE_STEPS
-    IN_PROGRESS_WEIGHT = 0.5
+    """Render the pipeline overview page with backend-driven survey version states."""
 
-    completed = sum(1 for step in steps if step["status"] == "done")
-    in_progress = sum(1 for step in steps if step["status"] == "in_progress")
-    total_segments = len(steps)
-    progress_ratio = (completed + (IN_PROGRESS_WEIGHT * in_progress)) / total_segments
-    progress_percentage = min(progress_ratio * 100, 100)
+    def status_value(*, started: bool, done: bool) -> str:
+        if done:
+            return "done"
+        if started:
+            return "in_progress"
+        return "not_started"
+
+    def pipeline_state(version: SurveyVersion) -> dict:
+        questions = list(version.questions.all())
+        total_questions = len(questions)
+        english_questions = sum(1 for q in questions if (q.text_en or "").strip())
+        required_questions = sum(1 for q in questions if q.is_required)
+
+        staged = list(version.staged_questions.all())
+        staged_total = len(staged)
+        staged_sent = sum(1 for item in staged if item.is_sent_for_translation)
+        staged_translated = sum(
+            1 for item in staged if item.is_sent_for_translation and (item.text_en or "").strip()
+        )
+
+        try:
+            assessment_run = version.assessment_run
+        except AssessmentRun.DoesNotExist:
+            assessment_run = None
+
+        results_count = 0
+        if assessment_run:
+            results = getattr(assessment_run, "prefetched_results", None)
+            if results is None:
+                results = list(assessment_run.results.all())
+            results_count = len(results)
+
+        return {
+            "version": "done",
+            "self": status_value(
+                started=bool(assessment_run),
+                done=bool(total_questions and results_count >= total_questions),
+            ),
+            "routing": status_value(
+                started=bool(total_questions),
+                done=bool(total_questions and assessment_run),
+            ),
+            "business": status_value(
+                started=bool(total_questions),
+                done=bool(required_questions),
+            ),
+            "lang": status_value(
+                started=bool(staged_total),
+                done=bool(staged_total and staged_sent == staged_total),
+            ),
+            "translation": status_value(
+                started=bool(staged_sent),
+                done=bool(staged_sent and staged_translated == staged_sent),
+            ),
+            "approval": status_value(
+                started=version.status
+                in {SurveyVersion.Status.ACTIVE, SurveyVersion.Status.LOCKED, SurveyVersion.Status.ARCHIVED},
+                done=version.status in {SurveyVersion.Status.LOCKED, SurveyVersion.Status.ARCHIVED},
+            ),
+            "qbank": status_value(
+                started=bool(total_questions),
+                done=bool(total_questions and english_questions == total_questions),
+            ),
+        }
+
+    versions = (
+        SurveyVersion.objects.select_related("survey")
+        .prefetch_related("questions", "staged_questions", "assessment_run__results")
+        .order_by("-version_date", "-id")
+    )
+
+    pipelines = [
+        {
+            "id": str(version.id),
+            "survey": version.survey.display_name,
+            "version_label": version.version_label or version.version_date.isoformat(),
+            "state": pipeline_state(version),
+        }
+        for version in versions
+    ]
+
+    status_labels = {
+        "done": str(_("مكتمل")),
+        "in_progress": str(_("قيد التنفيذ")),
+        "not_started": str(_("لم يبدأ")),
+        "blocked": str(_("محجوب")),
+    }
 
     return render(
         request,
         'pipeline.html',
         {
-            "steps": steps,
-            "progress_percentage": progress_percentage,
+            "pipelines": pipelines,
+            "status_labels": status_labels,
         },
     )

@@ -1,9 +1,10 @@
 :root{
-  --accent: #4a154b;
-  --track: #f3e7f3;
-  --warn: #ff9800;
-  --muted: #9a9a9a;
-  --bg: #ffffff;
+  --accent: var(--brand-green, #074d31);
+  --track: #f3e9d2;
+  --warn: var(--brand-gold, #dba102);
+  --muted: #9b8a66;
+  --bg: var(--card, #ffffff);
+  --pipeline-connector: #d6c08c;
 }
 
 .pipeline-wrap{
@@ -78,8 +79,8 @@
   display: inline-block;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #f6f6f6;
-  color: #333;
+  background: #f6f0df;
+  color: #3f3826;
 }
 
 /* Circle style (connected circles aesthetic) */
@@ -133,9 +134,9 @@
 .pnode.is-blocked .pnode__circle{ border-color: var(--muted); }
 
 .pnode.is-done .pnode__status{ background: var(--track); color: var(--accent); }
-.pnode.is-in_progress .pnode__status{ background: #fff4e5; color: #7a4b00; }
-.pnode.is-not_started .pnode__status{ background: #f6f6f6; color: #333; }
-.pnode.is-blocked .pnode__status{ background: #eeeeee; color: #555; }
+.pnode.is-in_progress .pnode__status{ background: #fff4e0; color: #6a4a04; }
+.pnode.is-not_started .pnode__status{ background: #f6f0df; color: #3f3826; }
+.pnode.is-blocked .pnode__status{ background: #ece2c6; color: #5c5035; }
 
 .pnode.gate .pnode__label{ font-weight: 800; }
 .pnode.post .pnode__circle{ border-style: dashed; }
