@@ -59,8 +59,8 @@ class AssessmentQuestion(models.Model):
         blank=True,
         related_name="assessment_questions",
     )
-    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("Updated At"), auto_now=True)
+    created_at = models.DateTimeField(_("تاريخ الإنشاء"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("تاريخ التحديث"), auto_now=True)
 
     class Meta:
         ordering = ["id"]
@@ -116,8 +116,8 @@ class AssessmentOption(models.Model):
 
     class Meta:
         ordering = ["id"]
-        verbose_name = _("Assessment Option")
-        verbose_name_plural = _("Assessment Options")
+        verbose_name = _("خيار التقييم")
+        verbose_name_plural = _("خيارات التقييم")
 
     def __str__(self):
         text = self.display_text
@@ -146,7 +146,7 @@ class AssessmentFlowRule(models.Model):
     """Declarative routing rule for the assessment flow."""
     to_question = models.ForeignKey(
         AssessmentQuestion,
-        verbose_name=_("To Question"),
+        verbose_name=_("إلى السؤال"),
         on_delete=models.CASCADE,
         related_name="incoming_rules",
     )
@@ -161,8 +161,8 @@ class AssessmentFlowRule(models.Model):
 
     class Meta:
         ordering = ["to_question_id", "priority"]
-        verbose_name = _("Assessment Flow Rule")
-        verbose_name_plural = _("Assessment Flow Rules")
+        verbose_name = _("قاعدة مسار التقييم")
+        verbose_name_plural = _("قواعد مسار التقييم")
 
     def __str__(self):
         return self.description or f"Rule to Q{self.to_question_id}"
@@ -179,8 +179,8 @@ class ReevaluationQuestion(models.Model):
     )
     text_ar = models.CharField(max_length=512, blank=True, verbose_name=_("السؤال [عربية]"))
     text_en = models.CharField(max_length=512, blank=True, verbose_name=_("السؤال [إنجليزية]"))
-    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("Updated At"), auto_now=True)
+    created_at = models.DateTimeField(_("تاريخ الإنشاء"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("تاريخ التحديث"), auto_now=True)
 
     class Meta:
         ordering = ["id"]
