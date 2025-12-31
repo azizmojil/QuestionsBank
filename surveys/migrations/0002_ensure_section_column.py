@@ -21,10 +21,7 @@ def ensure_section_column(apps, schema_editor):
     if column_name in columns:
         return
 
-    _, _, args, kwargs = section_field.deconstruct()
-    field = section_field.__class__(*args, **kwargs)
-    field.set_attributes_from_name(section_field.name)
-    schema_editor.add_field(SurveyQuestion, field)
+    schema_editor.add_field(SurveyQuestion, section_field)
 
 
 class Migration(migrations.Migration):
