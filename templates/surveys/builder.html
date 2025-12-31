@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "منشئ الاستبيان" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'surveys/css/builder_initial.css' %}">
+<link rel="stylesheet" href="{% static 'surveys/css/builder_final.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="card box mb-3">
+    <div class="section-head section-head--padded">
+        <div>
+            <p class="eyebrow">{% trans "النسخة النهائية" %}</p>
+            <h1 class="page-title">{% trans "منشئ الاستبيان" %}</h1>
+            <p class="muted">{% trans "كوّن الأقسام والأسئلة النهائية بعد التقييم الذاتي." %}</p>
+        </div>
+        <div class="controls">
+            <label class="stacked">
+                {% trans "إصدار الاستبيان" %}
+                <select id="survey-version-select">
+                    <option value="" disabled selected>{% trans "اختر إصدار الاستبيان" %}</option>
+                    {% for version in survey_versions %}
+                    <option value="{{ version.id }}">{{ version.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button class="btn btn-secondary" id="add-section-btn">{% trans "إضافة قسم" %}</button>
+            <button class="btn btn-primary" id="save-final-btn">{% trans "حفظ الاستبيان النهائي" %}</button>
+        </div>
+    </div>
+    <div id="save-status" class="save-status" role="status" aria-live="polite"></div>
+</div>
+
+<section class="builder-grid workflow-grid stage-panel" data-stage="final" aria-label="{% trans 'منشئ الاستبيان النهائي' %}">
+    <div class="card intake-card palette-card">
+        <h2 class="card-title">{% trans "المصادر" %}</h2>
+        <p class="muted">{% trans "اختر سؤالاً جاهزاً أو اكتب سؤالاً جديداً لكل قسم." %}</p>
+        <select id="available-question-options" aria-hidden="true" class="sr-only">
+            {% for q in available_questions %}
+            <option value="{{ q.id }}">{{ q.label }}</option>
+            {% endfor %}
+        </select>
+        <div class="palette-list" id="palette-list">
+            {% for q in available_questions %}
+            <div class="palette-item" data-id="{{ q.id }}" data-label="{{ q.label|escape }}">
+                <div class="palette-item__title">{{ q.label }}</div>
+                <div class="palette-item__meta">{{ q.code }}</div>
+            </div>
+            {% empty %}
+            <div class="muted">{% trans "لا توجد أسئلة جاهزة بعد" %}</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="builder-main">
+        <div id="sections-container" aria-live="polite"></div>
+    </div>
+</section>
+
+<div id="builder-config" data-submit-url="{% url 'submit_final_questionnaire' %}" class="sr-only"></div>
+{{ available_questions|json_script:"available-questions-data" }}
+{{ response_types|json_script:"response-types-data" }}
+{{ response_groups|json_script:"response-groups-data" }}
+{{ matrix_item_groups|json_script:"matrix-groups-data" }}
+{{ survey_structures|json_script:"survey-structures-data" }}
+<script id="builder-locale" type="application/json">
+{
+    "untitled": "{% trans 'قسم جديد' %}",
+    "add_question": "{% trans 'إضافة سؤال' %}",
+    "no_questions": "{% trans 'لا توجد أسئلة في هذا القسم بعد' %}",
+    "required_label": "{% trans 'إلزامي' %}",
+    "matrix_label": "{% trans 'سؤال مصفوفة' %}",
+    "manual_placeholder": "{% trans 'أدخل نص السؤال' %}",
+    "describe_section": "{% trans 'أضف وصفًا للقسم' %}",
+    "no_sections": "{% trans 'أضف قسماً لبدء البناء' %}",
+    "saved": "{% trans 'تم حفظ الاستبيان النهائي' %}",
+    "error": "{% trans 'حدث خطأ أثناء الحفظ' %}",
+    "response_type": "{% trans 'نوع الإجابة' %}",
+    "response_group": "{% trans 'مجموعة الإجابات' %}"
+}
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'surveys/js/builder_final.js' %}"></script>
+{% endblock %}
