@@ -410,44 +410,115 @@ body.dark-mode .hero-highlight {
     color: var(--accent-foreground);
 }
 
-/* Pill Switch */
-.theme-switch, .language-switch {
+.language-switch-form {
+    margin: 0;
+    padding: 0;
+    display: flex;       /* makes it behave like the other inline control */
+    align-items: center; /* align with the theme switch */
+}
+
+/* -------------------------------------------------------------------------- */
+/* Micro Vertical Switch (15w x 30h) - LIGHT-MODE COLORS ONLY                 */
+/* - No dark-mode variable usage inside the pill (track/thumb/checked/focus) */
+/* - Stable thumb motion (absolute positioning; no layout jump)              */
+/* - Text/emoji on the other side (left) via order:-1                        */
+/* -------------------------------------------------------------------------- */
+
+.v-switch {
     display: inline-flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    user-select: none;
+}
+
+/* Move the text/emoji to the other side of the switch */
+.v-switch__text {
+    order: -1;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 0.35rem;
-    cursor: pointer;
-    border-radius: 9999px;
-    padding: 0.5rem 1rem;
-    min-height: 40px;
-    min-width: 60px;
-    font-weight: 700;
-    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
-}
-
-.language-switch {
-    background-color: var(--ring);
-    border: 1px solid var(--ring);
-    color: #402c04;
-}
-
-.language-switch:hover {
-    background-color: #c28a00;
-}
-
-.theme-switch {
-    background-color: transparent;
-    border: 1px solid var(--ring);
-    color: var(--primary-foreground);
-}
-
-.theme-switch:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-}
-
-.theme-icon, .language-icon {
-    font-size: 1rem;
     line-height: 1;
+    font-weight: 800;
+    font-size: 0.75rem;
+    text-align: center;
+    gap: 0.6rem;
+    min-width: 1.2em;
+    margin-top: 0;
+    color: var(--primary-foreground);
+    opacity: 0.95;
+}
+
+.dark .v-switch__text,
+body.dark-mode .v-switch__text {
+    color: var(--foreground);
+    opacity: 0.95;
+}
+
+.v-switch__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* LIGHT MODE constants (from your :root) */
+:root {
+    --_sw-border-light: #e1d3b2; /* light --border */
+    --_sw-card-light: #ffffff;   /* light --card */
+    --_sw-ring-light: #dba102;   /* light --ring (gold) */
+}
+
+.v-switch__track {
+    width: 15px;
+    height: 30px;
+    padding: 0;
+    border-radius: 999px;
+    background: var(--_sw-border-light);
+    border: 1px solid var(--_sw-border-light);
+    cursor: pointer;
+    display: block;
+    position: relative;
+    transition: background-color 260ms, border-color 260ms, box-shadow 260ms;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.10);
+    flex: 0 0 auto;
+}
+
+.v-switch__thumb {
+    width: 11px;
+    height: 11px;
+    border-radius: 999px;
+    background: var(--_sw-card-light);
+    border: 1px solid var(--_sw-border-light);
+    position: absolute;
+    left: 50%;
+    bottom: 1px;
+    transform: translateX(-50%);
+    transition: top 420ms ease-in-out, bottom 420ms ease-in-out, transform 120ms ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+}
+
+.v-switch__input:focus-visible + .v-switch__track {
+    box-shadow: 0 0 0 2px var(--_sw-ring-light),
+                0 4px 6px -1px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.10);
+}
+
+.v-switch__input:checked + .v-switch__track {
+    background: var(--_sw-ring-light);
+    border-color: var(--_sw-ring-light);
+}
+
+.v-switch__input:checked + .v-switch__track > .v-switch__thumb {
+    bottom: auto;
+    top: 1px;
+}
+
+.v-switch__track:active .v-switch__thumb {
+    transform: translateX(-50%) scale(0.98);
 }
 
 /* Table Styles */

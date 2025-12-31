@@ -13,7 +13,7 @@ class SurveyVersionInline(admin.TabularInline):
     verbose_name_plural = _("إصدارات الاستبيان")
     extra = 0
     show_change_link = False
-    fields = ("interval", "version_date", "version_label_link", "status", "created_at")
+    fields = ("interval", "version_date", "version_label_link", "created_at")
     readonly_fields = ("version_label_link", "created_at")
 
     def version_label_link(self, obj):
@@ -74,7 +74,16 @@ class SurveyQuestionInline(admin.TabularInline):
 @admin.register(SurveyVersion)
 class SurveyVersionAdmin(admin.ModelAdmin):
     search_fields = ("version_label", "survey__name_ar", "survey__name_en")
-    list_display = ("__str__", "survey", "status")
+    list_display = (
+        "__str__", 
+        "survey", 
+        "initial_questionnaire_built",
+        "self_assessment_done",
+        "routing_logic_done",
+        "business_logic_done",
+        "lang_review_status",
+        "translation_status"
+    )
     inlines = [SurveyQuestionInline]
 
     def has_add_permission(self, request):

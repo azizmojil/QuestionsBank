@@ -17,13 +17,15 @@ log = logging.getLogger(__name__)
 
 
 def survey_list(request):
-    surveys = Survey.objects.all()
+    # Only show surveys that have at least one version with questions
+    surveys = Survey.objects.filter(versions__questions__isnull=False).distinct()
     return render(request, 'assessment_runs/survey_list.html', {'surveys': surveys})
 
 
 def survey_version_list(request, survey_id):
     survey = get_object_or_404(Survey, pk=survey_id)
-    versions = survey.versions.all()
+    # Only show versions that have questions
+    versions = survey.versions.annotate(num_questions=Count('questions')).filter(num_questions__gt=0).order_by("-version_date", "-id")
     return render(request, 'assessment_runs/survey_version_list.html', {'survey': survey, 'versions': versions})
 
 
@@ -284,11 +286,7 @@ def get_next_question_view(request):
             if not classification_result.classification:
                 log.debug("No classification resolved for survey question %s", survey_question_id)
 
-            classification_str = (
-                str(classification_result.classification)
-                if classification_result.classification
-                else ""
-            )
+            classification_str = classification_result.classification or ""
 
             AssessmentResult.objects.update_or_create(
                 assessment_run=assessment_run,

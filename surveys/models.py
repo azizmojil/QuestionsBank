@@ -85,6 +85,16 @@ class SurveyVersion(models.Model):
         BIANNUALLY = "B", _("نصف سنوي")
         ANNUALLY = "A", _("سنوي")
 
+    class LangReviewStatus(models.TextChoices):
+        DONE = "DONE", _("مكتمل")
+        IN_PROGRESS = "IN_PROGRESS", _("قيد التنفيذ")
+        NO_MANUAL_QUESTIONS = "NO_MANUAL_QUESTIONS", _("لا توجد أسئلة يدوية")
+
+    class TranslationStatus(models.TextChoices):
+        DONE = "DONE", _("مكتمل")
+        IN_PROGRESS = "IN_PROGRESS", _("قيد التنفيذ")
+        NO_MANUAL_QUESTIONS = "NO_MANUAL_QUESTIONS", _("لا توجد أسئلة يدوية")
+
     survey = models.ForeignKey(
         Survey,
         on_delete=models.CASCADE,
@@ -112,13 +122,40 @@ class SurveyVersion(models.Model):
         help_text=_("تواتر الاستبيان."),
     )
 
-    status = models.CharField(
-        max_length=20,
-        choices=Status.choices,
-        default=Status.DRAFT,
-        verbose_name=_("الحالة"),
-        help_text=_("مسودة: قابلة للتحرير؛ نشطة: قيد الجمع؛ مقفلة: هيكل ثابت؛ مؤرشفة: للاطلاع التاريخي."),
+    # Pipeline Status Fields
+    initial_questionnaire_built = models.BooleanField(default=False, verbose_name=_("بناء الاستبيان الأولي"))
+    initial_questionnaire_built_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="built_initial_questionnaires", verbose_name=_("تم البناء بواسطة"))
+    initial_questionnaire_built_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاريخ البناء"))
+
+    self_assessment_done = models.BooleanField(default=False, verbose_name=_("التقييم الذاتي"))
+    self_assessment_done_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="assessed_surveys", verbose_name=_("تم التقييم بواسطة"))
+    self_assessment_done_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاريخ التقييم"))
+
+    routing_logic_done = models.BooleanField(default=False, verbose_name=_("منطق التوجيه"))
+    routing_logic_done_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="routed_surveys", verbose_name=_("تم التوجيه بواسطة"))
+    routing_logic_done_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاريخ التوجيه"))
+
+    business_logic_done = models.BooleanField(default=False, verbose_name=_("منطق الأعمال"))
+    business_logic_done_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="business_logic_surveys", verbose_name=_("تم منطق الأعمال بواسطة"))
+    business_logic_done_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاريخ منطق الأعمال"))
+
+    lang_review_status = models.CharField(
+        max_length=30,
+        choices=LangReviewStatus.choices,
+        default=LangReviewStatus.IN_PROGRESS,
+        verbose_name=_("حالة التدقيق اللغوي")
     )
+    lang_review_done_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="reviewed_surveys", verbose_name=_("تم التدقيق بواسطة"))
+    lang_review_done_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاريخ التدقيق"))
+
+    translation_status = models.CharField(
+        max_length=30,
+        choices=TranslationStatus.choices,
+        default=TranslationStatus.IN_PROGRESS,
+        verbose_name=_("حالة الترجمة")
+    )
+    translation_done_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="translated_surveys", verbose_name=_("تم الترجمة بواسطة"))
+    translation_done_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاريخ الترجمة"))
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاريخ الإنشاء"))
     updated_at = models.DateTimeField(auto_now=True)

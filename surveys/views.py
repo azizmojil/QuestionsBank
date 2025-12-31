@@ -16,8 +16,8 @@ from assessment_runs.models import AssessmentRun
 def survey_builder(request):
     available_questions_qs = (
         SurveyQuestion.objects.select_related("survey_version")
-        .exclude(survey_version__status=SurveyVersion.Status.ARCHIVED)
-        .only("id", "text_ar", "text_en", "code", "created_at", "survey_version__status")
+        # .exclude(survey_version__status=SurveyVersion.Status.ARCHIVED) # Status field removed
+        .only("id", "text_ar", "text_en", "code", "created_at")
         .order_by("-created_at")
     )
     available_questions = [
@@ -92,8 +92,8 @@ def survey_builder_routing(request):
     # Reuse logic from survey_builder but render the dedicated routing template
     available_questions_qs = (
         SurveyQuestion.objects.select_related("survey_version")
-        .exclude(survey_version__status=SurveyVersion.Status.ARCHIVED)
-        .only("id", "text_ar", "text_en", "code", "created_at", "survey_version__status")
+        # .exclude(survey_version__status=SurveyVersion.Status.ARCHIVED) # Status field removed
+        # .only("id", "text_ar", "text_en", "code", "created_at") # Removed .only() to avoid FieldError
         .order_by("-created_at")
     )
     available_questions = [

@@ -94,7 +94,39 @@
         return;
       }
 
-      circle.innerHTML = `<span class="pnode__count">${step}</span>`;
+      // NOT STARTED: thick center line (not a typographic minus)
+      if (nodeState === 'not_started') {
+        circle.innerHTML = `
+          <span class="pnode__icon pnode__icon--dash" aria-hidden="true">
+            <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+              <path d="M3 8h10" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"></path>
+            </svg>
+          </span>
+        `;
+        return;
+      }
+
+      // BLOCKED: X icon
+      if (nodeState === 'blocked') {
+        circle.innerHTML = `
+          <span class="pnode__icon pnode__icon--x" aria-hidden="true">
+            <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+              <path d="M4 4l8 8M12 4L4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"></path>
+            </svg>
+          </span>
+        `;
+        return;
+      }
+
+      // Fallback (should not happen)
+      circle.innerHTML = `
+        <span class="pnode__icon pnode__icon--dash" aria-hidden="true">
+          <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+            <path d="M3 8h10" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"></path>
+          </svg>
+        </span>
+      `;
+
     }
 
     function setSvgSize() {

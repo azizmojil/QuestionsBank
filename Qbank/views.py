@@ -130,7 +130,7 @@ def save_translation(request):
 
 
 def pipeline_overview(request):
-    """Render the pipeline overview page with backend-driven survey version states."""
+    """Render the pipeline overview page describing the survey processing paths."""
 
     def status_value(*, started: bool, done: bool) -> str:
         if done:
@@ -159,7 +159,10 @@ def pipeline_overview(request):
             results_count = len(prefetched) if prefetched is not None else assessment_run.results.count()
 
         return {
-            "version": "done",
+            "version": status_value(
+                started=True, # Always started if the version exists
+                done=bool(total_questions),
+            ),
             "self": status_value(
                 started=bool(assessment_run),
                 done=bool(total_questions and results_count >= total_questions),
