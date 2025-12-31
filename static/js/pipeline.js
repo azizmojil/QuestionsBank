@@ -16,8 +16,10 @@
   const labelMap = { ...defaultLabels, ...statusLabels };
   const stateById = new Map(pipelines.map(item => [String(item.id), item.state || {}]));
 
-  const wrappers = document.querySelectorAll('.pipeline-wrap');
+  const wrappers = Array.from(document.querySelectorAll('.pipeline-wrap'));
   if (!wrappers.length) return;
+
+  const renderers = [];
 
   wrappers.forEach((wrap) => {
     const grid = wrap.querySelector('.pipeline-grid');
@@ -169,10 +171,13 @@
       drawAllLines();
     }
 
+    renderers.push(renderAll);
     renderAll();
     setTimeout(renderAll, 50);
     setTimeout(renderAll, 250);
-
-    window.addEventListener('resize', () => window.requestAnimationFrame(renderAll));
   });
+
+  if (renderers.length) {
+    window.addEventListener('resize', () => window.requestAnimationFrame(() => renderers.forEach(fn => fn())));
+  }
 })();

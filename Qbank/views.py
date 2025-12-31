@@ -152,17 +152,8 @@ def pipeline_overview(request):
             1 for item in staged if item.is_sent_for_translation and (item.text_en or "").strip()
         )
 
-        try:
-            assessment_run = version.assessment_run
-        except AssessmentRun.DoesNotExist:
-            assessment_run = None
-
-        results_count = 0
-        if assessment_run:
-            results = getattr(assessment_run, "prefetched_results", None)
-            if results is None:
-                results = list(assessment_run.results.all())
-            results_count = len(results)
+        assessment_run = getattr(version, "assessment_run", None)
+        results_count = assessment_run.results.count() if assessment_run else 0
 
         return {
             "version": "done",
