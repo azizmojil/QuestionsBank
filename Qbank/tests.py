@@ -1,7 +1,7 @@
 from django.db import IntegrityError, transaction
 from django.test import Client, TestCase
 from django.urls import reverse
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, override
 
 from .models import ResponseGroup, QuestionStaging
 from surveys.models import Survey, SurveyVersion, SurveyQuestion
@@ -33,7 +33,6 @@ class PipelineViewTests(TestCase):
         version = SurveyVersion.objects.create(
             survey=survey,
             interval=SurveyVersion.SurveyInterval.MONTHLY,
-            status=SurveyVersion.Status.LOCKED,
             version_date=datetime.date.today(),
         )
 
@@ -69,3 +68,18 @@ class PipelineViewTests(TestCase):
         self.assertEqual(state["translation"], "in_progress")
         self.assertEqual(state["qbank"], "done")
         self.assertEqual(state["approval"], "done")
+
+    def test_pipeline_labels_translate_in_english(self):
+        survey = Survey.objects.create(name_ar="مسح", name_en="Survey", code="SVY2")
+        SurveyVersion.objects.create(
+            survey=survey,
+            interval=SurveyVersion.SurveyInterval.MONTHLY,
+            version_date=datetime.date.today(),
+        )
+
+        with override('en'):
+            response = self.client.get(reverse('pipeline_overview'), HTTP_ACCEPT_LANGUAGE='en')
+
+        self.assertContains(response, "Accreditation pipeline")
+        self.assertContains(response, "Survey creation")
+        self.assertContains(response, "Linguistic review")

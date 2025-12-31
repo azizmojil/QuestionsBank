@@ -186,6 +186,50 @@ class SurveyVersion(models.Model):
         super().save(*args, **kwargs)
 
 
+class SurveySection(models.Model):
+    """Logical section within a survey version."""
+
+    class Meta:
+        verbose_name = _("قسم الاستبيان")
+        verbose_name_plural = _("أقسام الاستبيان")
+        ordering = ["order", "id"]
+
+    survey_version = models.ForeignKey(
+        SurveyVersion,
+        on_delete=models.CASCADE,
+        related_name="sections",
+        verbose_name=_("إصدار الاستبيان"),
+    )
+    title_ar = models.CharField(max_length=255, blank=True, verbose_name=_("عنوان القسم [عربية]"))
+    title_en = models.CharField(max_length=255, blank=True, verbose_name=_("عنوان القسم [إنجليزية]"))
+    description_ar = models.TextField(blank=True, verbose_name=_("وصف القسم [عربية]"))
+    description_en = models.TextField(blank=True, verbose_name=_("وصف القسم [إنجليزية]"))
+    order = models.PositiveIntegerField(default=0, verbose_name=_("الترتيب"))
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.display_title
+
+    @property
+    def display_title(self) -> str:
+        lang = (get_language() or "ar")[:2]
+        if lang == "ar" and self.title_ar:
+            return self.title_ar
+        if lang == "en" and self.title_en:
+            return self.title_en
+        return self.title_en or self.title_ar or _("قسم غير مسمى")
+
+    @property
+    def display_description(self) -> str:
+        lang = (get_language() or "ar")[:2]
+        if lang == "ar" and self.description_ar:
+            return self.description_ar
+        if lang == "en" and self.description_en:
+            return self.description_en
+        return self.description_en or self.description_ar or ""
+
+
 class SurveyQuestion(models.Model):
     """Individual question belonging to a specific SurveyVersion.
 
@@ -203,6 +247,47 @@ class SurveyQuestion(models.Model):
         on_delete=models.CASCADE,
         related_name="questions",
         verbose_name=_("إصدار الاستبيان")
+    )
+
+    section = models.ForeignKey(
+        "SurveySection",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="questions",
+        verbose_name=_("القسم"),
+    )
+
+    response_group = models.ForeignKey(
+        "Rbank.ResponseGroup",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="survey_questions",
+        verbose_name=_("مجموعة الإجابات"),
+    )
+
+    response_type = models.ForeignKey(
+        "Rbank.ResponseType",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="survey_questions",
+        verbose_name=_("نوع الإجابة"),
+    )
+
+    matrix_item_group = models.ForeignKey(
+        "Qbank.MatrixItemGroup",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="survey_questions",
+        verbose_name=_("مجموعة عناصر المصفوفة"),
+    )
+
+    is_matrix = models.BooleanField(
+        default=False,
+        verbose_name=_("سؤال مصفوفة"),
     )
 
     code = models.CharField(

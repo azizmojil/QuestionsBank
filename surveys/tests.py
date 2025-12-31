@@ -1,12 +1,14 @@
 import json
+
 from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
 
-from .engine import SurveyRoutingEngine
-from .models import Survey, SurveyQuestion, SurveyRoutingRule, SurveyVersion
+from .models import Survey, SurveyQuestion, SurveyVersion, SurveySection
+from Qbank.models import MatrixItemGroup, MatrixItem
+from Rbank.models import ResponseGroup, ResponseType
 
 
 class SurveyBuilderViewTests(TestCase):
@@ -110,141 +112,87 @@ class SurveyConstraintTests(TestCase):
             )
 
 
-class SurveyRoutingEngineTests(TestCase):
+class FinalBuilderSubmissionTests(TestCase):
     def setUp(self):
         self.survey = Survey.objects.create(
-            name_ar="توجيه",
-            name_en="Routing",
-            code="ROUTE",
+            name_ar="استبيان نهائي",
+            name_en="Final Survey",
+            code="FS1",
         )
         self.version = SurveyVersion.objects.create(
             survey=self.survey,
             interval=SurveyVersion.SurveyInterval.MONTHLY,
         )
-        self.q1 = SurveyQuestion.objects.create(
+        self.question = SurveyQuestion.objects.create(
             survey_version=self.version,
-            text_ar="س١",
-            text_en="Q1",
+            text_ar="سؤال موجود",
+            text_en="Existing question",
         )
-        self.q2 = SurveyQuestion.objects.create(
-            survey_version=self.version,
-            text_ar="س٢",
-            text_en="Q2",
-        )
-        self.q3 = SurveyQuestion.objects.create(
-            survey_version=self.version,
-            text_ar="س٣",
-            text_en="Q3",
-        )
+        self.response_type = ResponseType.objects.create(name_ar="اختيار", name_en="Choice")
+        self.response_group = ResponseGroup.objects.create(name="نعم/لا")
+        self.matrix_item = MatrixItem.objects.create(text_ar="صف", text_en="Row")
+        self.matrix_group = MatrixItemGroup.objects.create(name="مجموعة مصفوفة")
+        self.matrix_group.items.add(self.matrix_item)
 
-        SurveyRoutingRule.objects.create(
-            to_question=self.q2,
-            condition=json.dumps(
-                {
-                    "conditions": [
-                        {"question": self.q1.id, "operator": "==", "value": "Yes"},
-                    ]
-                }
-            ),
-            priority=0,
-        )
-        SurveyRoutingRule.objects.create(
-            to_question=self.q3,
-            condition=json.dumps({"fallback": True}),
-            priority=99,
-        )
-
-    def test_condition_rule_applied_before_fallback(self):
-        engine = SurveyRoutingEngine(self.version)
-        responses = {str(self.q1.id): "Yes"}
-        result = engine.get_next_question(responses, used_rule_ids=[])
-
-        self.assertIsNotNone(result.next_question)
-        self.assertEqual(result.next_question.id, self.q2.id)
-        self.assertEqual(result.rule.to_question_id, self.q2.id)
-
-    def test_used_rule_is_skipped_and_fallback_applies(self):
-        engine = SurveyRoutingEngine(self.version)
-        responses = {str(self.q1.id): "Yes"}
-        first = engine.get_next_question(responses, used_rule_ids=[])
-
-        result = engine.get_next_question(
-            responses,
-            used_rule_ids=[first.rule.id],
-        )
-
-        self.assertIsNotNone(result.next_question)
-        self.assertEqual(result.next_question.id, self.q3.id)
-        self.assertTrue(result.rule.condition.startswith("{"))
-
-    def test_fallback_used_when_no_condition_matches(self):
-        engine = SurveyRoutingEngine(self.version)
-        responses = {str(self.q1.id): "No"}
-        result = engine.get_next_question(responses, used_rule_ids=[])
-
-        self.assertIsNotNone(result.next_question)
-        self.assertEqual(result.next_question.id, self.q3.id)
-
-
-class SurveyRoutingApiTests(TestCase):
-    def setUp(self):
-        self.survey = Survey.objects.create(
-            name_ar="توجيه",
-            name_en="Routing",
-            code="ROUTE",
-        )
-        self.version = SurveyVersion.objects.create(
-            survey=self.survey,
-            interval=SurveyVersion.SurveyInterval.MONTHLY,
-        )
-        self.q1 = SurveyQuestion.objects.create(
-            survey_version=self.version,
-            text_ar="س١",
-            text_en="Q1",
-        )
-
-    def test_routing_data_endpoint_returns_questions(self):
-        SurveyRoutingRule.objects.create(
-            to_question=self.q1,
-            condition=json.dumps({"fallback": True}),
-            priority=0,
-            description="entry",
-        )
-        url = reverse("survey_routing_data")
-        response = self.client.get(url, {"version_id": self.version.id})
-
-        self.assertEqual(response.status_code, 200)
-        payload = response.json()
-        self.assertIn("questions", payload)
-        self.assertEqual(payload["questions"][0]["id"], self.q1.id)
-        self.assertEqual(payload["rules"][0]["to_question"], self.q1.id)
-
-    def test_save_routing_endpoint_persists_rules_and_layout(self):
-        url = reverse("survey_routing_save")
+    def test_submit_final_questionnaire_creates_sections_and_updates_questions(self):
         payload = {
             "version_id": self.version.id,
-            "layout": {str(self.q1.id): {"x": 15, "y": 25}},
-            "rules": [
+            "sections": [
                 {
-                    "to_question": self.q1.id,
-                    "condition": {"fallback": True},
-                    "priority": 1,
-                    "description": "fallback",
+                    "title": "القسم الأول",
+                    "description": "وصف",
+                    "questions": [
+                        {
+                            "id": self.question.id,
+                            "response_group_id": self.response_group.id,
+                            "response_type_id": self.response_type.id,
+                            "matrix_item_group_id": self.matrix_group.id,
+                            "is_required": True,
+                            "is_matrix": True,
+                        }
+                    ],
                 }
             ],
         }
 
         response = self.client.post(
-            url,
+            reverse("submit_final_questionnaire"),
             data=json.dumps(payload),
             content_type="application/json",
         )
-
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            SurveyRoutingRule.objects.filter(to_question=self.q1).count(),
-            1,
+        self.assertEqual(SurveySection.objects.filter(survey_version=self.version).count(), 1)
+        section = SurveySection.objects.first()
+
+        self.question.refresh_from_db()
+        self.assertEqual(self.question.section, section)
+        self.assertTrue(self.question.is_required)
+        self.assertTrue(self.question.is_matrix)
+        self.assertEqual(self.question.response_group, self.response_group)
+        self.assertEqual(self.question.response_type, self.response_type)
+        self.assertEqual(self.question.matrix_item_group, self.matrix_group)
+
+    def test_manual_questions_are_created_in_final_builder(self):
+        payload = {
+            "version_id": self.version.id,
+            "sections": [
+                {
+                    "title": "قسم جديد",
+                    "description": "",
+                    "questions": [
+                        {
+                            "label": "سؤال يدوي",
+                            "is_required": False,
+                        }
+                    ],
+                }
+            ],
+        }
+
+        response = self.client.post(
+            reverse("submit_final_questionnaire"),
+            data=json.dumps(payload),
+            content_type="application/json",
         )
-        self.version.refresh_from_db()
-        self.assertIn(str(self.q1.id), self.version.routing_layout)
-        self.assertEqual(self.version.routing_layout[str(self.q1.id)]["x"], 15)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(SurveyQuestion.objects.filter(survey_version=self.version, text_ar="سؤال يدوي").count(), 1)
