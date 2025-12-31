@@ -20,7 +20,6 @@ def ensure_section_column(apps, schema_editor):
         return
 
     SurveyQuestion = apps.get_model("surveys", "SurveyQuestion")
-    apps.get_model("surveys", "SurveySection")
 
     field = models.ForeignKey(
         "surveys.SurveySection",
