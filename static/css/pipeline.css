@@ -1,248 +1,139 @@
-:root {
-    --pipeline-start-green: rgba(7, 77, 49, 0.08);
-    --pipeline-start-gold: rgba(219, 161, 2, 0.14);
-    --pipeline-end-green: rgba(7, 77, 49, 0.12);
-    --pipeline-end-gold: rgba(219, 161, 2, 0.28);
-    --pipeline-final-gold: rgba(219, 161, 2, 0.24);
-    --pipeline-soft-green: rgba(7, 77, 49, 0.06);
-    --pipeline-soft-gold: rgba(219, 161, 2, 0.12);
-    --pipeline-connector-glow: rgba(7, 77, 49, 0.15);
+.progress-steps {
+  width: 100%;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 16px;
+  direction: ltr; /* Force LTR for the progress bar layout */
 }
 
-.pipeline-page {
-    max-width: 1100px;
-    margin: 0 auto 3rem;
+.progress-steps__container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 70px;
+  position: relative;
 }
 
-.pipeline-diagram {
-    position: relative;
-    overflow: hidden;
+.progress-steps__container:before {
+  content: '';
+  position: absolute;
+  background: #f3e7f3;
+  height: 4px;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  z-index: 0;
 }
 
-.pipeline-hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: var(--accent);
-    color: var(--accent-foreground);
-    border: 1px solid var(--ring);
-    padding: 0.35rem 0.65rem;
-    border-radius: 999px;
-    font-weight: 700;
+.progress-steps__filled-line {
+  content: '';
+  position: absolute;
+  background: #4a154b;
+  height: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  transition: width 0.4s ease;
+  z-index: 0;
 }
 
-.pipeline-hero-title {
-    margin: 0.25rem 0 0.35rem;
+.progress-steps__item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.pipeline-hero-subtitle {
-    margin: 0 0 0.75rem;
-    color: var(--muted-foreground);
+.progress-steps__circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 3px solid #f3e7f3;
+  transition: 0.4s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.pipeline-hero-actions {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem;
-    margin-top: 0.5rem;
+.progress-steps__circle--completed {
+  border-color: #4a154b;
+  background-color: #4a154b; /* Optional: fill completed circles */
 }
 
-.pipeline-node {
-    text-align: center;
-    padding: 1.5rem;
-    border-radius: var(--radius);
-    margin-bottom: 1.5rem;
+.progress-steps__count {
+  font-size: 19px;
+  color: #f3e7f3; /* Default color for incomplete steps */
+  font-weight: 600;
 }
 
-.pipeline-node.start {
-    background: linear-gradient(135deg, var(--pipeline-start-green), var(--pipeline-start-gold));
-    border: 1px dashed var(--ring);
+/* When circle is completed, change checkmark/count color if needed */
+.progress-steps__circle--completed .progress-steps__checkmark {
+    color: #ffffff;
 }
 
-.pipeline-node.end {
-    background: linear-gradient(135deg, var(--pipeline-end-green), var(--pipeline-end-gold));
-    border: 1px solid var(--ring);
+@media (max-width: 600px) {
+  .progress-steps__count {
+    font-size: 16px;
+  }
 }
 
-.node-label {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
-    background: var(--accent);
-    color: var(--accent-foreground);
-    font-weight: 700;
-    border: 1px solid var(--ring);
+.progress-steps__label-container {
+  position: absolute;
+  top: 50px; /* Adjusted to sit below circle */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px; /* Fixed width to prevent wrapping issues */
+  text-align: center;
 }
 
-.pipeline-lanes {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1.5rem;
+.progress-steps__label {
+  font-size: 16px;
+  color: #4a154b;
+  font-weight: 500;
 }
 
-.pipeline-lane {
-    position: relative;
-    padding-top: 0.5rem;
+@media (max-width: 600px) {
+  .progress-steps__label {
+    font-size: 14px;
+  }
 }
 
-.pipeline-lane::before {
-    content: "";
-    position: absolute;
-    inset-block-start: 1rem;
-    inset-block-end: 0.75rem;
-    inset-inline-start: 18px;
-    width: 3px;
-    background: var(--border);
-    border-radius: 999px;
-    opacity: 0.9;
+.progress-steps__buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 80px;
 }
 
-html[dir="rtl"] .pipeline-lane::before {
-    inset-inline-start: auto;
-    inset-inline-end: 18px;
+.progress-steps__button {
+  border-radius: 4px;
+  border: 0;
+  background: #4a154b;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: 16px;
+  transition: transform 0.1s ease;
 }
 
-.lane-header {
-    margin-inline-start: 2.5rem;
-    margin-bottom: 1rem;
+.progress-steps__button:active {
+  transform: scale(0.98);
 }
 
-.lane-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.25rem 0.8rem;
-    border-radius: 999px;
-    background: rgba(7, 77, 49, 0.1);
-    color: var(--foreground);
-    font-weight: 700;
-    border: 1px solid var(--primary);
+.progress-steps__button:disabled {
+  background: #f3e7f3;
+  color: #888;
+  cursor: not-allowed;
 }
 
-.lane-pill-secondary {
-    background: rgba(219, 161, 2, 0.12);
-    border-color: var(--ring);
-}
-
-.path-three {
-    background: var(--muted);
-    border-color: var(--ring);
-}
-
-.step-card {
-    position: relative;
-    margin-inline-start: 2.5rem;
-    margin-bottom: 1rem;
-    padding: 1rem 1.25rem;
-    border-radius: 1rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-}
-
-.pipeline-node:focus,
-.step-card:focus {
-    outline: 2px solid var(--ring);
-    outline-offset: 4px;
-}
-
-.step-card::before {
-    content: "";
-    position: absolute;
-    inset-block-start: 1.1rem;
-    inset-inline-start: -26px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--card);
-    border: 2px solid var(--primary);
-    box-shadow: 0 0 0 6px var(--pipeline-connector-glow);
-}
-
-html[dir="rtl"] .step-card::before {
-    inset-inline-start: auto;
-    inset-inline-end: -26px;
-}
-
-.step-card h4 {
-    margin: 0 0 0.35rem;
-}
-
-.step-card p {
-    margin: 0;
-    color: var(--muted-foreground);
-}
-
-.step-card.split {
-    background: linear-gradient(135deg, var(--pipeline-soft-green), var(--pipeline-soft-gold));
-}
-
-.split-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.75rem;
-}
-
-.split-chips span {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.6rem;
-    border-radius: 999px;
-    background: var(--muted);
-    border: 1px solid var(--border);
-    font-weight: 600;
-}
-
-.pipeline-merge {
-    margin-top: 1.25rem;
-    margin-bottom: 1rem;
-}
-
-.merge-lines {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.merge-lines span {
-    display: block;
-    height: 14px;
-    border-bottom: 2px dashed var(--border);
-}
-
-.final {
-    background: linear-gradient(135deg, var(--pipeline-end-green), var(--pipeline-final-gold));
-}
-
-.final-pill {
-    background: var(--primary);
-    color: var(--primary-foreground);
-    border-color: var(--primary);
-    margin-bottom: 0.35rem;
-}
-
-.pipeline-chip {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.35rem 0.75rem;
-    border-radius: 999px;
-    background: rgba(7, 77, 49, 0.08);
-    border: 1px solid var(--primary);
-    font-weight: 700;
-}
-
-.pipeline-chip-secondary {
-    background: rgba(219, 161, 2, 0.12);
-    border-color: var(--ring);
-}
-
-.pipeline-chip-outline {
-    background: transparent;
-    border-style: dashed;
+.progress-steps__checkmark {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  /* Removed rotation transform as 'L' or checkmark icon usually handles orientation,
+     or use a proper icon font/svg */
+  transform: scaleX(-1) rotate(-45deg); /* Kept original transform logic if it was making a checkmark from 'L' */
+  display: inline-block;
+  margin-top: -4px; /* Minor adjustment */
 }

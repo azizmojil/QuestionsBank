@@ -1,133 +1,122 @@
-.assessment-header-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    align-items: end;
-    margin-bottom: 1.5rem;
-    padding: 0 0.5rem;
+.progress-steps {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px;
 }
 
-@media (max-width: 768px) {
-    .assessment-header-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
+.progress-steps__container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 70px;
+  position: relative;
 }
 
-.header-left {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.progress-steps__container:before {
+  content: '';
+  position: absolute;
+  background: #f3e7f3;
+  height: 4px;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
 }
 
-.survey-info, .version-info {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
+.progress-steps__filled-line {
+  content: '';
+  position: absolute;
+  background: #4a154b;
+  height: 4px;
+  width: 100%;
+  top: 50%;
+  transition: 0.4s ease;
+  transform: translateY(-50%);
+  left: 0;
 }
 
-.survey-info .value {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--foreground);
+.progress-steps__item {
+  position: relative;
+  z-index: 1;
 }
 
-.version-info .value {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--foreground);
+.progress-steps__circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 3px solid #f3e7f3;
+  transition: 0.4s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.header-right {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: 0.5rem;
+.progress-steps__circle--completed {
+  border-color: #4a154b;
 }
 
-/* Progress Button Styles */
-.progress-btn {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    text-align: center;
-    padding: 0.75rem 1.5rem;
-    border: 1px solid var(--border);
-    font-weight: 600;
-    cursor: default;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    border-radius: 999px;
+.progress-steps__count {
+  font-size: 19px;
+  color: #f3e7f3;
 }
 
-.progress-fill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    transition: width 0.5s ease-in-out;
-    z-index: 1;
+@media (max-width: 600px) {
+  .progress-steps__count {
+    font-size: 16px;
+  }
 }
 
-/* Light Mode Explicit Styles */
-:root .progress-btn, body:not(.dark-mode) .progress-btn {
-    background-color: #d6d3d1; /* Darker background */
-    color: #000000 !important; /* Strict Black */
+.progress-steps__label-container {
+  position: absolute;
+  top: 66px;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-:root .progress-fill, body:not(.dark-mode) .progress-fill {
-    background-color: var(--muted); /* Match table header (#e7e5e4) */
+.progress-steps__label {
+  font-size: 19px;
+  color: #4a154b;
 }
 
-/* Dark Mode Overrides */
-.dark .progress-btn, body.dark-mode .progress-btn {
-    background-color: #52525b; /* Lighter background */
-    color: #ffffff !important; /* Strict White */
+@media (max-width: 600px) {
+  .progress-steps__label {
+    font-size: 16px;
+  }
 }
 
-.dark .progress-fill, body.dark-mode .progress-fill {
-    background-color: var(--secondary); /* Darker fill */
+.progress-steps__buttons {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 -15px;
+  margin-top: 100px;
 }
 
-.btn-text {
-    position: relative;
-    z-index: 2;
+.progress-steps__button {
+  border-radius: 4px;
+  border: 0;
+  background: #4a154b;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 8px;
+  width: 90px;
 }
 
-.progress-btn.complete {
-    cursor: pointer;
-    background-color: var(--secondary);
-    color: var(--foreground);
-    border-color: var(--border);
+.progress-steps__button:active {
+  transform: scale(0.98);
 }
 
-/* Force text color for complete state too */
-:root .progress-btn.complete, body:not(.dark-mode) .progress-btn.complete {
-    color: #000000 !important;
-}
-.dark .progress-btn.complete, body.dark-mode .progress-btn.complete {
-    color: #ffffff !important;
+.progress-steps__button:disabled {
+  background: #f3e7f3;
+  color: #000000;
+  cursor: not-allowed;
 }
 
-.progress-btn.complete:hover {
-    background-color: var(--muted);
-    border-color: var(--ring);
-}
-
-/* RTL support for progress bar direction */
-html[dir="rtl"] .progress-fill {
-    left: auto;
-    right: 0;
-}
-
-/* Force Button Text Colors */
-.btn-secondary, a.btn-secondary {
-    color: #000000 !important; /* Strict Black for Light Mode */
-}
-
-.dark .btn-secondary, body.dark-mode .btn-secondary,
-.dark a.btn-secondary, body.dark-mode a.btn-secondary {
-    color: #ffffff !important; /* Strict White for Dark Mode */
+.progress-steps__checkmark {
+  font-size: 26px;
+  font-weight: 600;
+  color: #4a154b;
+  -ms-transform: scaleX(-1) rotate(-46deg); /* IE 9 */
+  -webkit-transform: scaleX(-1) rotate(-46deg); /* Chrome, Safari, Opera */
+  transform: scaleX(-1) rotate(-46deg);
 }

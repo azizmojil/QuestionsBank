@@ -1,12 +1,2 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const progressFill = document.querySelector('.progress-fill');
-    if (progressFill) {
-        const percentage = progressFill.dataset.percentage;
-        if (percentage) {
-            // Small delay to allow transition to work
-            setTimeout(() => {
-                progressFill.style.width = percentage + '%';
-            }, 100);
-        }
-    }
-});
+// This file is intentionally left empty as the progress bar logic is now handled by React or inline scripts if needed.
+// The previous logic was for a simple fill bar which has been replaced by a stepped progress indicator.
