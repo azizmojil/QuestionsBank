@@ -24,6 +24,7 @@ from surveys import views as survey_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', qnr_views.home, name='home'),
+    path('qbank/', include('Qbank.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('assessment/', include('assessment_runs.urls')),
     path('surveys/', include('surveys.urls')),

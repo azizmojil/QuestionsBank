@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from .models import Questions, MatrixItem, MatrixItemGroup
+from .models import Questions, MatrixItem, MatrixItemGroup, QuestionStaging
 
 
 class ResponseGroupInline(admin.TabularInline):
@@ -48,3 +48,10 @@ class MatrixItemGroupAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     inlines = [MatrixItemInline]
     exclude = ("items",)
+
+
+@admin.register(QuestionStaging)
+class QuestionStagingAdmin(admin.ModelAdmin):
+    list_display = ("__str__", "survey", "survey_version", "created_at")
+    search_fields = ("text_ar", "text_en", "survey__name_ar", "survey__name_en")
+    list_filter = ("survey", "survey_version")

@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "تدقيق لغوي" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'surveys/css/builder_initial.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="card box">
+    <div class="section-head">
+        <h1 class="page-title">{% trans "تدقيق لغوي" %}</h1>
+    </div>
+
+    <div class="table-card">
+        <table class="data-table">
+            <thead class="table-header">
+                <tr>
+                    <th scope="col">{% trans "السؤال" %}</th>
+                    <th scope="col">{% trans "الاستبيان" %}</th>
+                    <th scope="col">{% trans "تاريخ الإضافة" %}</th>
+                    <th scope="col">{% trans "الإجراء" %}</th>
+                </tr>
+            </thead>
+            <tbody class="table-body">
+                {% for question in staged_questions %}
+                <tr class="table-row">
+                    <td>
+                        <div style="margin-bottom: 0.5rem;">{{ question.text_ar }}</div>
+                        <div>{{ question.text_en }}</div>
+                    </td>
+                    <td>
+                        <div>{{ question.survey.display_name }}</div>
+                        <div class="muted" style="font-size: 0.85rem;">{{ question.survey_version.version_label }}</div>
+                    </td>
+                    <td>{{ question.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary btn-sm edit-question-btn"
+                                    data-id="{{ question.id }}"
+                                    data-text-ar="{{ question.text_ar }}">
+                                {% trans "تعديل" %}
+                            </button>
+                            <button class="btn btn-secondary btn-sm send-translation-btn"
+                                    data-id="{{ question.id }}">
+                                {% trans "إرسال للترجمة" %}
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">{% trans "لا توجد أسئلة قيد الإعداد حالياً." %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="edit-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-content">
+        <h3>{% trans "تعديل السؤال" %}</h3>
+        <form id="edit-question-form">
+            <input type="hidden" id="edit-question-id">
+            <div class="stacked" style="text-align: right; margin-bottom: 1rem;">
+                <textarea id="edit-text-ar" rows="3"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="cancel-edit">{% trans "إلغاء" %}</button>
+                <button type="submit" class="btn btn-secondary">{% trans "حفظ التعديلات" %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Translation Confirmation Modal -->
+<div id="translation-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-content">
+        <h3>{% trans "تأكيد الإرسال للترجمة" %}</h3>
+        <p>{% trans "هل أنت متأكد من إرسال هذا السؤال للترجمة؟" %}</p>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="cancel-translation">{% trans "إلغاء" %}</button>
+            <button type="button" class="btn btn-secondary" id="confirm-translation">{% trans "تأكيد" %}</button>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="success-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-content">
+        <h3>{% trans "تم بنجاح" %}</h3>
+        <p id="success-message"></p>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="close-success">{% trans "إغلاق" %}</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const editModal = document.getElementById('edit-modal');
+        const translationModal = document.getElementById('translation-modal');
+        const successModal = document.getElementById('success-modal');
+
+        const editForm = document.getElementById('edit-question-form');
+        const cancelEditBtn = document.getElementById('cancel-edit');
+        const cancelTranslationBtn = document.getElementById('cancel-translation');
+        const confirmTranslationBtn = document.getElementById('confirm-translation');
+        const closeSuccessBtn = document.getElementById('close-success');
+
+        const questionIdInput = document.getElementById('edit-question-id');
+        const textArInput = document.getElementById('edit-text-ar');
+        const successMessageP = document.getElementById('success-message');
+
+        let questionIdToTranslate = null;
+
+        function showModal(modal) {
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function hideModal(modal) {
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Edit functionality
+        document.querySelectorAll('.edit-question-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.dataset.id;
+                const textAr = btn.dataset.textAr;
+
+                questionIdInput.value = id;
+                textArInput.value = textAr;
+
+                showModal(editModal);
+            });
+        });
+
+        cancelEditBtn.addEventListener('click', () => hideModal(editModal));
+
+        editForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = questionIdInput.value;
+            const textAr = textArInput.value;
+
+            fetch('{% url "update_staged_question" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    id: id,
+                    text_ar: textAr
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideModal(editModal);
+                if (data.status === 'success') {
+                    successMessageP.textContent = '{% trans "تم تحديث السؤال بنجاح." %}';
+                    showModal(successModal);
+                } else {
+                    alert('Error updating question: ' + data.message);
+                }
+            })
+            .catch(error => {
+                hideModal(editModal);
+                console.error('Error:', error);
+                alert('An error occurred.');
+            });
+        });
+
+        // Translation functionality
+        document.querySelectorAll('.send-translation-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                questionIdToTranslate = btn.dataset.id;
+                showModal(translationModal);
+            });
+        });
+
+        cancelTranslationBtn.addEventListener('click', () => {
+            questionIdToTranslate = null;
+            hideModal(translationModal);
+        });
+
+        confirmTranslationBtn.addEventListener('click', () => {
+            if (!questionIdToTranslate) return;
+
+            fetch('{% url "send_to_translation" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ id: questionIdToTranslate })
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideModal(translationModal);
+                if (data.status === 'success') {
+                    successMessageP.textContent = '{% trans "تم إرسال السؤال للترجمة بنجاح." %}';
+                    showModal(successModal);
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                hideModal(translationModal);
+                console.error('Error:', error);
+                alert('An error occurred.');
+            });
+        });
+
+        // Success modal
+        closeSuccessBtn.addEventListener('click', () => {
+            hideModal(successModal);
+            window.location.reload();
+        });
+    });
+</script>
+{% endblock %}

@@ -306,7 +306,12 @@
             },
             body: JSON.stringify(payload)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw new Error(err.message || 'Server error'); });
+            }
+            return response.json();
+        })
         .then(data => {
             hideModal(confirmationModal);
             if (data.status === 'success') {
@@ -318,7 +323,7 @@
         .catch(error => {
             hideModal(confirmationModal);
             console.error('Error:', error);
-            alert('An error occurred.');
+            alert('An error occurred: ' + error.message);
         });
     });
     

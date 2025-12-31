@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "منشئ الاستبيان - قواعد التوجيه" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'surveys/css/builder_initial.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="builder-grid stage-panel" data-stage="routing" aria-label="{% trans 'قواعد التوجيه' %}">
+    <div class="card rules-card">
+        <div class="section-head">
+            <div>
+                <h2 class="card-title">{% trans "قواعد التوجيه" %}</h2>
+                <p class="muted">{% trans "اسحب الأسئلة إلى مناطق القواعد لتحديد الانتقال." %}</p>
+            </div>
+        </div>
+        <div class="rule-palette" id="question-palette" aria-label="{% trans 'الأسئلة المتاحة للقواعد' %}"></div>
+        <div class="rules-grid">
+            <div class="rule-stack">
+                <h3>{% trans "شروط التوجيه" %}</h3>
+                <div class="dropzone" id="routing-conditions" aria-label="{% trans 'شروط التوجيه' %}"></div>
+            </div>
+            <div class="rule-stack">
+                <h3>{% trans "الأسئلة التالية" %}</h3>
+                <div class="dropzone" id="routing-targets" aria-label="{% trans 'الأسئلة التالية' %}"></div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

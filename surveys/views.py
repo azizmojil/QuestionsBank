@@ -5,10 +5,12 @@ from django.views.decorators.http import require_POST
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import get_language
 from django.db.models import Count
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import SurveyQuestion, SurveyVersion
 from Rbank.models import ResponseGroup
-from Qbank.models import MatrixItemGroup, Questions
+from Qbank.models import MatrixItemGroup, Questions, QuestionStaging
+from assessment_runs.models import AssessmentRun
 
 
 def survey_builder(request):
@@ -83,6 +85,42 @@ def survey_builder(request):
             "matrix_item_groups": matrix_item_groups,
             "survey_versions": version_choices,
             "survey_structures": survey_structures,
+        },
+    )
+
+def survey_builder_routing(request):
+    # Reuse logic from survey_builder but render the dedicated routing template
+    available_questions_qs = (
+        SurveyQuestion.objects.select_related("survey_version")
+        .exclude(survey_version__status=SurveyVersion.Status.ARCHIVED)
+        .only("id", "text_ar", "text_en", "code", "created_at", "survey_version__status")
+        .order_by("-created_at")
+    )
+    available_questions = [
+        {
+            "id": question.id,
+            "label": question.display_text,
+            "code": question.code,
+            "created_at": question.created_at.isoformat(),
+        }
+        for question in available_questions_qs
+    ]
+
+    survey_versions = SurveyVersion.objects.select_related('survey').prefetch_related('questions').all()
+    version_choices = [
+        {
+            "id": version.id,
+            "label": f"{version.survey.display_name} - {version.version_label}"
+        }
+        for version in survey_versions
+    ]
+
+    return render(
+        request,
+        "surveys/builder_routing.html",
+        {
+            "available_questions": available_questions,
+            "survey_versions": version_choices,
         },
     )
 
@@ -186,16 +224,28 @@ def submit_initial_questions(request):
                     text_ar = text if current_lang == 'ar' else ''
                     text_en = text if current_lang == 'en' else ''
                     
+                    # Create SurveyQuestion
                     SurveyQuestion.objects.create(
                         survey_version=survey_version,
                         text_ar=text_ar,
                         text_en=text_en,
                     )
                     
+                    # Create QuestionStaging entry
+                    QuestionStaging.objects.create(
+                        text_ar=text_ar,
+                        text_en=text_en,
+                        survey=survey_version.survey,
+                        survey_version=survey_version
+                    )
+        
+        # Create AssessmentRun for the survey version
+        AssessmentRun.objects.get_or_create(survey_version=survey_version)
+
         return JsonResponse({'status': 'success'})
         
     except Exception as e:
+        # Log the full exception for debugging
+        import traceback
+        traceback.print_exc()
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-
-def initial_questions_submitted(request):
-    return render(request, "surveys/initial_questions_submitted.html")
