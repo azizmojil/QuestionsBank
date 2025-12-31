@@ -129,5 +129,13 @@ def save_translation(request):
 
 
 def pipeline_overview(request):
-    """Render the pipeline visualization page."""
+    """
+    Display the pipeline visualization page describing survey processing paths.
+
+    Args:
+        request: The current HTTP request.
+
+    Returns:
+        HttpResponse rendering the pipeline overview template.
+    """
     return render(request, 'Qbank/pipeline.html')

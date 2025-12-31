@@ -3,6 +3,17 @@
     margin: 0 auto 3rem;
 }
 
+:root {
+    --pipeline-start-green: rgba(7, 77, 49, 0.08);
+    --pipeline-start-gold: rgba(219, 161, 2, 0.14);
+    --pipeline-end-green: rgba(7, 77, 49, 0.12);
+    --pipeline-end-gold: rgba(219, 161, 2, 0.28);
+    --pipeline-final-gold: rgba(219, 161, 2, 0.24);
+    --pipeline-soft-green: rgba(7, 77, 49, 0.06);
+    --pipeline-soft-gold: rgba(219, 161, 2, 0.12);
+    --pipeline-connector-glow: rgba(7, 77, 49, 0.15);
+}
+
 .pipeline-diagram {
     position: relative;
     overflow: hidden;
@@ -45,12 +56,12 @@
 }
 
 .pipeline-node.start {
-    background: linear-gradient(135deg, rgba(7, 77, 49, 0.08), rgba(219, 161, 2, 0.14));
+    background: linear-gradient(135deg, var(--pipeline-start-green), var(--pipeline-start-gold));
     border: 1px dashed var(--ring);
 }
 
 .pipeline-node.end {
-    background: linear-gradient(135deg, rgba(7, 77, 49, 0.12), rgba(219, 161, 2, 0.28));
+    background: linear-gradient(135deg, var(--pipeline-end-green), var(--pipeline-end-gold));
     border: 1px solid var(--ring);
 }
 
@@ -149,7 +160,7 @@ html[dir="rtl"] .pipeline-lane::before {
     border-radius: 50%;
     background: var(--card);
     border: 2px solid var(--primary);
-    box-shadow: 0 0 0 6px rgba(7, 77, 49, 0.15);
+    box-shadow: 0 0 0 6px var(--pipeline-connector-glow);
 }
 
 html[dir="rtl"] .step-card::before {
@@ -167,7 +178,7 @@ html[dir="rtl"] .step-card::before {
 }
 
 .step-card.split {
-    background: linear-gradient(135deg, rgba(7, 77, 49, 0.06), rgba(219, 161, 2, 0.12));
+    background: linear-gradient(135deg, var(--pipeline-soft-green), var(--pipeline-soft-gold));
 }
 
 .split-chips {
@@ -206,7 +217,7 @@ html[dir="rtl"] .step-card::before {
 }
 
 .final {
-    background: linear-gradient(135deg, rgba(7, 77, 49, 0.12), rgba(219, 161, 2, 0.24));
+    background: linear-gradient(135deg, var(--pipeline-end-green), var(--pipeline-final-gold));
 }
 
 .final-pill {
