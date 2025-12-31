@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 from django.utils import timezone
 from surveys.models import Survey, SurveyVersion, SurveyQuestion
 from assessment_flow.models import AssessmentQuestion, AssessmentOption
-from indicators.models import IndicatorListItem
+from indicators.models import Indicator
 from assessment_flow.engine import RoutingEngine
 from .models import AssessmentRun, AssessmentResult
 from .engine import ClassificationEngine
@@ -19,44 +19,6 @@ log = logging.getLogger(__name__)
 def survey_list(request):
     surveys = Survey.objects.all()
     return render(request, 'assessment_runs/survey_list.html', {'surveys': surveys})
-
-
-def dashboard(request):
-    surveys_qs = (
-        Survey.objects.prefetch_related(
-            Prefetch(
-                "versions",
-                queryset=SurveyVersion.objects.annotate(
-                    question_total=Count("questions")
-                ).order_by("-version_date", "-id"),
-            )
-        )
-        .annotate(version_total=Count("versions"))
-        .order_by("name_ar", "name_en")
-    )
-    survey_count = surveys_qs.count()
-
-    survey_rows = []
-    for survey in surveys_qs:
-        versions = list(survey.versions.all())
-        latest_version = versions[0] if versions else None
-        survey_rows.append({
-            "id": survey.id,
-            "name": survey.display_name,
-            "status": survey.get_status_display(),
-            "latest_version": latest_version,
-            "question_total": latest_version.question_total if latest_version else 0,
-        })
-
-    context = {
-        "stats": {
-            "survey_count": survey_count,
-            "version_count": SurveyVersion.objects.count(),
-            "question_count": SurveyQuestion.objects.count(),
-        },
-        "surveys": survey_rows,
-    }
-    return render(request, "assessment_runs/dashboard.html", context)
 
 
 def survey_version_list(request, survey_id):
@@ -220,8 +182,8 @@ def assessment_page(request, question_id):
                     if isinstance(ans, int):
                         # Try to find option
                         if q_obj.option_type == AssessmentQuestion.OptionType.INDICATOR_LIST:
-                             opt = IndicatorListItem.objects.filter(id=ans).first()
-                             if opt: display_answer.append(opt.name)
+                             opt = Indicator.objects.filter(id=ans).first()
+                             if opt: display_answer.append(opt.name_ar)
                         else:
                              opt = AssessmentOption.objects.filter(id=ans).first()
                              if opt: display_answer.append(opt.display_text)
@@ -322,7 +284,11 @@ def get_next_question_view(request):
             if not classification_result.classification:
                 log.debug("No classification resolved for survey question %s", survey_question_id)
 
-            classification_str = classification_result.classification or ""
+            classification_str = (
+                str(classification_result.classification)
+                if classification_result.classification
+                else ""
+            )
 
             AssessmentResult.objects.update_or_create(
                 assessment_run=assessment_run,

@@ -151,7 +151,7 @@ def pipeline_overview(request):
 
     return render(
         request,
-        'Qbank/pipeline.html',
+        'pipeline.html',
         {
             "steps": steps,
             "progress_percentage": progress_percentage,

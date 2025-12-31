@@ -29,5 +29,6 @@ urlpatterns = [
     path('assessment/', include('assessment_runs.urls')),
     path('surveys/', include('surveys.urls')),
     path('initialbuilder/', survey_views.survey_builder_initial, name='survey_builder_initial_root'),
+    path('pipeline/', qnr_views.pipeline_overview, name='pipeline_overview'),
     path('i18n/set-language/', set_language, name='set_language'),
 ]
