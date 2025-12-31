@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
 
-from .models import Survey, SurveyQuestion, SurveyVersion, SurveySection
+from .models import Survey, SurveyQuestion, SurveyVersion, SurveySection, SurveyRoutingRule
 from Qbank.models import MatrixItemGroup, MatrixItem
 from Rbank.models import ResponseGroup, ResponseType
 
@@ -196,3 +196,89 @@ class FinalBuilderSubmissionTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(SurveyQuestion.objects.filter(survey_version=self.version, text_ar="سؤال يدوي").count(), 1)
+
+
+class SurveyRoutingBuilderTests(TestCase):
+    def setUp(self):
+        self.survey = Survey.objects.create(
+            name_ar="استبيان توجيه",
+            name_en="Routing Survey",
+            code="ROUTE",
+        )
+        self.version = SurveyVersion.objects.create(
+            survey=self.survey,
+            interval=SurveyVersion.SurveyInterval.MONTHLY,
+        )
+        self.q1 = SurveyQuestion.objects.create(
+            survey_version=self.version,
+            text_ar="سؤال ١",
+            text_en="Question 1",
+        )
+        self.q2 = SurveyQuestion.objects.create(
+            survey_version=self.version,
+            text_ar="سؤال ٢",
+            text_en="Question 2",
+        )
+
+    def test_routing_data_includes_rules_and_layout(self):
+        layout = {"1": {"x": 10, "y": 20}}
+        self.version.routing_layout = layout
+        self.version.save()
+
+        SurveyRoutingRule.objects.create(
+            to_question=self.q2,
+            condition=json.dumps({"fallback": True}),
+            priority=3,
+            description="إلى السؤال الثاني",
+        )
+
+        response = self.client.get(
+            reverse("survey_routing_data"),
+            {"version_id": self.version.id},
+        )
+        self.assertEqual(response.status_code, 200)
+
+        payload = response.json()
+        self.assertEqual(payload["layout"], layout)
+        self.assertEqual(len(payload.get("questions", [])), 2)
+        self.assertEqual(len(payload.get("rules", [])), 1)
+        rule_payload = payload["rules"][0]
+        self.assertEqual(rule_payload["to_question"], self.q2.id)
+        self.assertEqual(rule_payload["priority"], 3)
+        self.assertEqual(rule_payload["condition"], {"fallback": True})
+
+    def test_save_routing_marks_version_and_persists_rules(self):
+        payload = {
+            "version_id": self.version.id,
+            "layout": {"1": {"x": 5, "y": 6, "label": "Q1"}},
+            "rules": [
+                {
+                    "to_question": self.q2.id,
+                    "condition": {
+                        "conditions": [
+                            {"question": self.q1.id, "operator": "==", "value": "yes"}
+                        ]
+                    },
+                    "priority": 2,
+                    "description": "Route to Q2",
+                }
+            ],
+        }
+
+        response = self.client.post(
+            reverse("survey_routing_save"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.version.refresh_from_db()
+        self.assertTrue(self.version.routing_logic_done)
+        self.assertIsNotNone(self.version.routing_logic_done_at)
+        self.assertEqual(self.version.routing_layout, payload["layout"])
+
+        rules = SurveyRoutingRule.objects.filter(to_question__survey_version=self.version)
+        self.assertEqual(rules.count(), 1)
+        rule = rules.first()
+        self.assertEqual(rule.priority, 2)
+        self.assertEqual(json.loads(rule.condition), payload["rules"][0]["condition"])
