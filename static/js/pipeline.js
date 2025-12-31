@@ -25,7 +25,8 @@
   wrappers.forEach((wrap) => {
     const grid = wrap.querySelector('.pipeline-grid');
     const svg = wrap.querySelector('.pipeline-lines');
-    const state = stateById.get(String(wrap.dataset.pipelineId)) || {};
+    const pipelineId = wrap.dataset.pipelineId || '';
+    const state = stateById.get(String(pipelineId)) || {};
 
     if (!grid || !svg) return;
 
@@ -176,7 +177,8 @@
     setTimeout(renderAll, 250);
   });
 
-  if (renderers.length) {
+  if (renderers.length && !window.__pipelineResizeBound) {
+    window.__pipelineResizeBound = true;
     window.addEventListener('resize', () => window.requestAnimationFrame(() => renderers.forEach(fn => fn())));
   }
 })();

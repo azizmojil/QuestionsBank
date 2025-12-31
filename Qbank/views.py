@@ -153,7 +153,10 @@ def pipeline_overview(request):
         )
 
         assessment_run = getattr(version, "assessment_run", None)
-        results_count = assessment_run.results.count() if assessment_run else 0
+        results_count = 0
+        if assessment_run:
+            prefetched = getattr(assessment_run, "_prefetched_objects_cache", {}).get("results")
+            results_count = len(prefetched) if prefetched is not None else assessment_run.results.count()
 
         return {
             "version": "done",
