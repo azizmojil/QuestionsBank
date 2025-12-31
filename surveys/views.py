@@ -7,8 +7,8 @@ from django.utils.translation import get_language
 from django.db.models import Count
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import SurveyQuestion, SurveyVersion
-from Rbank.models import ResponseGroup
+from .models import SurveyQuestion, SurveyVersion, SurveySection
+from Rbank.models import ResponseGroup, ResponseType
 from Qbank.models import MatrixItemGroup, Questions, QuestionStaging
 from assessment_runs.models import AssessmentRun
 
@@ -17,7 +17,6 @@ def survey_builder(request):
     available_questions_qs = (
         SurveyQuestion.objects.select_related("survey_version")
         # .exclude(survey_version__status=SurveyVersion.Status.ARCHIVED) # Status field removed
-        .only("id", "text_ar", "text_en", "code", "created_at")
         .order_by("-created_at")
     )
     available_questions = [
@@ -31,9 +30,9 @@ def survey_builder(request):
     ]
 
     response_types = [
-        {"value": choice.value, "label": choice.label}
-        for choice in SurveyQuestion.ResponseType
-    ] if hasattr(SurveyQuestion, 'ResponseType') else []
+        {"value": rt.id, "label": str(rt)}
+        for rt in ResponseType.objects.all()
+    ]
 
     response_groups = [
         {"value": rg.id, "label": rg.name}
@@ -45,7 +44,11 @@ def survey_builder(request):
         for mig in MatrixItemGroup.objects.all()
     ]
 
-    survey_versions = SurveyVersion.objects.select_related('survey').prefetch_related('questions').all()
+    survey_versions = (
+        SurveyVersion.objects.select_related('survey')
+        .prefetch_related('questions', 'sections__questions')
+        .all()
+    )
     version_choices = [
         {
             "id": version.id,
@@ -56,24 +59,52 @@ def survey_builder(request):
 
     survey_structures = {}
     for version in survey_versions:
-        sections = {}
-        for q in version.questions.all():
-            # Use a default section title if none is provided
-            section_title = _("قسم غير مسمى")
-            if section_title not in sections:
-                sections[section_title] = {
-                    "title": section_title,
-                    "description": "",  # No description field on section, can be added if needed
-                    "questions": []
-                }
-            
-            # Append question data
-            sections[section_title]["questions"].append({
-                "question_id": q.id,
-                "required": q.is_required,
-                # Add other relevant fields here if needed for the builder
+        sections_payload = []
+
+        # Existing sections with their questions
+        for section in version.sections.all():
+            sections_payload.append({
+                "id": section.id,
+                "title": section.display_title,
+                "description": section.display_description,
+                "questions": [
+                    {
+                        "question_id": q.id,
+                        "label": q.display_text,
+                        "required": q.is_required,
+                        "response_group_id": q.response_group_id,
+                        "response_type_id": q.response_type_id,
+                        "matrix_item_group_id": q.matrix_item_group_id,
+                        "is_matrix": q.is_matrix,
+                    }
+                    for q in section.questions.all()
+                ],
             })
-        survey_structures[version.id] = list(sections.values())
+
+        # Any unsectioned questions fall back to a default section
+        unsectioned = [
+            q for q in version.questions.all()
+            if not q.section_id
+        ]
+        if unsectioned:
+            sections_payload.append({
+                "title": _("قسم غير مسمى"),
+                "description": "",
+                "questions": [
+                    {
+                        "question_id": q.id,
+                        "label": q.display_text,
+                        "required": q.is_required,
+                        "response_group_id": q.response_group_id,
+                        "response_type_id": q.response_type_id,
+                        "matrix_item_group_id": q.matrix_item_group_id,
+                        "is_matrix": q.is_matrix,
+                    }
+                    for q in unsectioned
+                ],
+            })
+
+        survey_structures[version.id] = sections_payload
 
     return render(
         request,
@@ -87,6 +118,97 @@ def survey_builder(request):
             "survey_structures": survey_structures,
         },
     )
+
+
+@require_POST
+def submit_final_questionnaire(request):
+    try:
+        data = json.loads(request.body)
+        version_id = data.get("version_id")
+        sections_data = data.get("sections", [])
+
+        if not version_id:
+            return JsonResponse(
+                {"status": "error", "message": _("Missing version_id")},
+                status=400,
+            )
+
+        if not sections_data:
+            return JsonResponse(
+                {"status": "error", "message": _("لا توجد أقسام لإرسالها")},
+                status=400,
+            )
+
+        survey_version = get_object_or_404(SurveyVersion, pk=version_id)
+        current_lang = (get_language() or "ar")[:2]
+
+        # Replace existing sections with the submitted structure
+        survey_version.sections.all().delete()
+
+        created_sections = 0
+        for idx, section_data in enumerate(sections_data):
+            title_value = section_data.get("title") or ""
+            description_value = section_data.get("description") or ""
+
+            section = SurveySection.objects.create(
+                survey_version=survey_version,
+                title_ar=section_data.get("title_ar") or (title_value if current_lang == "ar" else ""),
+                title_en=section_data.get("title_en") or (title_value if current_lang == "en" else ""),
+                description_ar=section_data.get("description_ar") or (description_value if current_lang == "ar" else ""),
+                description_en=section_data.get("description_en") or (description_value if current_lang == "en" else ""),
+                order=idx,
+            )
+            created_sections += 1
+
+            for q_data in section_data.get("questions", []):
+                q_obj = None
+                qid = q_data.get("id") or q_data.get("question_id")
+                label = q_data.get("label")
+
+                if qid:
+                    q_obj = SurveyQuestion.objects.filter(pk=qid).first()
+                    if q_obj and q_obj.survey_version_id != survey_version.id:
+                        q_obj = SurveyQuestion.objects.create(
+                            survey_version=survey_version,
+                            text_ar=q_obj.text_ar,
+                            text_en=q_obj.text_en,
+                            code=q_obj.code,
+                        )
+
+                if q_obj is None and label:
+                    text_ar = label if current_lang == "ar" else ""
+                    text_en = label if current_lang == "en" else ""
+                    q_obj = SurveyQuestion.objects.create(
+                        survey_version=survey_version,
+                        text_ar=text_ar,
+                        text_en=text_en,
+                    )
+
+                if q_obj is None:
+                    continue
+
+                q_obj.section = section
+                q_obj.response_group_id = q_data.get("response_group_id")
+                q_obj.response_type_id = q_data.get("response_type_id")
+                q_obj.matrix_item_group_id = q_data.get("matrix_item_group_id")
+                q_obj.is_matrix = bool(q_data.get("is_matrix"))
+                if "is_required" in q_data:
+                    q_obj.is_required = bool(q_data.get("is_required"))
+                q_obj.save()
+
+        return JsonResponse(
+            {
+                "status": "success",
+                "sections_created": created_sections,
+            }
+        )
+
+    except Exception as exc:  # pragma: no cover - unexpected runtime errors
+        return JsonResponse(
+            {"status": "error", "message": str(exc)},
+            status=500,
+        )
+
 
 def survey_builder_routing(request):
     # Reuse logic from survey_builder but render the dedicated routing template
@@ -141,9 +263,9 @@ def survey_builder_initial(request):
     ]
 
     response_types = [
-        {"value": choice.value, "label": choice.label}
-        for choice in SurveyQuestion.ResponseType
-    ] if hasattr(SurveyQuestion, 'ResponseType') else []
+        {"value": rt.id, "label": str(rt)}
+        for rt in ResponseType.objects.all()
+    ]
 
     response_groups = [
         {"value": rg.id, "label": rg.name}
