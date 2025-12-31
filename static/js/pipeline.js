@@ -5,6 +5,7 @@
   const statusLabelsEl = document.getElementById('pipeline-status-labels');
   const pipelines = JSON.parse(dataEl.textContent || '[]');
   const statusLabels = statusLabelsEl ? JSON.parse(statusLabelsEl.textContent || '{}') : {};
+  const connectorColor = (getComputedStyle(document.documentElement).getPropertyValue('--pipeline-connector') || '').trim() || '#d6c08c';
 
   const defaultLabels = {
     done: 'Done',
@@ -27,8 +28,6 @@
     const state = stateById.get(String(wrap.dataset.pipelineId)) || {};
 
     if (!grid || !svg) return;
-
-    const connectorColor = (getComputedStyle(wrap).getPropertyValue('--pipeline-connector') || '').trim() || '#d6c08c';
 
     const DAG = {
       version: { dependsOn: [] },
