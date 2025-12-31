@@ -285,12 +285,13 @@ class SurveyRoutingBuilderTests(TestCase):
 
 
 class SurveySchemaTests(TestCase):
-    def test_section_column_exists(self):
-        table_name = SurveyQuestion._meta.db_table
+    def _table_columns(self, table_name):
         with connection.cursor() as cursor:
-            columns = [
+            return [
                 col.name
                 for col in connection.introspection.get_table_description(cursor, table_name)
             ]
 
+    def test_section_column_exists(self):
+        columns = self._table_columns(SurveyQuestion._meta.db_table)
         self.assertIn("section_id", columns)

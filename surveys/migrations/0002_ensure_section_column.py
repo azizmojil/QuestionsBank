@@ -27,6 +27,7 @@ def ensure_section_column(apps, schema_editor):
         null=True,
         blank=True,
         related_name="questions",
+        db_column="section_id",
     )
     field.set_attributes_from_name("section")
     schema_editor.add_field(SurveyQuestion, field)
