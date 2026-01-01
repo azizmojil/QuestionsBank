@@ -53,9 +53,10 @@
     }
 
     function resolve(id) {
+      if (!depsDone(id)) return 'not_started';
       const raw = norm(state[id]);
       if (raw === 'done' || raw === 'in_progress') return raw;
-      return depsDone(id) ? 'not_started' : 'blocked';
+      return 'not_started';
     }
 
     function statusText(stepState) {
@@ -71,7 +72,6 @@
 
       const circle = nodeEl.querySelector('.pnode__circle');
       const statusEl = nodeEl.querySelector('.pnode__status');
-      const step = nodeEl.dataset.step || '';
 
       if (statusEl) statusEl.textContent = statusText(nodeState);
       if (!circle) return;

@@ -340,6 +340,19 @@ class SurveyQuestion(models.Model):
         if lang == "en" and self.text_en:
             return self.text_en
         return self.text_en or self.text_ar
+    
+    def delete(self, *args, **kwargs):
+        # When a SurveyQuestion is deleted, also delete the corresponding QuestionStaging entry
+        # if it matches the text and survey version.
+        from Qbank.models import QuestionStaging
+        
+        QuestionStaging.objects.filter(
+            survey_version=self.survey_version,
+            text_ar=self.text_ar,
+            text_en=self.text_en
+        ).delete()
+        
+        super().delete(*args, **kwargs)
 
 
 class SurveyRoutingRule(models.Model):

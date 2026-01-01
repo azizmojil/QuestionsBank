@@ -76,7 +76,6 @@ class SurveyVersionAdmin(admin.ModelAdmin):
     search_fields = ("version_label", "survey__name_ar", "survey__name_en")
     list_display = (
         "__str__", 
-        "survey", 
         "initial_questionnaire_built",
         "self_assessment_done",
         "routing_logic_done",
@@ -90,7 +89,51 @@ class SurveyVersionAdmin(admin.ModelAdmin):
         return False
 
     def get_fieldsets(self, request, obj=None):
-        return []
+        return [
+            (_("Pipeline Status"), {
+                "fields": (
+                    "initial_questionnaire_built",
+                    "initial_questionnaire_built_by",
+                    "initial_questionnaire_built_at",
+                    "self_assessment_done",
+                    "self_assessment_done_by",
+                    "self_assessment_done_at",
+                    "routing_logic_done",
+                    "routing_logic_done_by",
+                    "routing_logic_done_at",
+                    "business_logic_done",
+                    "business_logic_done_by",
+                    "business_logic_done_at",
+                    "lang_review_status",
+                    "lang_review_done_by",
+                    "lang_review_done_at",
+                    "translation_status",
+                    "translation_done_by",
+                    "translation_done_at",
+                )
+            }),
+            (_("Metadata"), {
+                "fields": ("created_at", "updated_at", "routing_layout"),
+            }),
+        ]
+    
+    readonly_fields = (
+        "version_label",
+        "created_at",
+        "updated_at",
+        "initial_questionnaire_built_by",
+        "initial_questionnaire_built_at",
+        "self_assessment_done_by",
+        "self_assessment_done_at",
+        "routing_logic_done_by",
+        "routing_logic_done_at",
+        "business_logic_done_by",
+        "business_logic_done_at",
+        "lang_review_done_by",
+        "lang_review_done_at",
+        "translation_done_by",
+        "translation_done_at",
+    )
 
 
 @admin.register(SurveyQuestion)

@@ -254,6 +254,21 @@ def survey_builder_routing(request):
         for question in available_questions_qs
     ]
 
+    response_types = [
+        {"value": rt.id, "label": str(rt)}
+        for rt in ResponseType.objects.all()
+    ]
+
+    response_groups = [
+        {"value": rg.id, "label": rg.name}
+        for rg in ResponseGroup.objects.all()
+    ]
+
+    matrix_item_groups = [
+        {"value": mig.id, "label": mig.name}
+        for mig in MatrixItemGroup.objects.all()
+    ]
+
     survey_versions = SurveyVersion.objects.select_related('survey').prefetch_related('questions').all()
     version_choices = [
         {
@@ -284,6 +299,8 @@ def survey_builder_routing(request):
             "available_questions": available_questions,
             "survey_versions": version_choices,
             "routing_locale": routing_locale,
+            "response_types": response_types,
+            "response_groups": response_groups,
         },
     )
 
@@ -536,6 +553,13 @@ def submit_initial_questions(request):
         
         # Create AssessmentRun for the survey version
         AssessmentRun.objects.get_or_create(survey_version=survey_version)
+
+        # Update pipeline status
+        survey_version.initial_questionnaire_built = True
+        survey_version.initial_questionnaire_built_at = timezone.now()
+        if request.user.is_authenticated:
+            survey_version.initial_questionnaire_built_by = request.user
+        survey_version.save()
 
         return JsonResponse({'status': 'success'})
         
