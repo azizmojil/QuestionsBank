@@ -52,11 +52,18 @@
             <div class="muted">{% trans "لا توجد أسئلة جاهزة بعد" %}</div>
             {% endfor %}
         </div>
-    </div>
+        </div>
 
-    <div class="builder-main">
-        <div id="sections-container" aria-live="polite"></div>
-    </div>
+        <div class="builder-main">
+        <div class="final-nesting final-nesting--outer" role="group" aria-labelledby="final-sections-heading">
+            <div class="final-nesting final-nesting--middle">
+                <h2 class="final-nesting__label" id="final-sections-heading">{% trans "الأقسام والأسئلة النهائية" %}</h2>
+                <div class="final-nesting final-nesting--inner" role="region">
+                    <div id="sections-container" aria-live="polite"></div>
+                </div>
+            </div>
+        </div>
+        </div>
 </section>
 
 <div id="builder-config" data-submit-url="{% url 'submit_final_questionnaire' %}" class="sr-only"></div>
